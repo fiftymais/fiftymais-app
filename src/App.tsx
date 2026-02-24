@@ -106,20 +106,33 @@ export default function App() {
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        fetchProfile(session.user.id);
-        fetchPropostas(session.user.id);
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Auth session error:', error);
+        supabase.auth.signOut();
+        setSession(null);
+      } else {
+        setSession(session);
+        if (session) {
+          fetchProfile(session.user.id);
+          fetchPropostas(session.user.id);
+        }
       }
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        // Handle potential token issues by ensuring session is synced
+      }
+      
       setSession(session);
       if (session) {
         fetchProfile(session.user.id);
         fetchPropostas(session.user.id);
+      } else {
+        setProfile(null);
+        setPropostas([]);
       }
     });
 
@@ -151,6 +164,25 @@ export default function App() {
           return { 
             ...p, 
             ambientes: m.ambientes || [],
+            // Restore financial fields
+            v_mat: m.financeiro?.v_mat,
+            v_despesas: m.financeiro?.v_despesas,
+            v_ferr: m.financeiro?.v_ferr,
+            v_outros: m.financeiro?.v_outros,
+            v_margem: m.financeiro?.v_margem,
+            // Restore technical fields
+            chapa: m.detalhes_tecnicos?.chapa,
+            acabamento: m.detalhes_tecnicos?.acabamento,
+            ferragens: m.detalhes_tecnicos?.ferragens,
+            detalhes: m.detalhes_tecnicos?.detalhes,
+            inicio: m.detalhes_tecnicos?.inicio,
+            entrega: m.detalhes_tecnicos?.entrega,
+            prazo_obs: m.detalhes_tecnicos?.prazo_obs,
+            garantia: m.detalhes_tecnicos?.garantia,
+            incluso: m.detalhes_tecnicos?.incluso,
+            excluso: m.detalhes_tecnicos?.excluso,
+            obs_final: m.detalhes_tecnicos?.obs_final,
+            // Restore payment fields
             pgto_formas: m.pgto?.formas || ['Dinheiro', 'PIX'],
             pgto_parcelas: m.pgto?.parcelas || 1,
             pgto_juros: m.pgto?.juros || false,
@@ -196,6 +228,22 @@ export default function App() {
       pgto_pix, 
       pgto_pix_tipo,
       pgto_condicao,
+      v_mat,
+      v_despesas,
+      v_ferr,
+      v_outros,
+      v_margem,
+      chapa,
+      acabamento,
+      ferragens,
+      detalhes,
+      inicio,
+      entrega,
+      prazo_obs,
+      garantia,
+      incluso,
+      excluso,
+      obs_final,
       ...rest 
     } = formData;
 
@@ -203,6 +251,7 @@ export default function App() {
       ...rest,
       user_id: session.user.id,
       v_total: total,
+      status: 'enviada', // Force status to 'enviada' as requested
       updated_at: new Date().toISOString(),
       created_at: formData.created_at || new Date().toISOString(),
       numero: formData.numero || propostas.length + 1,
@@ -210,6 +259,26 @@ export default function App() {
       tipo_movel: ambientes?.[0]?.tipo || 'Móvel Planejado',
       medidas: {
         ambientes: ambientes || [],
+        financeiro: {
+          v_mat,
+          v_despesas,
+          v_ferr,
+          v_outros,
+          v_margem
+        },
+        detalhes_tecnicos: {
+          chapa,
+          acabamento,
+          ferragens,
+          detalhes,
+          inicio,
+          entrega,
+          prazo_obs,
+          garantia,
+          incluso,
+          excluso,
+          obs_final
+        },
         pgto: {
           formas: pgto_formas,
           parcelas: pgto_parcelas,
@@ -366,15 +435,6 @@ export default function App() {
                     className="w-full bg-white border border-brand-border rounded-xl pl-10 pr-4 py-2 text-sm focus:border-brand-red transition-all"
                   />
                 </div>
-                <select 
-                  value={statusFilter}
-                  onChange={e => setStatusFilter(e.target.value)}
-                  className="bg-white border border-brand-border rounded-xl px-3 py-2 text-sm font-medium focus:border-brand-red transition-all"
-                >
-                  <option value="">Status</option>
-                  <option value="enviada">Enviadas</option>
-                  <option value="nao_enviada">Não Enviadas</option>
-                </select>
               </div>
 
               <div className="space-y-3">
@@ -396,12 +456,6 @@ export default function App() {
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-brand-red text-lg">{fmt(p.v_total)}</p>
-                          <span className={cn(
-                            "text-[10px] font-bold px-2 py-0.5 rounded uppercase",
-                            p.status === 'enviada' ? "bg-green-50 text-green-600" : "bg-zinc-100 text-zinc-500"
-                          )}>
-                            {p.status === 'enviada' ? 'Enviada' : 'Não Enviada'}
-                          </span>
                         </div>
                       </div>
                       <div className="grid grid-cols-4 gap-2">
