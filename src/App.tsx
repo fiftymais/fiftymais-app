@@ -77,8 +77,8 @@ export default function App() {
   const [formData, setFormData] = useState<Partial<Proposta>>({
     ambientes: [{ id: '1', tipo: 'Cozinha Planejada', pecas: [] }],
     chapa: 'MDF 15mm',
-    acabamento: 'Lacca Fosco',
-    ferragens: 'Padrão',
+    acabamento: '',
+    ferragens: '',
     v_margem: 30,
     status: 'nao_enviada',
     pgto_formas: ['Dinheiro', 'PIX'],
@@ -448,8 +448,8 @@ export default function App() {
                     setFormData({
                       ambientes: [{ id: '1', tipo: 'Cozinha Planejada', pecas: [] }],
                       chapa: 'MDF 15mm',
-                      acabamento: 'Lacca Fosco',
-                      ferragens: 'Padrão',
+                      acabamento: '',
+                      ferragens: '',
                       v_margem: 30,
                       status: 'nao_enviada',
                       pgto_formas: ['Dinheiro', 'PIX'],
@@ -620,8 +620,8 @@ export default function App() {
             setFormData({
               ambientes: [{ id: '1', tipo: 'Cozinha Planejada', pecas: [] }],
               chapa: 'MDF 15mm',
-              acabamento: 'Lacca Fosco',
-              ferragens: 'Padrão',
+              acabamento: '',
+              ferragens: '',
               v_margem: 30,
               status: 'nao_enviada',
               pgto_formas: ['Dinheiro', 'PIX'],
