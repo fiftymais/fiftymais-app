@@ -143,14 +143,25 @@ export default function App() {
     }
 
     if (data) {
-      // Map 'medidas' back to 'ambientes' if necessary
+      // Map 'medidas' back to 'ambientes' and other fields if necessary
       const mappedData = data.map(p => {
+        if (p.medidas && typeof p.medidas === 'object' && !Array.isArray(p.medidas)) {
+          // New nested structure
+          const m = p.medidas as any;
+          return { 
+            ...p, 
+            ambientes: m.ambientes || [],
+            pgto_formas: m.pgto?.formas || ['Dinheiro', 'PIX'],
+            pgto_parcelas: m.pgto?.parcelas || 1,
+            pgto_juros: m.pgto?.juros || false,
+            pgto_pix: m.pgto?.pix || '',
+            pgto_pix_tipo: m.pgto?.pix_tipo || 'CPF',
+            pgto_condicao: m.pgto?.condicao || ''
+          };
+        }
         if (p.medidas && Array.isArray(p.medidas) && p.medidas.length > 0 && !p.ambientes) {
-          // Check if the first item in medidas looks like an Ambiente
-          const first = p.medidas[0];
-          if (first && typeof first === 'object' && 'pecas' in first) {
-            return { ...p, ambientes: p.medidas };
-          }
+          // Old structure (array of ambientes)
+          return { ...p, ambientes: p.medidas };
         }
         return p;
       });
@@ -176,8 +187,17 @@ export default function App() {
     const sub = mat + despesas + ferr + out;
     const total = sub + sub * (marg / 100);
 
-    // Destructure to remove 'ambientes' from the database payload
-    const { ambientes, ...rest } = formData;
+    // Destructure to remove fields not present in the database schema
+    const { 
+      ambientes, 
+      pgto_formas, 
+      pgto_parcelas, 
+      pgto_juros, 
+      pgto_pix, 
+      pgto_pix_tipo,
+      pgto_condicao,
+      ...rest 
+    } = formData;
 
     const payload = {
       ...rest,
@@ -188,7 +208,17 @@ export default function App() {
       numero: formData.numero || propostas.length + 1,
       // Compatibility fields: store the rich structure in 'medidas' column
       tipo_movel: ambientes?.[0]?.tipo || 'Móvel Planejado',
-      medidas: ambientes || [] // Store the full ambientes array in the medidas column
+      medidas: {
+        ambientes: ambientes || [],
+        pgto: {
+          formas: pgto_formas,
+          parcelas: pgto_parcelas,
+          juros: pgto_juros,
+          pix: pgto_pix,
+          pix_tipo: pgto_pix_tipo,
+          condicao: pgto_condicao
+        }
+      }
     };
 
     let { error, data: savedData } = editingId 
