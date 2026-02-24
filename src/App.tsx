@@ -971,13 +971,21 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               {[
                 { label: 'Cozinha', emoji: '🍳', val: 'Cozinha Planejada' },
                 { label: 'Guarda-Roupa', emoji: '🚪', val: 'Guarda-Roupa' },
+                { label: 'Dorm. Casal', emoji: '🛏️', val: 'Dormitório Casal' },
+                { label: 'Dorm. Solt.', emoji: '🛌', val: 'Dormitório Solteiro' },
+                { label: 'Dorm. Inf.', emoji: '🧸', val: 'Dormitório Infantil' },
+                { label: 'Amb. Criança', emoji: '👶', val: 'Ambiente de Criança' },
                 { label: 'Home Office', emoji: '💻', val: 'Home Office' },
+                { label: 'Escritório', emoji: '💼', val: 'Escritório' },
+                { label: 'Recepção', emoji: '🛎️', val: 'Recepção' },
                 { label: 'Closet', emoji: '👔', val: 'Closet' },
                 { label: 'Banheiro', emoji: '🚿', val: 'Banheiro' },
                 { label: 'Rack/Painel', emoji: '📺', val: 'Rack / Painel TV' },
-                { label: 'Infantil', emoji: '🧸', val: 'Quarto Infantil' },
                 { label: 'Área Serviço', emoji: '🧺', val: 'Área de Serviço' },
+                { label: 'Varanda', emoji: '🌿', val: 'Varanda' },
+                { label: 'Área Ext.', emoji: '🌳', val: 'Área Externa' },
                 { label: 'Sob Medida', emoji: '📐', val: 'Móvel Sob Medida' },
+                { label: 'Personalizado', emoji: '✨', val: 'Ambiente Personalizado' },
               ].map(m => (
                 <button 
                   key={m.val}
