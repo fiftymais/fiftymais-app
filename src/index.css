@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-red: #D42B2B;
+  --color-brand-red-dark: #AA2020;
+  --color-brand-red-light: #FFF0F0;
+  --color-brand-bg: #F2F2F7;
+  --color-brand-surface: #FFFFFF;
+  --color-brand-surface2: #F8F8F8;
+  --color-brand-border: #E5E5EA;
+  --color-brand-text: #1C1C1E;
+  --color-brand-text2: #48484A;
+  --color-brand-text3: #8E8E93;
+  --color-brand-green: #34C759;
+  --color-brand-green-dark: #248A3D;
+  --color-brand-green-bg: #F0FFF4;
+}
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  @apply bg-brand-bg text-brand-text antialiased;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input, select, textarea {
+  @apply outline-none;
+}
+
+.markdown-body {
+  @apply text-sm leading-relaxed;
+}
