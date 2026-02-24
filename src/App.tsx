@@ -164,6 +164,9 @@ export default function App() {
           return { 
             ...p, 
             ambientes: m.ambientes || [],
+            // Restore client fields
+            cliente_end: m.cliente?.endereco || p.cliente_end,
+            cliente_ref: m.cliente?.referencia || p.cliente_ref,
             // Restore financial fields
             v_mat: m.financeiro?.v_mat,
             v_despesas: m.financeiro?.v_despesas,
@@ -244,6 +247,8 @@ export default function App() {
       incluso,
       excluso,
       obs_final,
+      cliente_end,
+      cliente_ref,
       ...rest 
     } = formData;
 
@@ -259,6 +264,10 @@ export default function App() {
       tipo_movel: ambientes?.[0]?.tipo || 'Móvel Planejado',
       medidas: {
         ambientes: ambientes || [],
+        cliente: {
+          endereco: cliente_end,
+          referencia: cliente_ref
+        },
         financeiro: {
           v_mat,
           v_despesas,
@@ -290,30 +299,62 @@ export default function App() {
       }
     };
 
-    let { error, data: savedData } = editingId 
-      ? await supabase.from('propostas').update(payload).eq('id', editingId).select()
-      : await supabase.from('propostas').insert(payload).select();
+    try {
+      let { error, data: savedData } = editingId 
+        ? await supabase.from('propostas').update(payload).eq('id', editingId).select()
+        : await supabase.from('propostas').insert(payload).select();
 
-    if (error) {
-      console.error('Supabase Save Error:', error);
-      showToast('Erro ao salvar: ' + error.message, 'error');
-    } else {
-      showToast(editingId ? 'Proposta atualizada!' : 'Proposta salva!');
+      if (error) {
+        console.error('Supabase Save Error:', error);
+        showToast('Erro ao salvar: ' + error.message, 'error');
+        return;
+      }
+
+      showToast('Proposta enviada com sucesso!');
       fetchPropostas(session.user.id);
       
       // Reconstruct the proposal for the preview/state
       const savedProposta = (savedData?.[0] || payload) as Proposta;
-      // Ensure 'ambientes' is set from 'medidas' if it came back from DB
-      if (savedProposta.medidas && !savedProposta.ambientes) {
-        savedProposta.ambientes = savedProposta.medidas as any;
-      }
       
-      setFormData(savedProposta);
+      // Map back for local state consistency
+      const mappedProposta = {
+        ...savedProposta,
+        ambientes: payload.medidas.ambientes,
+        v_mat: payload.medidas.financeiro.v_mat,
+        v_despesas: payload.medidas.financeiro.v_despesas,
+        v_ferr: payload.medidas.financeiro.v_ferr,
+        v_outros: payload.medidas.financeiro.v_outros,
+        v_margem: payload.medidas.financeiro.v_margem,
+        chapa: payload.medidas.detalhes_tecnicos.chapa,
+        acabamento: payload.medidas.detalhes_tecnicos.acabamento,
+        ferragens: payload.medidas.detalhes_tecnicos.ferragens,
+        detalhes: payload.medidas.detalhes_tecnicos.detalhes,
+        inicio: payload.medidas.detalhes_tecnicos.inicio,
+        entrega: payload.medidas.detalhes_tecnicos.entrega,
+        prazo_obs: payload.medidas.detalhes_tecnicos.prazo_obs,
+        garantia: payload.medidas.detalhes_tecnicos.garantia,
+        incluso: payload.medidas.detalhes_tecnicos.incluso,
+        excluso: payload.medidas.detalhes_tecnicos.excluso,
+        obs_final: payload.medidas.detalhes_tecnicos.obs_final,
+        pgto_formas: payload.medidas.pgto.formas,
+        pgto_parcelas: payload.medidas.pgto.parcelas,
+        pgto_juros: payload.medidas.pgto.juros,
+        pgto_pix: payload.medidas.pgto.pix,
+        pgto_pix_tipo: payload.medidas.pgto.pix_tipo,
+        pgto_condicao: payload.medidas.pgto.condicao,
+        cliente_end: payload.medidas.cliente.endereco,
+        cliente_ref: payload.medidas.cliente.referencia
+      };
+      
+      setFormData(mappedProposta);
       setCurrentPage('preview');
       
       if (profile) {
-        generateProposalPDF(savedProposta, profile);
+        generateProposalPDF(mappedProposta, profile);
       }
+    } catch (err: any) {
+      console.error('Unexpected Save Error:', err);
+      showToast('Erro inesperado: ' + err.message, 'error');
     }
   };
 
@@ -549,27 +590,27 @@ export default function App() {
       </main>
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-20 flex items-center justify-around px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-16 sm:h-20 flex items-center justify-around px-1 sm:px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <button 
           onClick={() => setCurrentPage('tutorial')}
           className={cn(
-            "flex flex-col items-center gap-1.5 px-3 py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'tutorial' ? "text-brand-red bg-brand-red/5 scale-110" : "text-brand-text3 hover:text-brand-text2"
+            "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+            currentPage === 'tutorial' ? "text-brand-red bg-brand-red/5 scale-105" : "text-brand-text3 hover:text-brand-text2"
           )}
         >
-          <Home size={24} strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-          <span className={cn("text-[10px] uppercase tracking-tighter font-black", currentPage === 'tutorial' ? "opacity-100" : "opacity-60")}>Início</span>
+          <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
+          <span className={cn("text-[9px] sm:text-[10px] uppercase tracking-tighter font-black", currentPage === 'tutorial' ? "opacity-100" : "opacity-60")}>Início</span>
         </button>
 
         <button 
           onClick={() => setCurrentPage('perfil')}
           className={cn(
-            "flex flex-col items-center gap-1.5 px-3 py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'perfil' ? "text-brand-red bg-brand-red/5 scale-110" : "text-brand-text3 hover:text-brand-text2"
+            "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+            currentPage === 'perfil' ? "text-brand-red bg-brand-red/5 scale-105" : "text-brand-text3 hover:text-brand-text2"
           )}
         >
-          <Settings size={24} strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-          <span className={cn("text-[10px] uppercase tracking-tighter font-black", currentPage === 'perfil' ? "opacity-100" : "opacity-60")}>Perfil</span>
+          <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
+          <span className={cn("text-[9px] sm:text-[10px] uppercase tracking-tighter font-black", currentPage === 'perfil' ? "opacity-100" : "opacity-60")}>Perfil</span>
         </button>
 
         <button 
@@ -590,23 +631,23 @@ export default function App() {
             setCurrentPage('orcamento');
           }}
           className={cn(
-            "flex flex-col items-center gap-1.5 px-4 py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'orcamento' ? "text-white bg-brand-red shadow-lg shadow-brand-red/20 scale-110" : "text-brand-red bg-brand-red/10 hover:bg-brand-red/20"
+            "flex flex-col items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-2xl transition-all duration-300",
+            currentPage === 'orcamento' ? "text-white bg-brand-red shadow-lg shadow-brand-red/20 scale-105" : "text-brand-red bg-brand-red/10 hover:bg-brand-red/20"
           )}
         >
-          <Plus size={24} strokeWidth={3} />
-          <span className="text-[10px] uppercase tracking-tighter font-black">Nova Proposta</span>
+          <Plus size={20} className="sm:w-6 sm:h-6" strokeWidth={3} />
+          <span className="text-[9px] sm:text-[10px] uppercase tracking-tighter font-black">Nova Proposta</span>
         </button>
 
         <button 
           onClick={() => setCurrentPage('propostas')}
           className={cn(
-            "flex flex-col items-center gap-1.5 px-3 py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'propostas' ? "text-brand-red bg-brand-red/5 scale-110" : "text-brand-text3 hover:text-brand-text2"
+            "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+            currentPage === 'propostas' ? "text-brand-red bg-brand-red/5 scale-105" : "text-brand-text3 hover:text-brand-text2"
           )}
         >
-          <FileText size={24} strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-          <span className={cn("text-[10px] uppercase tracking-tighter font-black", currentPage === 'propostas' ? "opacity-100" : "opacity-60")}>Propostas</span>
+          <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
+          <span className={cn("text-[9px] sm:text-[10px] uppercase tracking-tighter font-black", currentPage === 'propostas' ? "opacity-100" : "opacity-60")}>Propostas</span>
         </button>
       </nav>
 
@@ -894,6 +935,26 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 placeholder="Rua, número, bairro"
               />
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-brand-text2 ml-1">Início da Montagem</label>
+                <input 
+                  type="date" 
+                  value={data.inicio || ''} 
+                  onChange={e => updateData('inicio', e.target.value)}
+                  className="w-full bg-brand-surface2 border border-brand-border rounded-xl px-4 py-3 focus:bg-white focus:border-brand-red transition-all"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-brand-text2 ml-1">Previsão de Entrega</label>
+                <input 
+                  type="date" 
+                  value={data.entrega || ''} 
+                  onChange={e => updateData('entrega', e.target.value)}
+                  className="w-full bg-brand-surface2 border border-brand-border rounded-xl px-4 py-3 focus:bg-white focus:border-brand-red transition-all"
+                />
+              </div>
+            </div>
           </div>
           <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
             Próximo <ChevronRight size={18} />
@@ -959,6 +1020,28 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   ))}
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text2 ml-1">Acabamento</label>
+                <input 
+                  type="text" 
+                  value={data.acabamento || ''} 
+                  onChange={e => updateData('acabamento', e.target.value)}
+                  className="w-full bg-brand-surface2 border border-brand-border rounded-xl px-4 py-3 focus:bg-white focus:border-brand-red transition-all"
+                  placeholder="Ex: Lacca Fosco, Amadeirado..."
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text2 ml-1">Ferragens</label>
+                <input 
+                  type="text" 
+                  value={data.ferragens || ''} 
+                  onChange={e => updateData('ferragens', e.target.value)}
+                  className="w-full bg-brand-surface2 border border-brand-border rounded-xl px-4 py-3 focus:bg-white focus:border-brand-red transition-all"
+                  placeholder="Ex: Amortecedores, Telescópicas..."
+                />
+              </div>
             </div>
           </div>
           <div className="flex gap-3">
@@ -984,7 +1067,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-brand-text2 ml-1 uppercase tracking-wider">Detalhes do Ambiente</label>
+                  <label className="text-[10px] font-bold text-brand-text2 ml-1 uppercase tracking-wider">OBS: Material utilizado e detalhamento</label>
                   <textarea 
                     value={amb.detalhes || ''} 
                     onChange={e => updateAmbiente(amb.id, 'detalhes', e.target.value)}
@@ -1002,7 +1085,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                           value={p.nome} 
                           onChange={e => updatePeca(amb.id, pIdx, 'nome', e.target.value)}
                           className="flex-1 bg-brand-surface2 border border-brand-border rounded-lg px-3 py-2 text-sm font-medium"
-                          placeholder="Nome da peça"
+                          placeholder="Módulo/item"
                         />
                         <button onClick={() => removePeca(amb.id, pIdx)} className="text-red-500 p-2"><Trash2 size={16} /></button>
                       </div>
@@ -1205,7 +1288,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   placeholder="Ex: 50% na aprovação + 50% na entrega"
                 />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1">
                 <label className="text-xs font-bold text-brand-text2 ml-1">Chave PIX</label>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   {['CPF', 'CNPJ', 'Celular', 'E-mail', 'Aleatória'].map(t => (
@@ -1234,6 +1317,26 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   }
                 />
               </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-brand-text2 ml-1">Observações Finais</label>
+                <textarea 
+                  value={data.obs_final || ''} 
+                  onChange={e => updateData('obs_final', e.target.value)}
+                  className="w-full bg-brand-surface2 border border-brand-border rounded-xl px-4 py-3 focus:bg-white focus:border-brand-red transition-all min-h-[80px]"
+                  placeholder="Informações adicionais para o cliente..."
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-brand-text2 ml-1">Considerações (O que NÃO está incluso)</label>
+                <textarea 
+                  value={data.excluso || ''} 
+                  onChange={e => updateData('excluso', e.target.value)}
+                  className="w-full bg-brand-surface2 border border-brand-border rounded-xl px-4 py-3 focus:bg-white focus:border-brand-red transition-all min-h-[80px]"
+                  placeholder="Ex: Tampos de pedra, cubas, eletros..."
+                />
+              </div>
             </div>
           </div>
           <div className="flex gap-3">
@@ -1241,7 +1344,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               <ChevronLeft size={18} /> Voltar
             </button>
             <button onClick={onSave} className="flex-[2] bg-brand-green text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 active:scale-95 transition-transform">
-              <Save size={18} /> Salvar Proposta e Enviar para o Cliente
+              <Plus size={18} /> Enviar para o Cliente
             </button>
           </div>
         </div>
@@ -1305,6 +1408,32 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
               <span className="text-brand-text2">Material</span>
               <span className="font-bold">{proposta.chapa}</span>
             </div>
+            {proposta.inicio && (
+              <div className="flex justify-between text-sm">
+                <span className="text-brand-text2">Início Montagem</span>
+                <span className="font-bold">{new Date(proposta.inicio).toLocaleDateString('pt-BR')}</span>
+              </div>
+            )}
+            {proposta.entrega && (
+              <div className="flex justify-between text-sm">
+                <span className="text-brand-text2">Previsão Entrega</span>
+                <span className="font-bold">{new Date(proposta.entrega).toLocaleDateString('pt-BR')}</span>
+              </div>
+            )}
+          </section>
+
+          <section className="space-y-2">
+            <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest border-b border-brand-border pb-1">Pagamento</h4>
+            <div className="flex justify-between text-sm">
+              <span className="text-brand-text2">Parcelamento</span>
+              <span className="font-bold">{proposta.pgto_parcelas || 1}x {proposta.pgto_juros ? 'c/ juros' : 's/ juros'}</span>
+            </div>
+            {proposta.pgto_pix && (
+              <div className="flex justify-between text-sm">
+                <span className="text-brand-text2">Chave PIX</span>
+                <span className="font-bold">{proposta.pgto_pix}</span>
+              </div>
+            )}
           </section>
 
           <div className="bg-zinc-900 text-white p-4 rounded-2xl flex justify-between items-center">

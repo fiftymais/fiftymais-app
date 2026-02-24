@@ -60,6 +60,7 @@ export interface Proposta {
   pgto_parcelas?: number;
   pgto_juros?: boolean;
   pgto_pix?: string;
+  pgto_pix_tipo?: string;
   obs_final?: string;
   status: 'nao_enviada' | 'enviada';
   created_at: string;

@@ -12,6 +12,34 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   const fmt = (val: number) => 'R$ ' + (val || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   const hoje = new Date(proposta.created_at || Date.now()).toLocaleDateString('pt-BR');
 
+  // Extract data from 'medidas' if it's the new nested structure
+  const m = (proposta.medidas && typeof proposta.medidas === 'object' && !Array.isArray(proposta.medidas)) ? proposta.medidas : null;
+  const ambientes = proposta.ambientes || m?.ambientes || [];
+  const pgto = m?.pgto || {
+    formas: proposta.pgto_formas,
+    parcelas: proposta.pgto_parcelas,
+    juros: proposta.pgto_juros,
+    pix: proposta.pgto_pix,
+    condicao: proposta.pgto_condicao
+  };
+  const tech = m?.detalhes_tecnicos || {
+    chapa: proposta.chapa,
+    acabamento: proposta.acabamento,
+    ferragens: proposta.ferragens,
+    detalhes: proposta.detalhes,
+    inicio: proposta.inicio,
+    entrega: proposta.entrega,
+    prazo_obs: proposta.prazo_obs,
+    garantia: proposta.garantia,
+    incluso: proposta.incluso,
+    excluso: proposta.excluso,
+    obs_final: proposta.obs_final
+  };
+  const cliente = m?.cliente || {
+    endereco: proposta.cliente_end,
+    referencia: proposta.cliente_ref
+  };
+
   const chkPg = (n = 20) => {
     if (y + n > 280) {
       doc.addPage();
@@ -65,8 +93,19 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.setFont('helvetica', 'bold');
   doc.text('Localização do Projeto: ', M, y);
   doc.setFont('helvetica', 'normal');
-  doc.text(proposta.cliente_end || '—', M + 45, y);
+  doc.text(cliente.endereco || '—', M + 45, y);
   y += 7;
+
+  if (tech.inicio || tech.entrega) {
+    doc.setFont('helvetica', 'bold');
+    doc.text('Cronograma da Montagem: ', M, y);
+    doc.setFont('helvetica', 'normal');
+    let crono = '';
+    if (tech.inicio) crono += `Início: ${new Date(tech.inicio).toLocaleDateString('pt-BR')}`;
+    if (tech.entrega) crono += `${tech.inicio ? ' | ' : ''}Entrega: ${new Date(tech.entrega).toLocaleDateString('pt-BR')}`;
+    doc.text(crono, M + 48, y);
+    y += 7;
+  }
 
   doc.setFont('helvetica', 'bold');
   doc.text('Data da Proposta: ', M, y);
@@ -86,9 +125,8 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.text('DETALHAMENTO POR AMBIENTE', M, y);
   y += 10;
 
-  const ambientes = proposta.ambientes || [];
   if (ambientes.length > 0) {
-    ambientes.forEach((amb, idx) => {
+    ambientes.forEach((amb: any, idx: number) => {
       chkPg(30);
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(11);
@@ -135,11 +173,11 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
     doc.setFontSize(10);
     doc.setTextColor(...GREY);
     
-    const specs = [];
-    if (proposta.chapa) specs.push(`Material: ${proposta.chapa}`);
-    if (proposta.acabamento) specs.push(`Acabamento: ${proposta.acabamento}`);
-    if (proposta.ferragens) specs.push(`Ferragens: ${proposta.ferragens}`);
-    if (proposta.detalhes) specs.push(`Observações: ${proposta.detalhes}`);
+  const specs = [];
+  if (tech.chapa) specs.push(`Material: ${tech.chapa}`);
+  if (tech.acabamento) specs.push(`Acabamento: ${tech.acabamento}`);
+  if (tech.ferragens) specs.push(`Ferragens: ${tech.ferragens}`);
+  if (tech.detalhes) specs.push(`Observações: ${tech.detalhes}`);
 
     specs.forEach(s => {
       const splitS = doc.splitTextToSize(s, W - M * 2);
@@ -172,21 +210,21 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   const condicoes = [];
-  if (proposta.pgto_condicao) condicoes.push(`Condição: ${proposta.pgto_condicao}`);
+  if (pgto.condicao) condicoes.push(`Condição: ${pgto.condicao}`);
   
-  if (proposta.pgto_formas && proposta.pgto_formas.length > 0) {
-    condicoes.push(`Formas de pagamento: ${proposta.pgto_formas.join(', ')}.`);
+  if (pgto.formas && pgto.formas.length > 0) {
+    condicoes.push(`Formas de pagamento: ${pgto.formas.join(', ')}.`);
   }
 
-  if (proposta.pgto_parcelas && proposta.pgto_parcelas > 1) {
-    condicoes.push(`Parcelamento: ${proposta.pgto_parcelas}x ${proposta.pgto_juros ? 'com juros' : 'sem juros'}.`);
+  if (pgto.parcelas && pgto.parcelas > 1) {
+    condicoes.push(`Parcelamento: ${pgto.parcelas}x ${pgto.juros ? 'com juros' : 'sem juros'}.`);
   }
 
-  if (proposta.pgto_pix) {
-    condicoes.push(`Chave PIX: ${proposta.pgto_pix}`);
+  if (pgto.pix) {
+    condicoes.push(`Chave PIX: ${pgto.pix}`);
   }
 
-  if (proposta.prazo_obs) condicoes.push(proposta.prazo_obs);
+  if (tech.prazo_obs) condicoes.push(tech.prazo_obs);
   else condicoes.push(`Prazo estimado para entrega e instalação: a combinar.`);
 
   condicoes.forEach(c => {
@@ -231,8 +269,8 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   y += 8;
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  const excluso = proposta.excluso || "Esta proposta não contempla itens como tampos de pedra, cubas, eletrodomésticos, instalações elétricas/hidráulicas ou quaisquer outros elementos não explicitamente mencionados.";
-  const splitExcluso = doc.splitTextToSize(excluso, W - M * 2);
+  const exclusoText = tech.excluso || "Esta proposta não contempla itens como tampos de pedra, cubas, eletrodomésticos, instalações elétricas/hidráulicas ou quaisquer outros elementos não explicitamente mencionados.";
+  const splitExcluso = doc.splitTextToSize(exclusoText, W - M * 2);
   doc.text(splitExcluso, M, y);
   y += splitExcluso.length * 5 + 20;
 
