@@ -438,7 +438,7 @@ export default function App() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="max-w-2xl mx-auto"
+              className="max-w-2xl md:max-w-xl mx-auto"
             >
               <div className="flex items-center justify-between mb-6">
                 <div />
@@ -541,7 +541,7 @@ export default function App() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="max-w-2xl mx-auto"
+              className="max-w-2xl md:max-w-xl mx-auto"
             >
               <OrcamentoForm 
                 step={currentStep} 
@@ -560,7 +560,7 @@ export default function App() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-2xl mx-auto"
+              className="max-w-2xl md:max-w-xl mx-auto"
             >
               <PreviewPage 
                 proposta={formData as Proposta} 
@@ -577,7 +577,7 @@ export default function App() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="max-w-2xl mx-auto"
+              className="max-w-2xl md:max-w-xl mx-auto"
             >
               <ProfilePage 
                 profile={profile} 
@@ -591,27 +591,27 @@ export default function App() {
       </main>
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-18 sm:h-20 flex items-center justify-around px-1 sm:px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-16 sm:h-20 flex items-center justify-around px-1 sm:px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
         <button 
           onClick={() => setCurrentPage('tutorial')}
           className={cn(
             "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'tutorial' ? "text-brand-red bg-brand-red/5 scale-105" : "text-brand-text3 hover:text-brand-text2"
+            currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
           )}
         >
-          <Home size={22} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-          <span className={cn("text-[10px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'tutorial' ? "opacity-100" : "opacity-60")}>Início</span>
+          <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
+          <span className={cn("text-[9px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'tutorial' ? "opacity-100" : "opacity-60")}>Início</span>
         </button>
 
         <button 
           onClick={() => setCurrentPage('perfil')}
           className={cn(
             "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'perfil' ? "text-brand-red bg-brand-red/5 scale-105" : "text-brand-text3 hover:text-brand-text2"
+            currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
           )}
         >
-          <Settings size={22} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-          <span className={cn("text-[10px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'perfil' ? "opacity-100" : "opacity-60")}>Perfil</span>
+          <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
+          <span className={cn("text-[9px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'perfil' ? "opacity-100" : "opacity-60")}>Perfil</span>
         </button>
 
         <button 
@@ -633,22 +633,22 @@ export default function App() {
           }}
           className={cn(
             "flex flex-col items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'orcamento' ? "text-white bg-brand-red shadow-lg shadow-brand-red/20 scale-105" : "text-brand-red bg-brand-red/10 hover:bg-brand-red/20"
+            currentPage === 'orcamento' ? "text-brand-red" : "text-brand-red/60"
           )}
         >
-          <Plus size={22} className="sm:w-6 sm:h-6" strokeWidth={3} />
-          <span className="text-[10px] sm:text-[11px] uppercase tracking-tight font-black">Novo</span>
+          <Plus size={24} className="sm:w-7 sm:h-7" strokeWidth={3} />
+          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black">Novo</span>
         </button>
 
         <button 
           onClick={() => setCurrentPage('propostas')}
           className={cn(
             "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'propostas' ? "text-brand-red bg-brand-red/5 scale-105" : "text-brand-text3 hover:text-brand-text2"
+            currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
           )}
         >
-          <FileText size={22} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-          <span className={cn("text-[10px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'propostas' ? "opacity-100" : "opacity-60")}>Lista</span>
+          <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
+          <span className={cn("text-[9px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'propostas' ? "opacity-100" : "opacity-60")}>Lista</span>
         </button>
       </nav>
 
@@ -663,31 +663,31 @@ export default function App() {
 
 function TutorialPage({ onStart }: { onStart: () => void }) {
   return (
-    <div className="space-y-12 py-8 max-w-4xl mx-auto">
-      <div className="w-full relative aspect-video bg-zinc-100 rounded-[3rem] overflow-hidden border-4 border-brand-border shadow-2xl group cursor-pointer max-w-3xl mx-auto">
+    <div className="space-y-8 md:space-y-6 py-4 md:py-6 max-w-4xl mx-auto">
+      <div className="w-full relative aspect-video bg-zinc-100 rounded-[2.5rem] md:rounded-[2rem] overflow-hidden border-4 border-brand-border shadow-2xl group cursor-pointer max-w-3xl mx-auto">
         <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/90 group-hover:bg-zinc-900 transition-colors">
-          <div className="text-white text-center p-8">
-            <div className="w-24 h-24 bg-brand-red rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-brand-red/40 group-hover:scale-110 transition-transform">
-              <Play size={48} fill="white" />
+          <div className="text-white text-center p-6">
+            <div className="w-20 h-20 md:w-16 md:h-16 bg-brand-red rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-brand-red/40 group-hover:scale-110 transition-transform">
+              <Play size={40} className="md:w-8 md:h-8" fill="white" />
             </div>
-            <p className="text-2xl font-black uppercase tracking-[0.2em]">Assistir Tutorial</p>
-            <p className="text-sm font-bold opacity-60 mt-3 uppercase tracking-widest">Aprenda a usar em 2 minutos</p>
+            <p className="text-xl md:text-lg font-black uppercase tracking-[0.2em]">Assistir Tutorial</p>
+            <p className="text-[10px] md:text-[9px] font-bold opacity-60 mt-2 uppercase tracking-widest">Aprenda a usar em 2 minutos</p>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
         {[
-          { title: 'Rápido', desc: 'Crie orçamentos em minutos direto do celular.', icon: <Zap size={32} className="text-amber-500" /> },
-          { title: 'Profissional', desc: 'PDFs elegantes com sua marca e fotos.', icon: <ShieldCheck size={32} className="text-emerald-500" /> },
-          { title: 'Organizado', desc: 'Tenha o histórico de todos os seus clientes.', icon: <Layout size={32} className="text-blue-500" /> },
+          { title: 'Rápido', desc: 'Crie orçamentos em minutos direto do celular.', icon: <Zap size={28} className="text-amber-500" /> },
+          { title: 'Profissional', desc: 'PDFs elegantes com sua marca e fotos.', icon: <ShieldCheck size={28} className="text-emerald-500" /> },
+          { title: 'Organizado', desc: 'Tenha o histórico de todos os seus clientes.', icon: <Layout size={28} className="text-blue-500" /> },
         ].map((item, i) => (
-          <div key={i} className="bg-white p-10 rounded-[2.5rem] border-2 border-brand-border shadow-md hover:shadow-lg transition-all">
-            <div className="w-16 h-16 bg-brand-surface2 rounded-3xl flex items-center justify-center mb-8 border-2 border-brand-border shadow-inner">
+          <div key={i} className="bg-white p-6 md:p-5 rounded-[2rem] md:rounded-2xl border-2 border-brand-border shadow-md hover:shadow-lg transition-all">
+            <div className="w-12 h-12 md:w-10 md:h-10 bg-brand-surface2 rounded-2xl md:rounded-xl flex items-center justify-center mb-4 border-2 border-brand-border shadow-inner">
               {item.icon}
             </div>
-            <h3 className="text-2xl font-black mb-3 text-brand-text1 uppercase tracking-tight">{item.title}</h3>
-            <p className="text-brand-text2 font-bold leading-relaxed">{item.desc}</p>
+            <h3 className="text-lg md:text-base font-black mb-2 text-brand-text1 uppercase tracking-tight">{item.title}</h3>
+            <p className="text-brand-text2 font-bold text-xs md:text-[11px] leading-relaxed">{item.desc}</p>
           </div>
         ))}
       </div>
@@ -912,7 +912,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 type="text" 
                 value={data.cliente_nome || ''} 
                 onChange={e => updateData('cliente_nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="Ex: João Silva"
               />
             </div>
@@ -922,7 +922,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 type="tel" 
                 value={data.cliente_wpp || ''} 
                 onChange={e => updateData('cliente_wpp', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -932,7 +932,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 type="text" 
                 value={data.cliente_end || ''} 
                 onChange={e => updateData('cliente_end', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="Rua, número, bairro"
               />
             </div>
@@ -943,7 +943,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="date" 
                   value={data.inicio || ''} 
                   onChange={e => updateData('inicio', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                 />
               </div>
               <div className="space-y-1.5">
@@ -952,7 +952,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="date" 
                   value={data.entrega || ''} 
                   onChange={e => updateData('entrega', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                 />
               </div>
             </div>
@@ -1036,7 +1036,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="text" 
                   value={data.acabamento || ''} 
                   onChange={e => updateData('acabamento', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="Ex: Lacca Fosco, Amadeirado..."
                 />
               </div>
@@ -1047,7 +1047,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="text" 
                   value={data.ferragens || ''} 
                   onChange={e => updateData('ferragens', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="Ex: Amortecedores, Telescópicas..."
                 />
               </div>
@@ -1105,7 +1105,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                             type="number" 
                             value={p.l} 
                             onChange={e => updatePeca(amb.id, pIdx, 'l', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-3 text-base font-bold outline-none focus:border-brand-red transition-all"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all"
                             placeholder="0.00"
                           />
                         </div>
@@ -1115,7 +1115,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                             type="number" 
                             value={p.a} 
                             onChange={e => updatePeca(amb.id, pIdx, 'a', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-3 text-base font-bold outline-none focus:border-brand-red transition-all"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all"
                             placeholder="0.00"
                           />
                         </div>
@@ -1125,7 +1125,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                             type="number" 
                             value={p.p} 
                             onChange={e => updatePeca(amb.id, pIdx, 'p', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-3 text-base font-bold outline-none focus:border-brand-red transition-all"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all"
                             placeholder="0.00"
                           />
                         </div>
@@ -1349,11 +1349,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setStep(4)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-black text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
-              <ChevronLeft size={22} /> VOLTAR
+            <button onClick={() => setStep(4)} className="flex-1 bg-white border-2 border-brand-border py-4 sm:py-5 rounded-2xl font-black text-sm sm:text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
+              <ChevronLeft size={20} /> VOLTAR
             </button>
-            <button onClick={onSave} className="flex-[2] bg-brand-green text-white py-5 rounded-2xl font-black text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-green/20 active:scale-95 transition-all">
-              <Plus size={22} /> ENVIAR PROPOSTA
+            <button onClick={onSave} className="flex-[2] bg-brand-green text-white py-4 sm:py-5 rounded-2xl font-black text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-green/20 active:scale-95 transition-all">
+              <Plus size={20} /> BAIXAR ORÇAMENTO
             </button>
           </div>
         </div>
@@ -1456,7 +1456,7 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
 
       <div className="space-y-4">
         <button onClick={handleDownload} className="w-full bg-brand-red text-white py-6 rounded-2xl font-black text-xl flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase">
-          <FileText size={24} strokeWidth={2.5} /> BAIXAR PDF
+          <FileText size={24} strokeWidth={2.5} /> BAIXAR ORÇAMENTO
         </button>
         <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-5 rounded-2xl font-black text-base text-brand-text2 active:scale-95 transition-all uppercase">
           VOLTAR PARA LISTA
@@ -1571,7 +1571,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
                 type="text" 
                 value={profile?.nome || ''} 
                 onChange={e => updateProfile('nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="Ex: Marcenaria Silva"
               />
             </div>
@@ -1581,7 +1581,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
                 type="text" 
                 value={profile?.cpf || ''} 
                 onChange={e => updateProfile('cpf', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="00.000.000/0000-00"
               />
             </div>
@@ -1592,7 +1592,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
                   type="tel" 
                   value={profile?.wpp || ''} 
                   onChange={e => updateProfile('wpp', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="(00) 00000-0000"
                 />
               </div>
@@ -1602,7 +1602,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
                   type="text" 
                   value={profile?.insta || ''} 
                   onChange={e => updateProfile('insta', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="@marcenaria"
                 />
               </div>
@@ -1613,7 +1613,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
                 type="text" 
                 value={profile?.endereco || ''} 
                 onChange={e => updateProfile('endereco', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="Rua, número, bairro, cidade - UF"
               />
             </div>
