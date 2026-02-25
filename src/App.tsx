@@ -17,6 +17,7 @@ import {
   Save, 
   Camera, 
   X,
+  Maximize,
   CheckCircle2,
   AlertCircle,
   Zap,
@@ -633,10 +634,10 @@ export default function App() {
           }}
           className={cn(
             "flex flex-col items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'orcamento' ? "text-brand-red" : "text-brand-red/60"
+            currentPage === 'orcamento' ? "text-brand-text1" : "text-brand-text3"
           )}
         >
-          <Plus size={24} className="sm:w-7 sm:h-7" strokeWidth={3} />
+          <Plus size={28} className="sm:w-8 sm:h-8" strokeWidth={3} />
           <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black">Novo</span>
         </button>
 
@@ -662,6 +663,14 @@ export default function App() {
 // --- SUB-COMPONENTS ---
 
 function TutorialPage({ onStart }: { onStart: () => void }) {
+  const steps = [
+    { title: 'Configurar Perfil', desc: 'Adicione sua logo e dados da marcenaria.', icon: <Settings size={20} /> },
+    { title: 'Nova Proposta', desc: 'Inicie um orçamento para seu cliente.', icon: <Plus size={20} /> },
+    { title: 'Adicionar Ambientes', desc: 'Escolha os cômodos do projeto.', icon: <Layout size={20} /> },
+    { title: 'Definir Medidas', desc: 'Insira as dimensões e detalhes técnicos.', icon: <Maximize size={20} /> },
+    { title: 'Gerar Orçamento', desc: 'Baixe o PDF profissional e envie.', icon: <FileText size={20} /> },
+  ];
+
   return (
     <div className="space-y-8 md:space-y-6 py-4 md:py-6 max-w-4xl mx-auto">
       <div className="w-full relative aspect-video bg-zinc-100 rounded-[2.5rem] md:rounded-[2rem] overflow-hidden border-4 border-brand-border shadow-2xl group cursor-pointer max-w-3xl mx-auto">
@@ -676,20 +685,32 @@ function TutorialPage({ onStart }: { onStart: () => void }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-        {[
-          { title: 'Rápido', desc: 'Crie orçamentos em minutos direto do celular.', icon: <Zap size={28} className="text-amber-500" /> },
-          { title: 'Profissional', desc: 'PDFs elegantes com sua marca e fotos.', icon: <ShieldCheck size={28} className="text-emerald-500" /> },
-          { title: 'Organizado', desc: 'Tenha o histórico de todos os seus clientes.', icon: <Layout size={28} className="text-blue-500" /> },
-        ].map((item, i) => (
-          <div key={i} className="bg-white p-6 md:p-5 rounded-[2rem] md:rounded-2xl border-2 border-brand-border shadow-md hover:shadow-lg transition-all">
-            <div className="w-12 h-12 md:w-10 md:h-10 bg-brand-surface2 rounded-2xl md:rounded-xl flex items-center justify-center mb-4 border-2 border-brand-border shadow-inner">
-              {item.icon}
-            </div>
-            <h3 className="text-lg md:text-base font-black mb-2 text-brand-text1 uppercase tracking-tight">{item.title}</h3>
-            <p className="text-brand-text2 font-bold text-xs md:text-[11px] leading-relaxed">{item.desc}</p>
-          </div>
-        ))}
+      <div className="bg-white p-8 md:p-6 rounded-[2.5rem] border-2 border-brand-border shadow-sm">
+        <h3 className="text-sm font-black text-brand-red uppercase tracking-widest mb-8 text-center">Como utilizar o App</h3>
+        
+        <div className="relative space-y-8">
+          {/* Vertical Line */}
+          <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-brand-border" />
+          
+          {steps.map((step, i) => (
+            <motion.div 
+              key={i}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="relative flex items-start gap-6 pl-1"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-brand-red text-white flex items-center justify-center shrink-0 z-10 shadow-lg shadow-brand-red/20 border-2 border-white">
+                {step.icon}
+              </div>
+              <div className="pt-1">
+                <h4 className="text-base font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
+                <p className="text-brand-text3 font-bold text-xs mt-0.5">{step.desc}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -872,32 +893,32 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
   const total = subtotal + subtotal * ((Number(data.v_margem) || 0) / 100);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Nova Proposta</h2>
+        <h2 className="text-lg font-black uppercase tracking-tight">Nova Proposta</h2>
         <button onClick={onCancel} className="text-brand-text3"><X size={20} /></button>
       </div>
 
       {/* Steps Bar */}
-      <div className="flex items-center gap-2 bg-white p-4 rounded-3xl border-2 border-brand-border overflow-x-auto no-scrollbar shadow-sm">
+      <div className="flex items-center gap-2 bg-white p-3 rounded-2xl border-2 border-brand-border overflow-x-auto no-scrollbar shadow-sm">
         {steps.map((s, i) => (
           <React.Fragment key={s}>
             <button 
               onClick={() => setStep(i + 1)}
               className={cn(
-                "flex flex-col items-center gap-1 shrink-0 min-w-[60px]",
+                "flex flex-col items-center gap-1 shrink-0 min-w-[50px]",
                 step === i + 1 ? "text-brand-red" : step > i + 1 ? "text-brand-green" : "text-brand-text3"
               )}
             >
               <div className={cn(
-                "w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all",
-                step === i + 1 ? "bg-brand-red text-white scale-110 shadow-md shadow-brand-red/20" : step > i + 1 ? "bg-brand-green text-white" : "bg-brand-border text-brand-text3"
+                "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black transition-all",
+                step === i + 1 ? "bg-brand-red text-white scale-105 shadow-md shadow-brand-red/20" : step > i + 1 ? "bg-brand-green text-white" : "bg-brand-border text-brand-text3"
               )}>
                 {i + 1}
               </div>
-              <span className="text-[9px] font-black uppercase tracking-widest">{s}</span>
+              <span className="text-[8px] font-black uppercase tracking-widest">{s}</span>
             </button>
-            {i < steps.length - 1 && <div className="w-6 h-[2px] bg-brand-border shrink-0 mt-[-12px]" />}
+            {i < steps.length - 1 && <div className="w-4 h-[1px] bg-brand-border shrink-0 mt-[-14px]" />}
           </React.Fragment>
         ))}
       </div>
@@ -967,35 +988,36 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
             <h3 className="text-sm font-black text-brand-red uppercase tracking-widest">Adicionar Ambientes</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="flex flex-col gap-2">
               {[
                 { label: 'Cozinha', emoji: '🍳', val: 'Cozinha Planejada' },
                 { label: 'Guarda-Roupa', emoji: '🚪', val: 'Guarda-Roupa' },
-                { label: 'Dorm. Casal', emoji: '🛏️', val: 'Dormitório Casal' },
-                { label: 'Dorm. Solt.', emoji: '🛌', val: 'Dormitório Solteiro' },
-                { label: 'Dorm. Inf.', emoji: '🧸', val: 'Dormitório Infantil' },
-                { label: 'Amb. Criança', emoji: '👶', val: 'Ambiente de Criança' },
+                { label: 'Dormitório Casal', emoji: '🛏️', val: 'Dormitório Casal' },
+                { label: 'Dormitório Solteiro', emoji: '🛌', val: 'Dormitório Solteiro' },
+                { label: 'Dormitório Infantil', emoji: '🧸', val: 'Dormitório Infantil' },
+                { label: 'Ambiente de Criança', emoji: '👶', val: 'Ambiente de Criança' },
                 { label: 'Home Office', emoji: '💻', val: 'Home Office' },
                 { label: 'Escritório', emoji: '💼', val: 'Escritório' },
                 { label: 'Recepção', emoji: '🛎️', val: 'Recepção' },
                 { label: 'Closet', emoji: '👔', val: 'Closet' },
                 { label: 'Banheiro', emoji: '🚿', val: 'Banheiro' },
-                { label: 'Rack/Painel', emoji: '📺', val: 'Rack / Painel TV' },
-                { label: 'Área Serviço', emoji: '🧺', val: 'Área de Serviço' },
+                { label: 'Rack / Painel TV', emoji: '📺', val: 'Rack / Painel TV' },
+                { label: 'Área de Serviço', emoji: '🧺', val: 'Área de Serviço' },
                 { label: 'Varanda', emoji: '🌿', val: 'Varanda' },
-                { label: 'Área Ext.', emoji: '🌳', val: 'Área Externa' },
-                { label: 'Sob Medida', emoji: '📐', val: 'Móvel Sob Medida' },
-                { label: 'Personalizado', emoji: '✨', val: 'Ambiente Personalizado' },
+                { label: 'Área Externa', emoji: '🌳', val: 'Área Externa' },
+                { label: 'Móvel Sob Medida', emoji: '📐', val: 'Móvel Sob Medida' },
+                { label: 'Ambiente Personalizado', emoji: '✨', val: 'Ambiente Personalizado' },
               ].map(m => (
                 <button 
                   key={m.val}
                   onClick={() => addAmbiente(m.val)}
-                  className="flex flex-col items-center justify-center p-4 rounded-2xl border-2 border-brand-border bg-brand-surface2 transition-all gap-2 hover:border-brand-red active:scale-95 shadow-sm"
+                  className="flex items-center p-3 rounded-xl border-2 border-brand-border bg-brand-surface2 transition-all gap-4 hover:border-brand-red active:scale-[0.98] shadow-sm"
                 >
-                  <span className="text-3xl">{m.emoji}</span>
-                  <span className="text-[10px] font-black text-center leading-tight text-brand-text2 uppercase">
+                  <span className="text-2xl">{m.emoji}</span>
+                  <span className="text-xs font-black uppercase tracking-wider text-brand-text2">
                     {m.label}
                   </span>
+                  <Plus size={16} className="ml-auto text-brand-text3" />
                 </button>
               ))}
             </div>
@@ -1029,28 +1051,6 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   ))}
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-black text-brand-text2 ml-1">Acabamento</label>
-                <input 
-                  type="text" 
-                  value={data.acabamento || ''} 
-                  onChange={e => updateData('acabamento', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
-                  placeholder="Ex: Lacca Fosco, Amadeirado..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-black text-brand-text2 ml-1">Ferragens</label>
-                <input 
-                  type="text" 
-                  value={data.ferragens || ''} 
-                  onChange={e => updateData('ferragens', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
-                  placeholder="Ex: Amortecedores, Telescópicas..."
-                />
-              </div>
             </div>
           </div>
           <div className="flex gap-3">
@@ -1067,8 +1067,34 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
       {step === 3 && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
-            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest">Medidas por Ambiente</h3>
+            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest">Medidas e Detalhes</h3>
             
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-black text-brand-text2 ml-1">Acabamento Geral</label>
+                <input 
+                  type="text" 
+                  value={data.acabamento || ''} 
+                  onChange={e => updateData('acabamento', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-sm font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                  placeholder="Ex: Lacca Fosco, Amadeirado..."
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-black text-brand-text2 ml-1">Ferragens Gerais</label>
+                <input 
+                  type="text" 
+                  value={data.ferragens || ''} 
+                  onChange={e => updateData('ferragens', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-sm font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
+                  placeholder="Ex: Amortecedores, Telescópicas..."
+                />
+              </div>
+            </div>
+
+            <div className="h-[1px] bg-brand-border w-full" />
+
             {(data.ambientes || []).map((amb: any) => (
               <div key={amb.id} className="space-y-4 p-4 bg-brand-surface2 rounded-2xl border border-brand-border">
                 <div className="flex items-center justify-between">
