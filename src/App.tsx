@@ -600,8 +600,8 @@ export default function App() {
             currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
           )}
         >
-          <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-          <span className={cn("text-[9px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'tutorial' ? "opacity-100" : "opacity-60")}>Início</span>
+          <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 3 : 2.5} />
+          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black opacity-100">Início</span>
         </button>
 
         <button 
@@ -611,8 +611,8 @@ export default function App() {
             currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
           )}
         >
-          <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-          <span className={cn("text-[9px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'perfil' ? "opacity-100" : "opacity-60")}>Perfil</span>
+          <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 3 : 2.5} />
+          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black opacity-100">Perfil</span>
         </button>
 
         <button 
@@ -638,7 +638,7 @@ export default function App() {
           )}
         >
           <Plus size={28} className="sm:w-8 sm:h-8" strokeWidth={3} />
-          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black">Novo</span>
+          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black opacity-100">Novo</span>
         </button>
 
         <button 
@@ -648,8 +648,8 @@ export default function App() {
             currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
           )}
         >
-          <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-          <span className={cn("text-[9px] sm:text-[11px] uppercase tracking-tight font-black", currentPage === 'propostas' ? "opacity-100" : "opacity-60")}>Lista</span>
+          <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 3 : 2.5} />
+          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-black opacity-100">Lista</span>
         </button>
       </nav>
 
@@ -664,54 +664,106 @@ export default function App() {
 
 function TutorialPage({ onStart }: { onStart: () => void }) {
   const steps = [
-    { title: 'Configurar Perfil', desc: 'Adicione sua logo e dados da marcenaria.', icon: <Settings size={20} /> },
-    { title: 'Nova Proposta', desc: 'Inicie um orçamento para seu cliente.', icon: <Plus size={20} /> },
-    { title: 'Adicionar Ambientes', desc: 'Escolha os cômodos do projeto.', icon: <Layout size={20} /> },
-    { title: 'Definir Medidas', desc: 'Insira as dimensões e detalhes técnicos.', icon: <Maximize size={20} /> },
-    { title: 'Gerar Orçamento', desc: 'Baixe o PDF profissional e envie.', icon: <FileText size={20} /> },
+    { 
+      title: '1. Configurar Perfil', 
+      desc: 'O primeiro passo é profissionalizar sua marca. Adicione sua logo, WhatsApp e endereço para que seus orçamentos saiam com sua identidade visual.', 
+      icon: <Settings size={24} />,
+      color: 'bg-blue-500'
+    },
+    { 
+      title: '2. Nova Proposta', 
+      desc: 'Clique no botão "Novo" para iniciar um orçamento. Preencha os dados do cliente e as datas de entrega para manter o controle da sua agenda.', 
+      icon: <Plus size={24} />,
+      color: 'bg-emerald-500'
+    },
+    { 
+      title: '3. Adicionar Ambientes', 
+      desc: 'Selecione os cômodos que fazem parte do projeto. Você pode adicionar quantos ambientes precisar em uma única proposta.', 
+      icon: <Layout size={24} />,
+      color: 'bg-amber-500'
+    },
+    { 
+      title: '4. Definir Medidas', 
+      desc: 'Para cada ambiente, adicione os módulos e suas medidas (Largura, Altura, Profundidade). O sistema organiza tudo automaticamente.', 
+      icon: <Maximize size={24} />,
+      color: 'bg-purple-500'
+    },
+    { 
+      title: '5. Gerar Orçamento', 
+      desc: 'Revise os valores e clique em "Baixar Orçamento". Você terá um PDF profissional pronto para ser enviado via WhatsApp.', 
+      icon: <FileText size={24} />,
+      color: 'bg-brand-red'
+    },
   ];
 
   return (
-    <div className="space-y-8 md:space-y-6 py-4 md:py-6 max-w-4xl mx-auto">
-      <div className="w-full relative aspect-video bg-zinc-100 rounded-[2.5rem] md:rounded-[2rem] overflow-hidden border-4 border-brand-border shadow-2xl group cursor-pointer max-w-3xl mx-auto">
-        <div className="absolute inset-0 flex items-center justify-center bg-zinc-900/90 group-hover:bg-zinc-900 transition-colors">
-          <div className="text-white text-center p-6">
-            <div className="w-20 h-20 md:w-16 md:h-16 bg-brand-red rounded-full flex items-center justify-center mx-auto mb-4 shadow-2xl shadow-brand-red/40 group-hover:scale-110 transition-transform">
-              <Play size={40} className="md:w-8 md:h-8" fill="white" />
-            </div>
-            <p className="text-xl md:text-lg font-black uppercase tracking-[0.2em]">Assistir Tutorial</p>
-            <p className="text-[10px] md:text-[9px] font-bold opacity-60 mt-2 uppercase tracking-widest">Aprenda a usar em 2 minutos</p>
-          </div>
-        </div>
+    <div className="space-y-8 py-6 max-w-4xl mx-auto px-4">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-black text-brand-text1 uppercase tracking-tighter">Guia do Marceneiro</h2>
+        <p className="text-brand-text3 font-bold text-sm uppercase tracking-widest">Siga o fluxo para dominar a ferramenta</p>
       </div>
 
-      <div className="bg-white p-8 md:p-6 rounded-[2.5rem] border-2 border-brand-border shadow-sm">
-        <h3 className="text-sm font-black text-brand-red uppercase tracking-widest mb-8 text-center">Como utilizar o App</h3>
-        
-        <div className="relative space-y-8">
-          {/* Vertical Line */}
-          <div className="absolute left-6 top-2 bottom-2 w-0.5 bg-brand-border" />
+      <div className="relative">
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
+            className="absolute -top-20 -right-20 w-64 h-64 border-8 border-brand-red rounded-full"
+          />
+          <motion.div 
+            animate={{ rotate: -360 }}
+            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+            className="absolute -bottom-20 -left-20 w-80 h-80 border-8 border-zinc-200 rounded-full"
+          />
+        </div>
+
+        <div className="relative space-y-12">
+          {/* Vertical Path Line */}
+          <div className="absolute left-[27px] top-6 bottom-6 w-1 bg-zinc-100 rounded-full" />
           
           {steps.map((step, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, x: -20 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-              viewport={{ once: true }}
-              className="relative flex items-start gap-6 pl-1"
+              transition={{ delay: i * 0.15, duration: 0.5 }}
+              viewport={{ once: true, margin: "-50px" }}
+              className="relative flex items-start gap-8"
             >
-              <div className="w-12 h-12 rounded-2xl bg-brand-red text-white flex items-center justify-center shrink-0 z-10 shadow-lg shadow-brand-red/20 border-2 border-white">
+              {/* Node Icon */}
+              <motion.div 
+                whileHover={{ scale: 1.1 }}
+                className={cn(
+                  "w-14 h-14 rounded-2xl text-white flex items-center justify-center shrink-0 z-10 shadow-xl border-4 border-white",
+                  step.color
+                )}
+              >
                 {step.icon}
+              </motion.div>
+
+              {/* Content Card */}
+              <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border shadow-sm flex-1 hover:shadow-md transition-all group">
+                <h4 className="text-lg font-black text-brand-text1 uppercase tracking-tight group-hover:text-brand-red transition-colors">{step.title}</h4>
+                <p className="text-brand-text3 font-bold text-xs mt-2 leading-relaxed">{step.desc}</p>
               </div>
-              <div className="pt-1">
-                <h4 className="text-base font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                <p className="text-brand-text3 font-bold text-xs mt-0.5">{step.desc}</p>
-              </div>
+
+              {/* Connecting Dot */}
+              <div className="absolute left-[27px] top-14 w-1 h-12 bg-gradient-to-b from-zinc-200 to-transparent -z-0" />
             </motion.div>
           ))}
         </div>
       </div>
+
+      <motion.button
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1 }}
+        onClick={onStart}
+        className="w-full bg-zinc-900 text-white py-6 rounded-3xl font-black text-xl shadow-2xl active:scale-95 transition-all uppercase tracking-widest"
+      >
+        Começar Agora
+      </motion.button>
     </div>
   );
 }
@@ -899,30 +951,6 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
         <button onClick={onCancel} className="text-brand-text3"><X size={20} /></button>
       </div>
 
-      {/* Steps Bar */}
-      <div className="flex items-center gap-2 bg-white p-3 rounded-2xl border-2 border-brand-border overflow-x-auto no-scrollbar shadow-sm">
-        {steps.map((s, i) => (
-          <React.Fragment key={s}>
-            <button 
-              onClick={() => setStep(i + 1)}
-              className={cn(
-                "flex flex-col items-center gap-1 shrink-0 min-w-[50px]",
-                step === i + 1 ? "text-brand-red" : step > i + 1 ? "text-brand-green" : "text-brand-text3"
-              )}
-            >
-              <div className={cn(
-                "w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black transition-all",
-                step === i + 1 ? "bg-brand-red text-white scale-105 shadow-md shadow-brand-red/20" : step > i + 1 ? "bg-brand-green text-white" : "bg-brand-border text-brand-text3"
-              )}>
-                {i + 1}
-              </div>
-              <span className="text-[8px] font-black uppercase tracking-widest">{s}</span>
-            </button>
-            {i < steps.length - 1 && <div className="w-4 h-[1px] bg-brand-border shrink-0 mt-[-14px]" />}
-          </React.Fragment>
-        ))}
-      </div>
-
       {step === 1 && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-5">
@@ -988,7 +1016,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
             <h3 className="text-sm font-black text-brand-red uppercase tracking-widest">Adicionar Ambientes</h3>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1.5">
               {[
                 { label: 'Cozinha', emoji: '🍳', val: 'Cozinha Planejada' },
                 { label: 'Guarda-Roupa', emoji: '🚪', val: 'Guarda-Roupa' },
@@ -1011,13 +1039,13 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 <button 
                   key={m.val}
                   onClick={() => addAmbiente(m.val)}
-                  className="flex items-center p-3 rounded-xl border-2 border-brand-border bg-brand-surface2 transition-all gap-4 hover:border-brand-red active:scale-[0.98] shadow-sm"
+                  className="flex items-center p-2 rounded-xl border border-brand-border bg-brand-surface2 transition-all gap-3 hover:border-brand-red active:scale-[0.98] shadow-sm"
                 >
-                  <span className="text-2xl">{m.emoji}</span>
-                  <span className="text-xs font-black uppercase tracking-wider text-brand-text2">
+                  <span className="text-xl">{m.emoji}</span>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-brand-text2">
                     {m.label}
                   </span>
-                  <Plus size={16} className="ml-auto text-brand-text3" />
+                  <Plus size={14} className="ml-auto text-brand-text3" />
                 </button>
               ))}
             </div>
@@ -1069,32 +1097,6 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
             <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest">Medidas e Detalhes</h3>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-black text-brand-text2 ml-1">Acabamento Geral</label>
-                <input 
-                  type="text" 
-                  value={data.acabamento || ''} 
-                  onChange={e => updateData('acabamento', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-sm font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
-                  placeholder="Ex: Lacca Fosco, Amadeirado..."
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-sm font-black text-brand-text2 ml-1">Ferragens Gerais</label>
-                <input 
-                  type="text" 
-                  value={data.ferragens || ''} 
-                  onChange={e => updateData('ferragens', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-sm font-medium focus:bg-white focus:border-brand-red transition-all outline-none"
-                  placeholder="Ex: Amortecedores, Telescópicas..."
-                />
-              </div>
-            </div>
-
-            <div className="h-[1px] bg-brand-border w-full" />
-
             {(data.ambientes || []).map((amb: any) => (
               <div key={amb.id} className="space-y-4 p-4 bg-brand-surface2 rounded-2xl border border-brand-border">
                 <div className="flex items-center justify-between">
