@@ -55,6 +55,7 @@ export interface Proposta {
   garantia?: string;
   incluso?: string;
   excluso?: string;
+  validade?: string;
   pgto_formas?: string[];
   pgto_condicao?: string;
   pgto_parcelas?: number;

@@ -33,6 +33,7 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
     garantia: proposta.garantia,
     incluso: proposta.incluso,
     excluso: proposta.excluso,
+    validade: proposta.validade,
     obs_final: proposta.obs_final
   };
   const cliente = m?.cliente || {
@@ -116,7 +117,7 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.setFont('helvetica', 'bold');
   doc.text('Validade da Proposta: ', M, y);
   doc.setFont('helvetica', 'normal');
-  doc.text((profile.validade || 15) + ' dias', M + 45, y);
+  doc.text(tech.validade || (profile.validade || 15) + ' dias', M + 45, y);
   y += 15;
 
   // --- DETALHAMENTO POR AMBIENTE ---

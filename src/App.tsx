@@ -76,7 +76,7 @@ export default function App() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<Partial<Proposta>>({
-    ambientes: [{ id: '1', tipo: 'Cozinha Planejada', pecas: [] }],
+    ambientes: [],
     chapa: 'MDF 15mm',
     acabamento: '',
     ferragens: '',
@@ -619,7 +619,7 @@ export default function App() {
           onClick={() => {
             setEditingId(null);
             setFormData({
-              ambientes: [{ id: '1', tipo: 'Cozinha Planejada', pecas: [] }],
+              ambientes: [],
               chapa: 'MDF 15mm',
               acabamento: '',
               ferragens: '',
@@ -664,103 +664,49 @@ export default function App() {
 
 function TutorialPage({ onStart }: { onStart: () => void }) {
   const steps = [
-    { 
-      title: '1. Configurar Perfil', 
-      desc: 'O primeiro passo é profissionalizar sua marca. Adicione sua logo, WhatsApp e endereço para que seus orçamentos saiam com sua identidade visual.', 
-      icon: <Settings size={24} />,
-      color: 'bg-blue-500'
-    },
-    { 
-      title: '2. Nova Proposta', 
-      desc: 'Clique no botão "Novo" para iniciar um orçamento. Preencha os dados do cliente e as datas de entrega para manter o controle da sua agenda.', 
-      icon: <Plus size={24} />,
-      color: 'bg-emerald-500'
-    },
-    { 
-      title: '3. Adicionar Ambientes', 
-      desc: 'Selecione os cômodos que fazem parte do projeto. Você pode adicionar quantos ambientes precisar em uma única proposta.', 
-      icon: <Layout size={24} />,
-      color: 'bg-amber-500'
-    },
-    { 
-      title: '4. Definir Medidas', 
-      desc: 'Para cada ambiente, adicione os módulos e suas medidas (Largura, Altura, Profundidade). O sistema organiza tudo automaticamente.', 
-      icon: <Maximize size={24} />,
-      color: 'bg-purple-500'
-    },
-    { 
-      title: '5. Gerar Orçamento', 
-      desc: 'Revise os valores e clique em "Baixar Orçamento". Você terá um PDF profissional pronto para ser enviado via WhatsApp.', 
-      icon: <FileText size={24} />,
-      color: 'bg-brand-red'
-    },
+    { title: '1. Perfil', desc: 'Configure sua logo e dados.', icon: <Settings size={18} />, color: 'bg-blue-500' },
+    { title: '2. Nova Proposta', desc: 'Inicie um orçamento rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
+    { title: '3. Ambientes', desc: 'Escolha os cômodos do projeto.', icon: <Layout size={18} />, color: 'bg-amber-500' },
+    { title: '4. Medidas', desc: 'Insira as dimensões técnicas.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
+    { title: '5. Orçamento', desc: 'Gere o PDF e envie ao cliente.', icon: <FileText size={18} />, color: 'bg-brand-red' },
   ];
 
   return (
-    <div className="space-y-8 py-6 max-w-4xl mx-auto px-4">
-      <div className="text-center space-y-2">
-        <h2 className="text-3xl font-black text-brand-text1 uppercase tracking-tighter">Guia do Marceneiro</h2>
-        <p className="text-brand-text3 font-bold text-sm uppercase tracking-widest">Siga o fluxo para dominar a ferramenta</p>
+    <div className="space-y-6 py-4 max-w-xl mx-auto px-4">
+      <div className="text-center space-y-1">
+        <h2 className="text-2xl font-black text-brand-text1 uppercase tracking-tighter">Guia Rápido</h2>
+        <p className="text-brand-text3 font-bold text-[10px] uppercase tracking-widest">Passo a passo para sua marcenaria</p>
       </div>
 
-      <div className="relative">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-10">
-          <motion.div 
-            animate={{ rotate: 360 }}
-            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-20 -right-20 w-64 h-64 border-8 border-brand-red rounded-full"
-          />
-          <motion.div 
-            animate={{ rotate: -360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-20 -left-20 w-80 h-80 border-8 border-zinc-200 rounded-full"
-          />
-        </div>
-
-        <div className="relative space-y-12">
-          {/* Vertical Path Line */}
-          <div className="absolute left-[27px] top-6 bottom-6 w-1 bg-zinc-100 rounded-full" />
-          
+      <div className="bg-white rounded-[2rem] border-2 border-brand-border overflow-hidden shadow-sm">
+        <div className="divide-y-2 divide-brand-border">
           {steps.map((step, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.15, duration: 0.5 }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="relative flex items-start gap-8"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="flex items-center gap-4 p-4 hover:bg-brand-surface2 transition-colors"
             >
-              {/* Node Icon */}
-              <motion.div 
-                whileHover={{ scale: 1.1 }}
-                className={cn(
-                  "w-14 h-14 rounded-2xl text-white flex items-center justify-center shrink-0 z-10 shadow-xl border-4 border-white",
-                  step.color
-                )}
-              >
+              <div className={cn(
+                "w-10 h-10 rounded-xl text-white flex items-center justify-center shrink-0 shadow-sm",
+                step.color
+              )}>
                 {step.icon}
-              </motion.div>
-
-              {/* Content Card */}
-              <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border shadow-sm flex-1 hover:shadow-md transition-all group">
-                <h4 className="text-lg font-black text-brand-text1 uppercase tracking-tight group-hover:text-brand-red transition-colors">{step.title}</h4>
-                <p className="text-brand-text3 font-bold text-xs mt-2 leading-relaxed">{step.desc}</p>
               </div>
-
-              {/* Connecting Dot */}
-              <div className="absolute left-[27px] top-14 w-1 h-12 bg-gradient-to-b from-zinc-200 to-transparent -z-0" />
+              <div className="flex-1 min-w-0">
+                <h4 className="text-xs font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
+                <p className="text-[10px] text-brand-text3 font-bold truncate">{step.desc}</p>
+              </div>
             </motion.div>
           ))}
         </div>
       </div>
 
       <motion.button
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
+        whileTap={{ scale: 0.98 }}
         onClick={onStart}
-        className="w-full bg-zinc-900 text-white py-6 rounded-3xl font-black text-xl shadow-2xl active:scale-95 transition-all uppercase tracking-widest"
+        className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black text-base shadow-xl active:scale-95 transition-all uppercase tracking-widest"
       >
         Começar Agora
       </motion.button>
@@ -1016,36 +962,35 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
             <h3 className="text-sm font-black text-brand-red uppercase tracking-widest">Adicionar Ambientes</h3>
-            <div className="flex flex-col gap-1.5">
+            <div className="grid grid-cols-4 gap-2">
               {[
                 { label: 'Cozinha', emoji: '🍳', val: 'Cozinha Planejada' },
-                { label: 'Guarda-Roupa', emoji: '🚪', val: 'Guarda-Roupa' },
-                { label: 'Dormitório Casal', emoji: '🛏️', val: 'Dormitório Casal' },
-                { label: 'Dormitório Solteiro', emoji: '🛌', val: 'Dormitório Solteiro' },
-                { label: 'Dormitório Infantil', emoji: '🧸', val: 'Dormitório Infantil' },
-                { label: 'Ambiente de Criança', emoji: '👶', val: 'Ambiente de Criança' },
-                { label: 'Home Office', emoji: '💻', val: 'Home Office' },
-                { label: 'Escritório', emoji: '💼', val: 'Escritório' },
-                { label: 'Recepção', emoji: '🛎️', val: 'Recepção' },
+                { label: 'G.Roupa', emoji: '🚪', val: 'Guarda-Roupa' },
+                { label: 'D.Casal', emoji: '🛏️', val: 'Dormitório Casal' },
+                { label: 'D.Solt.', emoji: '🛌', val: 'Dormitório Solteiro' },
+                { label: 'D.Inf.', emoji: '🧸', val: 'Dormitório Infantil' },
+                { label: 'Criança', emoji: '👶', val: 'Ambiente de Criança' },
+                { label: 'H.Office', emoji: '💻', val: 'Home Office' },
+                { label: 'Escrit.', emoji: '💼', val: 'Escritório' },
+                { label: 'Recep.', emoji: '🛎️', val: 'Recepção' },
                 { label: 'Closet', emoji: '👔', val: 'Closet' },
-                { label: 'Banheiro', emoji: '🚿', val: 'Banheiro' },
-                { label: 'Rack / Painel TV', emoji: '📺', val: 'Rack / Painel TV' },
-                { label: 'Área de Serviço', emoji: '🧺', val: 'Área de Serviço' },
+                { label: 'Banho', emoji: '🚿', val: 'Banheiro' },
+                { label: 'Painel', emoji: '📺', val: 'Rack / Painel TV' },
+                { label: 'Serviço', emoji: '🧺', val: 'Área de Serviço' },
                 { label: 'Varanda', emoji: '🌿', val: 'Varanda' },
-                { label: 'Área Externa', emoji: '🌳', val: 'Área Externa' },
-                { label: 'Móvel Sob Medida', emoji: '📐', val: 'Móvel Sob Medida' },
-                { label: 'Ambiente Personalizado', emoji: '✨', val: 'Ambiente Personalizado' },
+                { label: 'Externa', emoji: '🌳', val: 'Área Externa' },
+                { label: 'Medida', emoji: '📐', val: 'Móvel Sob Medida' },
+                { label: 'Pers.', emoji: '✨', val: 'Ambiente Personalizado' },
               ].map(m => (
                 <button 
                   key={m.val}
                   onClick={() => addAmbiente(m.val)}
-                  className="flex items-center p-2 rounded-xl border border-brand-border bg-brand-surface2 transition-all gap-3 hover:border-brand-red active:scale-[0.98] shadow-sm"
+                  className="flex flex-col items-center justify-center p-2 rounded-xl border border-brand-border bg-brand-surface2 transition-all gap-1 hover:border-brand-red active:scale-[0.95] shadow-sm"
                 >
-                  <span className="text-xl">{m.emoji}</span>
-                  <span className="text-[10px] font-black uppercase tracking-wider text-brand-text2">
+                  <span className="text-lg">{m.emoji}</span>
+                  <span className="text-[8px] font-black uppercase tracking-tighter text-brand-text2 text-center leading-none">
                     {m.label}
                   </span>
-                  <Plus size={14} className="ml-auto text-brand-text3" />
                 </button>
               ))}
             </div>
@@ -1133,7 +1078,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                             type="number" 
                             value={p.l} 
                             onChange={e => updatePeca(amb.id, pIdx, 'l', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all text-center"
                             placeholder="0.00"
                           />
                         </div>
@@ -1143,7 +1088,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                             type="number" 
                             value={p.a} 
                             onChange={e => updatePeca(amb.id, pIdx, 'a', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all text-center"
                             placeholder="0.00"
                           />
                         </div>
@@ -1153,7 +1098,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                             type="number" 
                             value={p.p} 
                             onChange={e => updatePeca(amb.id, pIdx, 'p', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-bold outline-none focus:border-brand-red transition-all text-center"
                             placeholder="0.00"
                           />
                         </div>
@@ -1374,6 +1319,17 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   placeholder="Ex: Pedras, cubas, eletros..."
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <label className="text-sm font-black text-brand-text2 ml-1">Validade do Orçamento</label>
+                <input 
+                  type="text" 
+                  value={data.validade || ''} 
+                  onChange={e => updateData('validade', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-medium focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  placeholder="Ex: 10 dias"
+                />
+              </div>
             </div>
           </div>
           <div className="flex gap-3">
@@ -1471,6 +1427,12 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm font-black text-brand-text3 uppercase">Chave PIX</span>
                 <span className="text-base font-black text-brand-text1">{proposta.pgto_pix}</span>
+              </div>
+            )}
+            {proposta.validade && (
+              <div className="flex justify-between items-center py-1">
+                <span className="text-sm font-black text-brand-text3 uppercase">Validade</span>
+                <span className="text-base font-black text-brand-text1">{proposta.validade}</span>
               </div>
             )}
           </section>
