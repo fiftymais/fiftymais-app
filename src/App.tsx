@@ -451,7 +451,7 @@ export default function App() {
                   onClick={() => {
                     setEditingId(null);
                     setFormData({
-                      ambientes: [{ id: '1', tipo: 'Cozinha Planejada', pecas: [] }],
+                      ambientes: [],
                       chapa: 'MDF 15mm',
                       acabamento: '',
                       ferragens: '',
@@ -466,7 +466,7 @@ export default function App() {
                   }}
                   className="bg-brand-red text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 active:scale-95 transition-transform"
                 >
-                  <Plus size={18} /> Nova
+                  <Plus size={18} /> Novo Orçamento
                 </button>
               </div>
 
@@ -487,8 +487,8 @@ export default function App() {
                 {filteredPropostas.length === 0 ? (
                   <div className="py-16 text-center text-brand-text3 bg-white rounded-3xl border-2 border-brand-border border-dashed">
                     <FileText size={64} className="mx-auto mb-4 opacity-10" />
-                    <p className="font-bold text-lg">Nenhuma proposta encontrada.</p>
-                    <p className="text-sm opacity-60">Tente buscar por outro nome.</p>
+                    <p className="font-bold text-lg">Nenhum orçamento encontrado.</p>
+                    <p className="text-sm opacity-60">Toque em "+ Novo Orçamento" para começar.</p>
                   </div>
                 ) : (
                   filteredPropostas.map(p => (
@@ -511,7 +511,7 @@ export default function App() {
                           className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
                         >
                           <Eye size={22} strokeWidth={2.5} />
-                          <span className="text-[11px] font-black uppercase tracking-widest">Ver</span>
+                          <span className="text-[11px] font-bold uppercase tracking-widest">Ver</span>
                         </button>
                         <button 
                           onClick={() => {
@@ -523,14 +523,14 @@ export default function App() {
                           className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
                         >
                           <Edit2 size={22} strokeWidth={2.5} />
-                          <span className="text-[11px] font-black uppercase tracking-widest">Editar</span>
+                          <span className="text-[11px] font-bold uppercase tracking-widest">Editar</span>
                         </button>
                         <button 
                           onClick={() => handleDeleteProposta(p.id)}
                           className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all active:scale-90"
                         >
                           <Trash2 size={22} strokeWidth={2.5} />
-                          <span className="text-[11px] font-black uppercase tracking-widest">Excluir</span>
+                          <span className="text-[11px] font-bold uppercase tracking-widest">Excluir</span>
                         </button>
                       </div>
                     </div>
@@ -722,8 +722,7 @@ function TutorialPage({ onStart, profile, setCurrentPage }: { onStart: () => voi
           }
         }}
         className={cn(
-          "w-full py-5 rounded-2xl font-bold text-base shadow-xl active:scale-95 transition-all uppercase tracking-widest",
-          isProfileSet ? "bg-brand-red text-white" : "bg-zinc-900 text-white"
+          "w-full py-5 rounded-2xl font-bold text-base shadow-xl active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white"
         )}
       >
         {isProfileSet ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
@@ -920,7 +919,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-5">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-4">Dados do Cliente</h3>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-brand-text2 ml-1">Nome Completo *</label>
+              <label className="text-sm font-medium text-brand-text2 ml-1">Nome Completo *</label>
               <input 
                 type="text" 
                 value={data.cliente_nome || ''} 
@@ -930,7 +929,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-brand-text2 ml-1">WhatsApp *</label>
+              <label className="text-sm font-medium text-brand-text2 ml-1">WhatsApp *</label>
               <input 
                 type="tel" 
                 value={data.cliente_wpp || ''} 
@@ -940,7 +939,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-brand-text2 ml-1">Endereço da Obra</label>
+              <label className="text-sm font-medium text-brand-text2 ml-1">Endereço da Obra</label>
               <input 
                 type="text" 
                 value={data.cliente_end || ''} 
@@ -951,7 +950,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-brand-text2 ml-1">Início Montagem</label>
+                <label className="text-sm font-medium text-brand-text2 ml-1">Início Montagem</label>
                 <input 
                   type="date" 
                   value={data.inicio || ''} 
@@ -960,7 +959,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-brand-text2 ml-1">Previsão Entrega</label>
+                <label className="text-sm font-medium text-brand-text2 ml-1">Previsão Entrega</label>
                 <input 
                   type="date" 
                   value={data.entrega || ''} 
@@ -1164,7 +1163,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="number" 
                   value={data.v_mat || ''} 
                   onChange={e => updateData('v_mat', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="0,00"
                 />
               </div>
@@ -1174,7 +1173,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="number" 
                   value={data.v_despesas || ''} 
                   onChange={e => updateData('v_despesas', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="Frete, ajuda..."
                 />
               </div>
@@ -1186,7 +1185,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                   type="number" 
                   value={data.v_margem || ''} 
                   onChange={e => updateData('v_margem', e.target.value)}
-                  className="w-28 bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-28 bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="30"
                 />
                 <div className="flex-1 bg-brand-surface2 p-4 rounded-xl border-2 border-brand-border text-xs font-semibold text-brand-text3 uppercase text-center">
@@ -1574,54 +1573,54 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
           <div className="bg-white p-6 rounded-[2.5rem] border-2 border-brand-border space-y-6 shadow-sm">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-4">Dados da Empresa</h3>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-brand-text2 ml-1">Nome da Marcenaria *</label>
+              <label className="text-sm font-medium text-brand-text2 ml-1">Nome da Marcenaria *</label>
               <input 
                 type="text" 
                 value={profile?.nome || ''} 
                 onChange={e => updateProfile('nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="Ex: Marcenaria Silva"
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-brand-text2 ml-1">CNPJ ou CPF</label>
+              <label className="text-sm font-medium text-brand-text2 ml-1">CNPJ ou CPF</label>
               <input 
                 type="text" 
                 value={profile?.cpf || ''} 
                 onChange={e => updateProfile('cpf', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="00.000.000/0000-00"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-brand-text2 ml-1">WhatsApp *</label>
+                <label className="text-sm font-medium text-brand-text2 ml-1">WhatsApp *</label>
                 <input 
                   type="tel" 
                   value={profile?.wpp || ''} 
                   onChange={e => updateProfile('wpp', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="(00) 00000-0000"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-semibold text-brand-text2 ml-1">Instagram</label>
+                <label className="text-sm font-medium text-brand-text2 ml-1">Instagram</label>
                 <input 
                   type="text" 
                   value={profile?.insta || ''} 
                   onChange={e => updateProfile('insta', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="@marcenaria"
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-semibold text-brand-text2 ml-1">Endereço Completo</label>
+              <label className="text-sm font-medium text-brand-text2 ml-1">Endereço Completo</label>
               <input 
                 type="text" 
                 value={profile?.endereco || ''} 
                 onChange={e => updateProfile('endereco', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="Rua, número, bairro, cidade - UF"
               />
             </div>
