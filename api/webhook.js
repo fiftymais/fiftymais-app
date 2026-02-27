@@ -15,8 +15,6 @@ async function buffer(req) {
   });
 }
 
-export const config = { api: { bodyParser: false } };
-
 module.exports = async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
