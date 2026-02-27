@@ -13,6 +13,7 @@ export interface Profile {
   validade?: number;
   rodape?: string;
   logo?: string;
+  unidade_medida?: 'mm' | 'cm';
   updated_at?: string;
 }
 
