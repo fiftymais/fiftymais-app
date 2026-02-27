@@ -169,12 +169,25 @@ export default function App() {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
     if (data) {
-      // Map 'especialidade' to 'user_name' if 'user_name' column is missing in DB
-      const profileData = {
-        ...data,
-        user_name: data.user_name || data.especialidade
-      };
-      setProfile(profileData);
+      let userName = data.user_name || '';
+      let unit = 'mm';
+      
+      // Try to parse especialidade as JSON for extended fields
+      if (data.especialidade) {
+        if (data.especialidade.startsWith('{')) {
+          try {
+            const parsed = JSON.parse(data.especialidade);
+            userName = parsed.user_name || userName;
+            unit = parsed.unidade_medida || unit;
+          } catch (e) {
+            userName = data.especialidade;
+          }
+        } else {
+          userName = data.especialidade;
+        }
+      }
+
+      setProfile({ ...data, user_name: userName, unidade_medida: unit });
       if (data.nome) setHasPersistedProfile(true);
     }
   };
@@ -438,34 +451,34 @@ export default function App() {
     <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex w-64 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
-        <div className="p-6 border-b border-brand-border">
+        <div className="p-8 border-b border-brand-border">
           <button 
             onClick={() => setCurrentPage('tutorial')}
-            className="text-2xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+            className="text-3xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
           >
             Fifty+
           </button>
         </div>
         
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-6 space-y-3">
           <button 
             onClick={() => setCurrentPage('tutorial')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
               currentPage === 'tutorial' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Home size={20} /> INÍCIO
+            <Home size={18} strokeWidth={1.5} /> INÍCIO
           </button>
           
           <button 
             onClick={() => setCurrentPage('perfil')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
               currentPage === 'perfil' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Settings size={20} /> PERFIL
+            <Settings size={18} strokeWidth={1.5} /> PERFIL
           </button>
 
           <button 
@@ -486,40 +499,40 @@ export default function App() {
               setCurrentPage('orcamento');
             }}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
               currentPage === 'orcamento' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Plus size={20} /> NOVO ORÇAMENTO
+            <Plus size={18} strokeWidth={1.5} /> NOVO ORÇAMENTO
           </button>
 
           <button 
             onClick={() => setCurrentPage('propostas')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
               currentPage === 'propostas' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <FileText size={20} /> LISTA
+            <FileText size={18} strokeWidth={1.5} /> LISTA
           </button>
 
           <button 
             onClick={() => setCurrentPage('calculadora')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
               currentPage === 'calculadora' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Calculator size={20} /> CALCULADORA
+            <Calculator size={18} strokeWidth={1.5} /> CALCULADORA
           </button>
         </nav>
 
-        <div className="p-4 border-t border-brand-border">
+        <div className="p-6 border-t border-brand-border">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
+            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
           >
-            <LogOut size={20} /> SAIR
+            <LogOut size={18} strokeWidth={1.5} /> SAIR
           </button>
         </div>
       </aside>
@@ -603,7 +616,7 @@ export default function App() {
                       placeholder="Buscar cliente pelo nome..." 
                       value={searchTerm}
                       onChange={e => setSearchTerm(e.target.value)}
-                      className="w-full bg-white border-2 border-brand-border rounded-2xl pl-12 pr-4 py-4 text-base font-medium focus:border-brand-red transition-all outline-none shadow-sm"
+                      className="w-full bg-white border-2 border-brand-border rounded-2xl pl-12 pr-4 py-4 text-base font-medium focus:border-brand-red transition-all outline-none shadow-sm text-center"
                     />
                   </div>
                 </div>
@@ -633,10 +646,10 @@ export default function App() {
                         <div className="grid grid-cols-3 gap-3 pt-4 border-t-2 border-brand-border">
                           <button 
                             onClick={() => { setFormData(p); setCurrentPage('preview'); }}
-                            className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
+                            className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
                           >
-                            <Eye size={22} strokeWidth={2.5} />
-                            <span className="text-[11px] font-bold uppercase tracking-widest">Ver</span>
+                            <Eye size={20} strokeWidth={2.5} />
+                            <span className="text-[9px] font-bold uppercase tracking-widest">Ver</span>
                           </button>
                           <button 
                             onClick={() => {
@@ -645,17 +658,17 @@ export default function App() {
                               setCurrentStep(1);
                               setCurrentPage('orcamento');
                             }}
-                            className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
+                            className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
                           >
-                            <Edit2 size={22} strokeWidth={2.5} />
-                            <span className="text-[11px] font-bold uppercase tracking-widest">Editar</span>
+                            <Edit2 size={20} strokeWidth={2.5} />
+                            <span className="text-[9px] font-bold uppercase tracking-widest">Editar</span>
                           </button>
                           <button 
                             onClick={() => handleDeleteProposta(p.id)}
-                            className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all active:scale-90"
+                            className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all active:scale-90 border border-transparent hover:border-red-200"
                           >
-                            <Trash2 size={22} strokeWidth={2.5} />
-                            <span className="text-[11px] font-bold uppercase tracking-widest">Excluir</span>
+                            <Trash2 size={20} strokeWidth={2.5} />
+                            <span className="text-[9px] font-bold uppercase tracking-widest">Excluir</span>
                           </button>
                         </div>
                       </div>
@@ -844,33 +857,34 @@ function FullCalculator() {
     const isOperator = ['+', '-', 'x', '÷'].includes(val);
     if (isOperator) {
       setEquation(prev => prev + val);
+      setDisplay(val); // Show operator in main display
       return;
     }
 
     setEquation(prev => prev === '0' ? val : prev + val);
-    setDisplay(prev => prev === '0' ? val : prev + val);
+    setDisplay(prev => (prev === '0' || ['+', '-', 'x', '÷'].includes(prev)) ? val : prev + val);
   };
 
   return (
-    <div className="bg-zinc-900 text-white p-6 rounded-[2.5rem] shadow-2xl border border-white/10 w-full max-w-sm mx-auto">
-      <div className="flex items-center justify-between mb-6 px-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Calculadora Profissional</span>
+    <div className="bg-zinc-900 text-white p-8 rounded-[3rem] shadow-2xl border border-white/10 w-full max-w-md mx-auto">
+      <div className="flex items-center justify-between mb-8 px-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Calculadora Profissional</span>
       </div>
       
-      <div className="bg-black/40 p-6 rounded-3xl mb-6 text-right overflow-hidden min-h-[100px] flex flex-col justify-end">
-        <div className="text-sm text-zinc-500 h-6 truncate mb-1">{equation}</div>
-        <div className="text-4xl font-bold truncate">{display}</div>
+      <div className="bg-black/60 p-8 rounded-3xl mb-8 text-right overflow-hidden min-h-[120px] flex flex-col justify-end border border-white/5">
+        <div className="text-base text-zinc-400 h-6 truncate mb-2 font-mono">{equation}</div>
+        <div className="text-5xl font-bold truncate font-mono">{display}</div>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-4">
         {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
           <button
             key={btn}
             onClick={() => handleBtn(btn)}
             className={cn(
-              "h-16 rounded-2xl font-bold text-xl transition-all active:scale-90",
+              "h-20 rounded-2xl font-bold text-2xl transition-all active:scale-90 flex items-center justify-center",
               btn === 'C' ? "bg-zinc-800 text-brand-red" :
-              ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white" : "bg-zinc-800 text-white hover:bg-zinc-700"
+              ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "bg-zinc-800 text-white hover:bg-zinc-700"
             )}
           >
             {btn}
@@ -883,13 +897,157 @@ function FullCalculator() {
 
 // --- SUB-COMPONENTS ---
 
+function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void }) {
+  const [index, setIndex] = useState(0);
+  const total = 5;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % total);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const banners = [
+    {
+      tag: '⚡ COMECE AGORA',
+      title: 'Sua proposta em PDF em menos de 5 minutos',
+      sub: 'Preenche no celular, gera o PDF com sua logo e manda pelo WhatsApp.',
+      btn: 'CRIAR MINHA PROPOSTA',
+      action: () => setCurrentPage('form'),
+      bg: 'bg-[#111111]',
+      textColor: 'text-white',
+      tagBg: 'bg-brand-red/20 text-brand-red',
+      btnBg: 'bg-[#D42B2B] text-white',
+    },
+    {
+      tag: '✅ IDENTIDADE PROFISSIONAL',
+      title: 'Sua logo aparece em todas as propostas automaticamente',
+      sub: 'Configure uma vez no seu perfil e nunca mais se preocupe.',
+      btn: 'CONFIGURAR PERFIL',
+      action: () => setCurrentPage('profile'),
+      bg: 'bg-gradient-to-br from-[#D42B2B] to-[#AA2020]',
+      textColor: 'text-white',
+      tagBg: 'bg-white/20 text-white',
+      btnBg: 'bg-white text-[#D42B2B]',
+    },
+    {
+      tag: '📊 FERRAMENTA EXCLUSIVA',
+      title: 'Descubra quanto cobrar em cada projeto',
+      sub: 'Use a calculadora de custos e pare de trabalhar no prejuízo.',
+      btn: 'CALCULAR AGORA',
+      action: () => setCurrentPage('calculator'),
+      bg: 'bg-[#0F172A]',
+      textColor: 'text-white',
+      tagBg: 'bg-blue-500/20 text-blue-400',
+      btnBg: 'bg-[#D42B2B] text-white',
+    },
+    {
+      tag: '☁️ SEUS DADOS SALVOS',
+      title: 'Todas as suas propostas salvas na nuvem',
+      sub: 'Acesse de qualquer celular. Nunca mais perca um orçamento.',
+      btn: 'VER MINHAS PROPOSTAS',
+      action: () => setCurrentPage('propostas'),
+      bg: 'bg-white border-2 border-[#EEEEEE]',
+      textColor: 'text-brand-text1',
+      tagBg: 'bg-zinc-100 text-zinc-500',
+      btnBg: 'bg-[#D42B2B] text-white',
+    },
+    {
+      tag: '🎁 PROGRAMA DE INDICAÇÃO',
+      title: 'Indique um amigo marceneiro e ganhe 1 mês grátis',
+      sub: 'Ele também ganha desconto. Todo mundo sai ganhando.',
+      btn: 'INDICAR AGORA',
+      action: () => window.open('https://wa.me/?text=Olá! Estou usando o Fifty+ para meus orçamentos e é excelente. Use meu link para ganhar desconto!'),
+      bg: 'bg-[#111111]',
+      textColor: 'text-white',
+      tagBg: 'bg-[#FFE566] text-black',
+      btnBg: 'bg-[#D42B2B] text-white',
+    }
+  ];
+
+  return (
+    <div className="pb-6 font-dm">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-extrabold text-brand-text1 uppercase tracking-wider">Novidades</h3>
+        <div className="flex gap-1">
+          {banners.map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-1 rounded-full transition-all duration-300",
+                index === i ? "w-4 bg-brand-red" : "w-1 bg-brand-border"
+              )}
+            />
+          ))}
+        </div>
+      </div>
+      
+      <div className="relative overflow-hidden rounded-2xl border-2 border-brand-border bg-white shadow-sm">
+        <motion.div 
+          className="flex cursor-grab active:cursor-grabbing"
+          animate={{ x: `-${index * 100}%` }}
+          transition={{ duration: 0.42, ease: [0.4, 0, 0.2, 1] }}
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -50 && index < total - 1) setIndex(index + 1);
+            if (info.offset.x > 50 && index > 0) setIndex(index - 1);
+          }}
+        >
+          {banners.map((b, i) => (
+            <div 
+              key={i} 
+              className={cn(
+                "min-w-full h-[120px] p-4 flex items-center gap-4 relative overflow-hidden shrink-0",
+                b.bg.includes('white') ? 'bg-white' : b.bg
+              )}
+            >
+              <div className="flex-1 min-w-0 space-y-1 relative z-10">
+                <div className="flex items-center gap-2">
+                  <span className={cn("px-1.5 py-0.5 rounded text-[7px] font-bold uppercase tracking-widest", b.tagBg)}>
+                    {b.tag.split(' ')[0]}
+                  </span>
+                  <span className={cn("text-[7px] font-bold uppercase tracking-widest opacity-60", b.textColor)}>
+                    {b.tag.split(' ').slice(1).join(' ')}
+                  </span>
+                </div>
+                <h4 className={cn("text-sm md:text-base font-bold leading-tight truncate", b.textColor)}>
+                  {b.title}
+                </h4>
+                <p className={cn("text-[9px] md:text-[10px] opacity-70 truncate", b.textColor)}>
+                  {b.sub}
+                </p>
+                <div className="pt-1">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      b.action();
+                    }}
+                    className={cn(
+                      "px-4 py-1.5 rounded-lg font-bold text-[8px] uppercase tracking-widest transition-all active:scale-95",
+                      b.btnBg
+                    )}
+                  >
+                    {b.btn}
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
 function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
   const steps = [
-    { title: '1. Perfil', desc: 'Logo e dados.', icon: <Settings size={14} />, color: 'bg-blue-500' },
-    { title: '2. Proposta', desc: 'Inicie rápido.', icon: <Plus size={14} />, color: 'bg-emerald-500' },
-    { title: '3. Ambientes', desc: 'Escolha cômodos.', icon: <Layout size={14} />, color: 'bg-amber-500' },
-    { title: '4. Medidas', desc: 'Dimensões técnicas.', icon: <Maximize size={14} />, color: 'bg-purple-500' },
-    { title: '5. Orçamento', desc: 'Gere o PDF.', icon: <FileText size={14} />, color: 'bg-brand-red' },
+    { title: '1. Perfil', desc: 'Logo e dados.', icon: <Settings size={18} />, color: 'bg-blue-500' },
+    { title: '2. Proposta', desc: 'Inicie rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
+    { title: '3. Ambientes', desc: 'Escolha cômodos.', icon: <Layout size={18} />, color: 'bg-amber-500' },
+    { title: '4. Medidas', desc: 'Dimensões técnicas.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
+    { title: '5. Orçamento', desc: 'Gere o PDF.', icon: <FileText size={18} />, color: 'bg-brand-red' },
   ];
 
   const formatName = (name: string) => {
@@ -898,9 +1056,9 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   };
 
   return (
-    <div className="space-y-4 py-2 max-w-xl mx-auto px-4">
-      <div className="text-center space-y-1">
-        <h2 className="text-2xl font-bold text-brand-text1 tracking-tighter">
+    <div className="space-y-6 py-4 max-w-3xl mx-auto px-4">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-bold text-brand-text1 tracking-tighter">
           Bem-vindo ao <span className="text-brand-red">Fifty+</span> 
           {profile?.user_name && (
             <motion.span 
@@ -912,34 +1070,36 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-medium text-[8px] uppercase tracking-widest">Sua ferramenta completa para orçamentos de marcenaria</p>
+        <p className="text-brand-text3 font-medium text-xs uppercase tracking-widest">Sua ferramenta completa para orçamentos de marcenaria</p>
       </div>
 
-      <div className="bg-white rounded-[1.5rem] border-2 border-brand-border overflow-hidden shadow-sm">
-        <div className="p-4 border-b border-brand-border bg-brand-surface2">
-           <h3 className="text-[10px] font-bold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
+      <NewsCarousel setCurrentPage={setCurrentPage} />
+
+      <div className="bg-white rounded-[2rem] border-2 border-brand-border overflow-hidden shadow-sm">
+        <div className="p-6 border-b border-brand-border bg-brand-surface2">
+           <h3 className="text-sm font-bold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
         </div>
-        <div className="p-4 space-y-0 relative">
+        <div className="p-6 space-y-0 relative">
           {/* Trail Line */}
-          <div className="absolute left-[2.25rem] top-8 bottom-8 w-0.5 bg-brand-border" />
+          <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
           
           {steps.map((step, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, x: -10 }}
+              initial={{ opacity: 0, x: -15 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-4 py-2 relative z-10"
+              transition={{ delay: i * 0.08 }}
+              className="flex items-center gap-6 py-4 relative z-10"
             >
               <div className={cn(
-                "w-8 h-8 rounded-xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
+                "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
                 step.color
               )}>
                 {step.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-[10px] font-bold text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                <p className="text-[9px] text-brand-text3 font-medium">{step.desc}</p>
+                <h4 className="text-sm font-bold text-brand-text1 uppercase tracking-wider">{step.title}</h4>
+                <p className="text-xs text-brand-text3 font-bold uppercase tracking-tighter opacity-70">{step.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -957,7 +1117,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
           }
         }}
         className={cn(
-          "w-full py-3 rounded-xl font-bold text-xs shadow-lg shadow-brand-red/10 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
+          "w-full py-4 rounded-2xl font-bold text-sm shadow-xl shadow-brand-red/10 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
         )}
       >
         {hasPersistedProfile ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
@@ -1005,7 +1165,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
                 type="email" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all text-center"
                 placeholder="seu@email.com"
                 required
               />
@@ -1016,7 +1176,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
                 type="password" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all text-center"
                 placeholder="••••••••"
                 required
               />
@@ -1056,7 +1216,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
                 type="email" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all"
+                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all text-center"
                 placeholder="seu@email.com"
                 required
               />
@@ -1162,71 +1322,71 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
       </div>
 
       {step === 1 && (
-        <div className="space-y-3">
-          <div className="bg-white p-4 rounded-3xl border border-brand-border space-y-4">
-            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest mb-2">Dados do Cliente</h3>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome Completo *</label>
+        <div className="space-y-4">
+          <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
+            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-2">Dados do Cliente</h3>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome Completo *</label>
               <input 
                 type="text" 
                 value={data.cliente_nome || ''} 
                 onChange={e => updateData('cliente_nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Ex: João Silva"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
               <input 
                 type="tel" 
                 value={data.cliente_wpp || ''} 
                 onChange={e => updateData('cliente_wpp', formatPhone(e.target.value))}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="(00) 00000-0000"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Endereço da Obra</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Endereço da Obra</label>
               <input 
                 type="text" 
                 value={data.cliente_end || ''} 
                 onChange={e => updateData('cliente_end', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Rua, número, bairro"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Início Montagem</label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Início Montagem</label>
                 <input 
                   type="date" 
                   value={data.inicio || ''} 
                   onChange={e => updateData('inicio', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Previsão Entrega</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Previsão Entrega</label>
                 <input 
                   type="date" 
                   value={data.entrega || ''} 
                   onChange={e => updateData('entrega', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 />
               </div>
             </div>
           </div>
-          <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap">
-            PRÓXIMO PASSO <ChevronRight size={16} />
+          <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+            PRÓXIMO PASSO <ChevronRight size={18} />
           </button>
         </div>
       )}
 
       {step === 2 && (
-        <div className="space-y-3">
-          <div className="bg-white p-4 rounded-3xl border border-brand-border space-y-4">
-            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest">ADICIONE OS AMBIENTES</h3>
-            <div className="grid grid-cols-4 gap-1.5">
+        <div className="space-y-4">
+          <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
+            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">ADICIONE OS AMBIENTES</h3>
+            <div className="grid grid-cols-4 gap-2">
               {[
                 { label: 'Cozinha', emoji: '🍳', val: 'Cozinha Planejada' },
                 { label: 'G.Roupa', emoji: '🚪', val: 'Guarda-Roupa' },
@@ -1249,39 +1409,39 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 <button 
                   key={m.val}
                   onClick={() => addAmbiente(m.val)}
-                  className="flex flex-col items-center justify-center p-1.5 rounded-xl border border-brand-border bg-brand-surface2 transition-all gap-0.5 hover:border-brand-red active:scale-[0.95] shadow-sm"
+                  className="flex flex-col items-center justify-center p-3 rounded-2xl border border-brand-border bg-brand-surface2 transition-all gap-1 hover:border-brand-red active:scale-[0.95] shadow-sm"
                 >
-                  <span className="text-base">{m.emoji}</span>
-                  <span className="text-[7px] font-bold uppercase tracking-tighter text-brand-text2 text-center leading-none">
+                  <span className="text-xl">{m.emoji}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-tighter text-brand-text2 text-center leading-none">
                     {m.label}
                   </span>
                 </button>
               ))}
             </div>
 
-            <div className="space-y-2">
-              <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Ambientes Adicionados</h4>
+            <div className="space-y-3">
+              <h4 className="text-xs font-bold text-brand-text3 uppercase tracking-widest">Ambientes Adicionados</h4>
               <div className="grid grid-cols-1 gap-2">
                 {(data.ambientes || []).map((a: any) => (
-                  <div key={a.id} className="flex items-center justify-between p-2 px-3 bg-brand-red-light rounded-xl border border-brand-red/20">
-                    <span className="text-xs font-bold text-brand-red uppercase">{a.tipo}</span>
-                    <button onClick={() => removeAmbiente(a.id)} className="text-brand-red p-1 active:scale-90 transition-transform"><X size={14} /></button>
+                  <div key={a.id} className="flex items-center justify-between p-3 px-4 bg-brand-red-light rounded-2xl border border-brand-red/20">
+                    <span className="text-sm font-bold text-brand-red uppercase">{a.tipo}</span>
+                    <button onClick={() => removeAmbiente(a.id)} className="text-brand-red p-1 active:scale-90 transition-transform"><X size={18} /></button>
                   </div>
                 ))}
               </div>
-              {(data.ambientes || []).length === 0 && <p className="text-[10px] text-brand-text3 italic">Nenhum ambiente adicionado.</p>}
+              {(data.ambientes || []).length === 0 && <p className="text-xs text-brand-text3 italic">Nenhum ambiente adicionado.</p>}
             </div>
 
-            <div className="space-y-3 pt-3 border-t border-brand-border">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest ml-1">Tipo de Chapa</label>
-                <div className="flex flex-wrap gap-1.5">
+            <div className="space-y-4 pt-4 border-t border-brand-border">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Tipo de Chapa</label>
+                <div className="flex flex-wrap gap-2">
                   {['MDF 15mm', 'MDF 18mm', 'MDP', 'Compensado'].map(c => (
                     <button 
                       key={c}
                       onClick={() => updateData('chapa', c)}
                       className={cn(
-                        "px-3 py-2 rounded-lg text-[10px] font-bold border-2 transition-all uppercase tracking-wider",
+                        "px-4 py-3 rounded-xl text-xs font-bold border-2 transition-all uppercase tracking-wider",
                         data.chapa === c ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                       )}
                     >
@@ -1292,79 +1452,79 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
               </div>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(1)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
-              <ChevronLeft size={14} /> Voltar
+          <div className="flex gap-4">
+            <button onClick={() => setStep(1)} className="flex-1 bg-brand-surface2 border border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={() => setStep(3)} className="flex-[1.5] bg-brand-red text-white py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap">
-              Próximo Passo <ChevronRight size={14} />
+            <button onClick={() => setStep(3)} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+              Próximo Passo <ChevronRight size={18} />
             </button>
           </div>
         </div>
       )}
 
       {step === 3 && (
-        <div className="space-y-3">
-          <div className="bg-white p-4 rounded-3xl border border-brand-border space-y-4">
-            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest">Medidas e Detalhes</h3>
+        <div className="space-y-4">
+          <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
+            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">Medidas e Detalhes</h3>
             
             {(data.ambientes || []).map((amb: any) => (
-              <div key={amb.id} className="space-y-3 p-3 bg-brand-surface2 rounded-2xl border border-brand-border">
+              <div key={amb.id} className="space-y-4 p-5 bg-brand-surface2 rounded-3xl border border-brand-border">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-bold text-brand-red uppercase">{amb.tipo}</h4>
+                  <h4 className="text-sm font-bold text-brand-red uppercase">{amb.tipo}</h4>
                 </div>
 
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-brand-text3 ml-1 uppercase tracking-wider">OBS: Material e detalhamento</label>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-brand-text3 ml-1 uppercase tracking-wider">OBS: Material e detalhamento</label>
                   <textarea 
                     value={amb.detalhes || ''} 
                     onChange={e => updateAmbiente(amb.id, 'detalhes', e.target.value)}
-                    className="w-full bg-white border-2 border-brand-border rounded-xl px-3 py-2 text-sm focus:border-brand-red transition-all min-h-[60px] outline-none font-normal"
+                    className="w-full bg-white border-2 border-brand-border rounded-xl px-4 py-3 text-base focus:border-brand-red transition-all min-h-[80px] outline-none font-normal text-center"
                     placeholder="Cores, puxadores..."
                   />
                 </div>
                 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {amb.pecas.map((p: any, pIdx: number) => (
-                    <div key={pIdx} className="bg-white p-3 rounded-2xl border-2 border-brand-border space-y-3 shadow-sm">
-                      <div className="flex items-center justify-between gap-2">
+                    <div key={pIdx} className="bg-white p-5 rounded-3xl border-2 border-brand-border space-y-4 shadow-sm">
+                      <div className="flex items-center justify-between gap-3">
                         <input 
                           type="text" 
                           value={p.nome} 
                           onChange={e => updatePeca(amb.id, pIdx, 'nome', e.target.value)}
-                          className="flex-1 bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-brand-red transition-all uppercase"
+                          className="flex-1 bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-brand-red transition-all uppercase text-center"
                           placeholder="Módulo/item"
                         />
-                        <button onClick={() => removePeca(amb.id, pIdx)} className="text-red-500 p-1 active:scale-90 transition-transform"><Trash2 size={16} /></button>
+                        <button onClick={() => removePeca(amb.id, pIdx)} className="text-red-500 p-1 active:scale-90 transition-transform"><Trash2 size={20} /></button>
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-bold text-brand-text3 uppercase ml-1">Larg. ({unit})</label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-brand-text3 ml-1 uppercase">Larg. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.l} 
                             onChange={e => updatePeca(amb.id, pIdx, 'l', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-lg px-2 py-1.5 text-xs font-bold outline-none focus:border-brand-red transition-all text-center"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-brand-red transition-all text-center"
                             placeholder="0"
                           />
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-bold text-brand-text3 uppercase ml-1">Alt. ({unit})</label>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-brand-text3 uppercase ml-1">Alt. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.a} 
                             onChange={e => updatePeca(amb.id, pIdx, 'a', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-lg px-2 py-1.5 text-xs font-bold outline-none focus:border-brand-red transition-all text-center"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-brand-red transition-all text-center"
                             placeholder="0"
                           />
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-bold text-brand-text3 uppercase ml-1">Prof. ({unit})</label>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold text-brand-text3 uppercase ml-1">Prof. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.p} 
                             onChange={e => updatePeca(amb.id, pIdx, 'p', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-lg px-2 py-1.5 text-xs font-bold outline-none focus:border-brand-red transition-all text-center"
+                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-brand-red transition-all text-center"
                             placeholder="0"
                           />
                         </div>
@@ -1373,7 +1533,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                   ))}
                   <button 
                     onClick={() => addPeca(amb.id)}
-                    className="w-full py-2.5 border-2 border-dashed border-brand-border rounded-xl text-brand-text3 font-bold text-[10px] hover:border-brand-red hover:text-brand-red transition-all bg-white active:scale-95 uppercase"
+                    className="w-full py-4 border-2 border-dashed border-brand-border rounded-2xl text-brand-text3 font-bold text-xs hover:border-brand-red hover:text-brand-red transition-all bg-white active:scale-95 uppercase"
                   >
                     + ADICIONAR MÓDULO EM {amb.tipo.toUpperCase()}
                   </button>
@@ -1382,83 +1542,108 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             ))}
             
             {(data.ambientes || []).length === 0 && (
-              <div className="text-center py-6">
-                <p className="text-xs text-brand-text3">Volte ao passo anterior e adicione pelo menos um ambiente.</p>
+              <div className="text-center py-8">
+                <p className="text-sm text-brand-text3">Volte ao passo anterior e adicione pelo menos um ambiente.</p>
               </div>
             )}
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
-              <ChevronLeft size={14} /> Voltar
+          <div className="flex gap-4">
+            <button onClick={() => setStep(2)} className="flex-1 bg-brand-surface2 border border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={() => setStep(4)} className="flex-[1.5] bg-brand-red text-white py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap">
-              Próximo Passo <ChevronRight size={14} />
+            <button onClick={() => setStep(4)} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+              Próximo Passo <ChevronRight size={18} />
             </button>
           </div>
         </div>
       )}
 
       {step === 4 && (
-        <div className="space-y-3">
-          <div className="bg-white p-4 rounded-3xl border border-brand-border space-y-4">
-            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest">Custos Internos 🔒</h3>
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[10px] text-amber-800 font-bold leading-tight">
+        <div className="space-y-4">
+          <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
+            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">Custos Internos 🔒</h3>
+            <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 font-bold leading-tight">
               O cliente verá apenas o valor final. Este detalhamento é privado.
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-brand-text2 ml-1 uppercase">Materiais (R$)</label>
+            
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Materiais</label>
                 <input 
                   type="number" 
                   value={data.v_mat || ''} 
                   onChange={e => updateData('v_mat', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 text-sm font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="0,00"
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-brand-text2 ml-1 uppercase">Despesas (R$)</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Despesas</label>
                 <input 
                   type="number" 
                   value={data.v_despesas || ''} 
                   onChange={e => updateData('v_despesas', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 text-sm font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                  placeholder="Frete..."
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  placeholder="0,00"
                 />
               </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text2 ml-1 uppercase">Margem de Lucro (%)</label>
-              <div className="flex items-center gap-2">
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Ferragens</label>
+                <input 
+                  type="number" 
+                  value={data.v_ferr || ''} 
+                  onChange={e => updateData('v_ferr', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  placeholder="0,00"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Outros</label>
+                <input 
+                  type="number" 
+                  value={data.v_outros || ''} 
+                  onChange={e => updateData('v_outros', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  placeholder="0,00"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Margem de Lucro (%)</label>
+              <div className="flex items-center gap-4">
                 <input 
                   type="number" 
                   value={data.v_margem || ''} 
                   onChange={e => updateData('v_margem', e.target.value)}
-                  className="w-20 bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 text-sm font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  className="w-24 bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="30"
                 />
-                <div className="flex-1 bg-brand-surface2 p-2 rounded-xl border border-brand-border text-[9px] font-bold text-brand-text3 uppercase text-center">
-                  Lucro: <span className="text-brand-red block text-sm font-bold">{fmt(subtotal * ((Number(data.v_margem) || 0) / 100))}</span>
+                <div className="flex-1 bg-brand-surface2 p-3 rounded-xl border border-brand-border text-[10px] font-bold text-brand-text3 uppercase text-center">
+                  Lucro: <span className="text-brand-red block text-base font-bold">{fmt(subtotal * ((Number(data.v_margem) || 0) / 100))}</span>
                 </div>
               </div>
             </div>
-            <div className="pt-3 border-t border-brand-border">
-              <div className="flex justify-between items-center mb-2 px-1">
-                <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Subtotal</span>
-                <span className="text-sm font-bold text-brand-text2">{fmt(subtotal)}</span>
+            <div className="pt-4 border-t border-brand-border">
+              <div className="flex justify-between items-center mb-3 px-1">
+                <span className="text-xs font-bold text-brand-text3 uppercase tracking-widest">Subtotal</span>
+                <span className="text-base font-bold text-brand-text2">{fmt(subtotal)}</span>
               </div>
-              <div className="bg-brand-red text-white p-4 rounded-2xl flex flex-col items-center gap-0.5 shadow-lg shadow-brand-red/10">
-                <span className="text-[8px] font-bold uppercase tracking-[0.2em] opacity-80">Valor Total Cliente</span>
-                <span className="text-2xl font-bold">{fmt(total)}</span>
+              <div className="bg-brand-red text-white p-6 rounded-[2rem] flex flex-col items-center gap-1 shadow-xl shadow-brand-red/20">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Valor Total Cliente</span>
+                <span className="text-3xl font-bold">{fmt(total)}</span>
               </div>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(3)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
-              <ChevronLeft size={14} /> Voltar
+          <div className="flex gap-4">
+            <button onClick={() => setStep(3)} className="flex-1 bg-brand-surface2 border border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={() => setStep(5)} className="flex-[1.5] bg-brand-red text-white py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap">
-              Próximo Passo <ChevronRight size={14} />
+            <button onClick={() => setStep(5)} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+              Próximo Passo <ChevronRight size={18} />
             </button>
           </div>
         </div>
@@ -1466,9 +1651,9 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
 
       {step === 5 && (
         <div className="space-y-4">
-          <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
+          <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">Pagamento</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {['Dinheiro', 'PIX', 'Cartão', 'Transferência', 'Cheque', 'Financiamento'].map(f => (
                 <button 
                   key={f}
@@ -1478,7 +1663,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                     updateData('pgto_formas', next);
                   }}
                   className={cn(
-                    "p-3 rounded-2xl border-2 text-[10px] font-semibold transition-all uppercase tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis",
+                    "p-4 rounded-2xl border-2 text-xs font-semibold transition-all uppercase tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis",
                     (data.pgto_formas || []).includes(f) ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                   )}
                 >
@@ -1489,7 +1674,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
 
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <label className="text-sm font-semibold text-brand-text2 ml-1">Parcelas</label>
                   <select 
                     value={data.pgto_parcelas || 1}
@@ -1501,13 +1686,13 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                     ))}
                   </select>
                 </div>
-                <div className="space-y-1.5">
+                <div className="space-y-2">
                   <label className="text-sm font-semibold text-brand-text2 ml-1">Juros</label>
                   <div className="flex gap-2">
                     <button 
                       onClick={() => updateData('pgto_juros', false)}
                       className={cn(
-                        "flex-1 py-4 rounded-xl border-2 text-[10px] font-semibold transition-all uppercase",
+                        "flex-1 py-4 rounded-xl border-2 text-xs font-semibold transition-all uppercase",
                         !data.pgto_juros ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                       )}
                     >
@@ -1516,7 +1701,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                     <button 
                       onClick={() => updateData('pgto_juros', true)}
                       className={cn(
-                        "flex-1 py-4 rounded-xl border-2 text-[10px] font-semibold transition-all uppercase",
+                        "flex-1 py-4 rounded-xl border-2 text-xs font-semibold transition-all uppercase",
                         data.pgto_juros ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                       )}
                     >
@@ -1526,7 +1711,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 </div>
               </div>
 
-              <div className="space-y-1.5">
+              <div className="space-y-2">
                 <label className="text-sm font-semibold text-brand-text2 ml-1">Condição de Pagamento</label>
                 <input 
                   type="text" 
@@ -1556,7 +1741,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                   type="text" 
                   value={data.pgto_pix || ''} 
                   onChange={e => updateData('pgto_pix', formatPixKey(e.target.value, data.pgto_pix_tipo || ''))}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder={
                     data.pgto_pix_tipo === 'CPF' ? '000.000.000-00' :
                     data.pgto_pix_tipo === 'CNPJ' ? '00.000.000/0000-00' :
@@ -1571,7 +1756,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 <textarea 
                   value={data.obs_final || ''} 
                   onChange={e => updateData('obs_final', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-normal focus:bg-white focus:border-brand-red transition-all min-h-[100px] outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-normal focus:bg-white focus:border-brand-red transition-all min-h-[100px] outline-none text-center"
                   placeholder="Informações adicionais para o cliente..."
                 />
               </div>
@@ -1581,7 +1766,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 <textarea 
                   value={data.excluso || ''} 
                   onChange={e => updateData('excluso', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-normal focus:bg-white focus:border-brand-red transition-all min-h-[100px] outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-normal focus:bg-white focus:border-brand-red transition-all min-h-[100px] outline-none text-center"
                   placeholder="Ex: Pedras, cubas, eletros..."
                 />
               </div>
@@ -1598,12 +1783,12 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
               </div>
             </div>
           </div>
-          <div className="flex gap-3">
-            <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
-              <ChevronLeft size={14} /> Voltar
+          <div className="flex gap-4">
+            <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border-2 border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/10 uppercase tracking-widest whitespace-nowrap">
-              Finalizar Orçamento <Check size={14} />
+            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap">
+              Finalizar Orçamento <Check size={18} />
             </button>
           </div>
         </div>
@@ -1743,12 +1928,14 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
     }
 
     setLoading(true);
-    // Map 'user_name' to 'especialidade' to avoid DB column error
-    const { user_name, ...rest } = profile;
+    // Map 'user_name' and 'unidade_medida' to 'especialidade' as JSON to avoid DB column error
+    const { user_name, unidade_medida, ...rest } = profile;
+    const especialidadeJson = JSON.stringify({ user_name, unidade_medida });
+    
     const { error } = await supabase.from('profiles').upsert({
       id: userId,
       ...rest,
-      especialidade: user_name,
+      especialidade: especialidadeJson,
       updated_at: new Date().toISOString()
     });
     if (error) {
@@ -1835,16 +2022,16 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
         </div>
       ) : (
         <>
-          <div className="bg-white p-4 rounded-[2rem] border-2 border-brand-border space-y-4 shadow-sm">
-            <h3 className="text-xs font-bold text-brand-red uppercase tracking-widest mb-2">Configurações e Dados</h3>
+          <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border space-y-8 shadow-sm">
+            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-2">Configurações e Dados</h3>
             
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Unidade de Medida Padrão</label>
-              <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-3">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Unidade de Medida Padrão</label>
+              <div className="grid grid-cols-2 gap-3">
                 <button 
                   onClick={() => updateProfile('unidade_medida', 'mm')}
                   className={cn(
-                    "py-2 rounded-xl font-bold text-[10px] border-2 transition-all uppercase tracking-widest",
+                    "py-3 rounded-xl font-bold text-xs border-2 transition-all uppercase tracking-widest",
                     (profile?.unidade_medida || 'mm') === 'mm' ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                   )}
                 >
@@ -1853,7 +2040,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                 <button 
                   onClick={() => updateProfile('unidade_medida', 'cm')}
                   className={cn(
-                    "py-2 rounded-xl font-bold text-[10px] border-2 transition-all uppercase tracking-widest",
+                    "py-3 rounded-xl font-bold text-xs border-2 transition-all uppercase tracking-widest",
                     profile?.unidade_medida === 'cm' ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                   )}
                 >
@@ -1862,77 +2049,82 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Seu Nome *</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Seu Nome *</label>
               <input 
                 type="text" 
                 value={profile?.user_name || ''} 
                 onChange={e => updateProfile('user_name', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Como quer ser chamado?"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome da Marcenaria *</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome da Marcenaria *</label>
               <input 
                 type="text" 
                 value={profile?.nome || ''} 
                 onChange={e => updateProfile('nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Ex: Marcenaria Silva"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">CNPJ ou CPF</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">CNPJ ou CPF</label>
               <input 
                 type="text" 
                 value={profile?.cpf || ''} 
                 onChange={e => updateProfile('cpf', formatCPFCNPJ(e.target.value))}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="00.000.000/0000-00"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
                 <input 
                   type="tel" 
                   value={profile?.wpp || ''} 
                   onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="(00) 00000-0000"
                 />
               </div>
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Instagram</label>
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Instagram</label>
                 <input 
                   type="text" 
                   value={profile?.insta || ''} 
                   onChange={e => updateProfile('insta', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="@marcenaria"
                 />
               </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Endereço Completo</label>
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Endereço Completo</label>
               <input 
                 type="text" 
                 value={profile?.endereco || ''} 
                 onChange={e => updateProfile('endereco', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-2 text-sm font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Rua, número, bairro, cidade - UF"
               />
             </div>
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-brand-text3 uppercase tracking-wider ml-1">Logo da Empresa</label>
-              <label className="w-full h-24 border-2 border-dashed border-brand-border rounded-2xl flex flex-col items-center justify-center text-brand-text3 cursor-pointer hover:border-brand-red hover:text-brand-red transition-all overflow-hidden bg-brand-surface2 shadow-inner">
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Logo da Empresa</label>
+              <label className="w-full h-32 border-2 border-dashed border-brand-border rounded-2xl flex flex-col items-center justify-center text-brand-text3 cursor-pointer hover:border-brand-red hover:text-brand-red transition-all overflow-hidden bg-brand-surface2 shadow-inner relative">
                 {profile?.logo ? (
-                  <img src={profile.logo} className="w-full h-full object-contain p-2" />
+                  <div className="w-full h-full flex items-center justify-center p-4">
+                    <img src={profile.logo} className="max-w-full max-h-full object-contain" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                       <Camera size={24} className="text-white" />
+                    </div>
+                  </div>
                 ) : (
                   <>
-                    <Camera size={20} strokeWidth={2.5} />
-                    <span className="text-[8px] font-bold mt-1 uppercase tracking-widest">Upload Logo</span>
+                    <Camera size={24} strokeWidth={2.5} />
+                    <span className="text-[10px] font-bold mt-1 uppercase tracking-widest">Upload Logo</span>
                   </>
                 )}
                 <input type="file" className="hidden" accept="image/*" onChange={handleLogo} />
@@ -1940,7 +2132,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex gap-4">
             <button 
               onClick={() => {
                 if (profile?.nome) {
@@ -1949,16 +2141,16 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   setCurrentPage('tutorial');
                 }
               }}
-              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-2.5 rounded-xl font-bold text-[10px] active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
+              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-bold text-sm active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
             >
               {profile?.nome ? 'Cancelar' : 'Voltar'}
             </button>
             <button 
               onClick={handleSave} 
               disabled={loading}
-              className="flex-[1.5] bg-brand-red text-white py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/10 uppercase tracking-widest whitespace-nowrap"
+              className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap"
             >
-              <Save size={14} /> {loading ? 'Salvando...' : 'Salvar Perfil'}
+              <Save size={18} /> {loading ? 'Salvando...' : 'Salvar Perfil'}
             </button>
           </div>
         </>
