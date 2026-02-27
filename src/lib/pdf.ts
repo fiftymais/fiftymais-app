@@ -3,7 +3,7 @@ import { Proposta, Profile } from '../types';
 
 export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const W = 210, M = 20;
+  const W = 210, M = 15;
   const BLACK: [number, number, number] = [0, 0, 0];
   const GREY: [number, number, number] = [80, 80, 80];
   const LIGHT_GREY: [number, number, number] = [240, 240, 240];
@@ -86,39 +86,43 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   // --- DADOS DO CLIENTE ---
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
-  doc.text('Cliente: ', M, y);
-  doc.setFont('helvetica', 'normal');
-  doc.text(proposta.cliente_nome || '—', M + 18, y);
+  doc.text('CLIENTE: ', M, y);
+  doc.setFont('helvetica', 'bold');
+  doc.text((proposta.cliente_nome || '—').toUpperCase(), M + 22, y);
   y += 7;
 
   doc.setFont('helvetica', 'bold');
-  doc.text('Localização do Projeto: ', M, y);
+  doc.text('LOCALIZAÇÃO DO PROJETO: ', M, y);
   doc.setFont('helvetica', 'normal');
-  doc.text(cliente.endereco || '—', M + 45, y);
+  doc.text(cliente.endereco || '—', M + 55, y);
   y += 7;
 
   if (tech.inicio || tech.entrega) {
     doc.setFont('helvetica', 'bold');
-    doc.text('Cronograma da Montagem: ', M, y);
+    doc.text('CRONOGRAMA DA MONTAGEM: ', M, y);
     doc.setFont('helvetica', 'normal');
     let crono = '';
     if (tech.inicio) crono += `Início: ${new Date(tech.inicio).toLocaleDateString('pt-BR')}`;
     if (tech.entrega) crono += `${tech.inicio ? ' | ' : ''}Entrega: ${new Date(tech.entrega).toLocaleDateString('pt-BR')}`;
-    doc.text(crono, M + 48, y);
+    doc.text(crono, M + 58, y);
     y += 7;
   }
 
   doc.setFont('helvetica', 'bold');
-  doc.text('Data da Proposta: ', M, y);
+  doc.text('DATA DA PROPOSTA: ', M, y);
   doc.setFont('helvetica', 'normal');
   doc.text(hoje, M + 45, y);
   y += 7;
 
-  doc.setFont('helvetica', 'bold');
-  doc.text('Validade da Proposta: ', M, y);
-  doc.setFont('helvetica', 'normal');
-  doc.text(tech.validade || (profile.validade || 15) + ' dias', M + 45, y);
-  y += 15;
+  if (tech.validade) {
+    doc.setFont('helvetica', 'bold');
+    doc.text('VALIDADE DA PROPOSTA: ', M, y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(tech.validade, M + 55, y);
+    y += 15;
+  } else {
+    y += 8;
+  }
 
   // --- DETALHAMENTO POR AMBIENTE ---
   doc.setFont('helvetica', 'bold');

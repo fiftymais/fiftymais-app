@@ -74,7 +74,7 @@ const Toast = ({ message, type = 'success', onClose }: { message: string, type?:
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState<'propostas' | 'orcamento' | 'perfil' | 'preview' | 'tutorial'>('tutorial');
+  const [currentPage, setCurrentPage] = useState<'propostas' | 'orcamento' | 'perfil' | 'preview' | 'tutorial' | 'calculadora'>('tutorial');
   const [profile, setProfile] = useState<Profile | null>(null);
   const [hasPersistedProfile, setHasPersistedProfile] = useState(false);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
@@ -169,7 +169,12 @@ export default function App() {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
     if (data) {
-      setProfile(data);
+      // Map 'especialidade' to 'user_name' if 'user_name' column is missing in DB
+      const profileData = {
+        ...data,
+        user_name: data.user_name || data.especialidade
+      };
+      setProfile(profileData);
       if (data.nome) setHasPersistedProfile(true);
     }
   };
@@ -430,226 +435,37 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg pb-24">
-      {/* Top Bar */}
-      <header className="sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-14 flex items-center justify-between">
-        <button 
-          onClick={() => setCurrentPage('tutorial')}
-          className="text-xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
-        >
-          Fifty+
-        </button>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center text-xs font-bold">
-            {session.user.email?.[0].toUpperCase()}
-          </div>
-          <button onClick={handleLogout} className="p-2 text-brand-text3 hover:text-brand-red transition-colors">
-            <LogOut size={18} />
+    <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
+      {/* Sidebar for Desktop */}
+      <aside className="hidden md:flex w-64 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
+        <div className="p-6 border-b border-brand-border">
+          <button 
+            onClick={() => setCurrentPage('tutorial')}
+            className="text-2xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+          >
+            Fifty+
           </button>
         </div>
-      </header>
-
-      <main className="max-w-5xl mx-auto p-4 md:p-8">
-        <AnimatePresence mode="wait">
-          {currentPage === 'tutorial' && (
-            <motion.div
-              key="tutorial"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <TutorialPage 
-                onStart={() => setCurrentPage('orcamento')} 
-                hasPersistedProfile={hasPersistedProfile}
-                setCurrentPage={setCurrentPage}
-                profile={profile}
-              />
-            </motion.div>
-          )}
-
-          {currentPage === 'propostas' && (
-            <motion.div 
-              key="propostas"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="max-w-2xl md:max-w-xl mx-auto"
-            >
-              <div className="flex items-center justify-between mb-6">
-                <div />
-                <button 
-                  onClick={() => {
-                    setEditingId(null);
-                    setFormData({
-                      ambientes: [],
-                      chapa: 'MDF 15mm',
-                      acabamento: '',
-                      ferragens: '',
-                      v_margem: 30,
-                      status: 'nao_enviada',
-                      pgto_formas: ['Dinheiro', 'PIX'],
-                      pgto_parcelas: 1,
-                      pgto_juros: false
-                    });
-                    setCurrentStep(1);
-                    setCurrentPage('orcamento');
-                  }}
-                  className="bg-brand-red text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 active:scale-95 transition-transform"
-                >
-                  <Plus size={18} /> Novo Orçamento
-                </button>
-              </div>
-
-              <div className="flex gap-2 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-text3" size={20} />
-                  <input 
-                    type="text" 
-                    placeholder="Buscar cliente pelo nome..." 
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full bg-white border-2 border-brand-border rounded-2xl pl-12 pr-4 py-4 text-base font-medium focus:border-brand-red transition-all outline-none shadow-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {filteredPropostas.length === 0 ? (
-                  <div className="py-16 text-center text-brand-text3 bg-white rounded-3xl border-2 border-brand-border border-dashed">
-                    <FileText size={64} className="mx-auto mb-4 opacity-10" />
-                    <p className="font-bold text-lg">Nenhum orçamento encontrado.</p>
-                    <p className="text-sm opacity-60">Toque em "+ Novo Orçamento" para começar.</p>
-                  </div>
-                ) : (
-                  filteredPropostas.map(p => (
-                    <div key={p.id} className="bg-white border-2 border-brand-border rounded-3xl p-5 shadow-md hover:shadow-lg transition-all active:scale-[0.99]">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="space-y-1">
-                          <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">
-                            #{String(p.numero).padStart(3, '0')} • {new Date(p.created_at).toLocaleDateString()}
-                          </p>
-                          <h3 className="font-bold text-xl text-brand-text1 leading-tight">{p.cliente_nome}</h3>
-                          <p className="text-sm font-semibold text-brand-red uppercase tracking-wider">{p.tipo_movel}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold text-brand-green text-xl">{fmt(p.v_total)}</p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-3 gap-3 pt-4 border-t-2 border-brand-border">
-                        <button 
-                          onClick={() => { setFormData(p); setCurrentPage('preview'); }}
-                          className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
-                        >
-                          <Eye size={22} strokeWidth={2.5} />
-                          <span className="text-[11px] font-bold uppercase tracking-widest">Ver</span>
-                        </button>
-                        <button 
-                          onClick={() => {
-                            setEditingId(p.id);
-                            setFormData(p);
-                            setCurrentStep(1);
-                            setCurrentPage('orcamento');
-                          }}
-                          className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
-                        >
-                          <Edit2 size={22} strokeWidth={2.5} />
-                          <span className="text-[11px] font-bold uppercase tracking-widest">Editar</span>
-                        </button>
-                        <button 
-                          onClick={() => handleDeleteProposta(p.id)}
-                          className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all active:scale-90"
-                        >
-                          <Trash2 size={22} strokeWidth={2.5} />
-                          <span className="text-[11px] font-bold uppercase tracking-widest">Excluir</span>
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </motion.div>
-          )}
-
-          {currentPage === 'orcamento' && (
-            <motion.div 
-              key="orcamento"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="max-w-2xl md:max-w-xl mx-auto"
-            >
-              <OrcamentoForm 
-                step={currentStep} 
-                setStep={setCurrentStep} 
-                data={formData} 
-                setData={setFormData} 
-                onSave={handleSaveProposta}
-                onCancel={() => setCurrentPage('propostas')}
-              />
-            </motion.div>
-          )}
-
-          {currentPage === 'preview' && (
-            <motion.div 
-              key="preview"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-2xl md:max-w-xl mx-auto"
-            >
-              <PreviewPage 
-                proposta={formData as Proposta} 
-                profile={profile} 
-                onBack={() => setCurrentPage('propostas')} 
-                onStatusUpdate={handleUpdateStatus}
-              />
-            </motion.div>
-          )}
-
-          {currentPage === 'perfil' && (
-            <motion.div 
-              key="perfil"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="max-w-2xl md:max-w-xl mx-auto"
-            >
-              <ProfilePage 
-                profile={profile} 
-                setProfile={setProfile} 
-                userId={session.user.id} 
-                showToast={showToast} 
-                setCurrentPage={setCurrentPage}
-                onSaveSuccess={() => setHasPersistedProfile(true)}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </main>
-
-      {/* Bottom Nav */}
-      {hasPersistedProfile && (
-        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-16 sm:h-20 flex items-center justify-around px-1 sm:px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+        
+        <nav className="flex-1 p-4 space-y-2">
           <button 
             onClick={() => setCurrentPage('tutorial')}
             className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-              currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              currentPage === 'tutorial' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Início</span>
+            <Home size={20} /> INÍCIO
           </button>
-
+          
           <button 
             onClick={() => setCurrentPage('perfil')}
             className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-              currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              currentPage === 'perfil' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Perfil</span>
+            <Settings size={20} /> PERFIL
           </button>
 
           <button 
@@ -670,38 +486,339 @@ export default function App() {
               setCurrentPage('orcamento');
             }}
             className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-2xl transition-all duration-300",
-              currentPage === 'orcamento' ? "text-brand-text1" : "text-brand-text3"
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              currentPage === 'orcamento' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Plus size={28} className="sm:w-8 sm:h-8" strokeWidth={3} />
-            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Novo</span>
+            <Plus size={20} /> NOVO ORÇAMENTO
           </button>
 
           <button 
             onClick={() => setCurrentPage('propostas')}
             className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              currentPage === 'propostas' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+            )}
+          >
+            <FileText size={20} /> LISTA
+          </button>
+
+          <button 
+            onClick={() => setCurrentPage('calculadora')}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all",
+              currentPage === 'calculadora' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+            )}
+          >
+            <Calculator size={20} /> CALCULADORA
+          </button>
+        </nav>
+
+        <div className="p-4 border-t border-brand-border">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
+          >
+            <LogOut size={20} /> SAIR
+          </button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Top Bar for Mobile */}
+        <header className="md:hidden sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-14 flex items-center justify-between">
+          <button 
+            onClick={() => setCurrentPage('tutorial')}
+            className="text-xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+          >
+            Fifty+
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center text-xs font-bold">
+              {session.user.email?.[0].toUpperCase()}
+            </div>
+            <button onClick={handleLogout} className="p-2 text-brand-text3 hover:text-brand-red transition-colors">
+              <LogOut size={18} />
+            </button>
+          </div>
+        </header>
+
+        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto">
+          <AnimatePresence mode="wait">
+            {currentPage === 'tutorial' && (
+              <motion.div
+                key="tutorial"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <TutorialPage 
+                  onStart={() => setCurrentPage('orcamento')} 
+                  hasPersistedProfile={hasPersistedProfile}
+                  setCurrentPage={setCurrentPage}
+                  profile={profile}
+                />
+              </motion.div>
+            )}
+
+            {currentPage === 'propostas' && (
+              <motion.div 
+                key="propostas"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="max-w-2xl mx-auto"
+              >
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-brand-text1">Seus Orçamentos</h2>
+                  <button 
+                    onClick={() => {
+                      setEditingId(null);
+                      setFormData({
+                        ambientes: [],
+                        chapa: 'MDF 15mm',
+                        acabamento: '',
+                        ferragens: '',
+                        v_margem: 30,
+                        status: 'nao_enviada',
+                        pgto_formas: ['Dinheiro', 'PIX'],
+                        pgto_parcelas: 1,
+                        pgto_juros: false
+                      });
+                      setCurrentStep(1);
+                      setCurrentPage('orcamento');
+                    }}
+                    className="bg-brand-red text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20"
+                  >
+                    <Plus size={18} /> Novo Orçamento
+                  </button>
+                </div>
+
+                <div className="flex gap-2 mb-6">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-text3" size={20} />
+                    <input 
+                      type="text" 
+                      placeholder="Buscar cliente pelo nome..." 
+                      value={searchTerm}
+                      onChange={e => setSearchTerm(e.target.value)}
+                      className="w-full bg-white border-2 border-brand-border rounded-2xl pl-12 pr-4 py-4 text-base font-medium focus:border-brand-red transition-all outline-none shadow-sm"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  {filteredPropostas.length === 0 ? (
+                    <div className="py-16 text-center text-brand-text3 bg-white rounded-3xl border-2 border-brand-border border-dashed">
+                      <FileText size={64} className="mx-auto mb-4 opacity-10" />
+                      <p className="font-bold text-lg">Nenhum orçamento encontrado.</p>
+                      <p className="text-sm opacity-60">Toque em "+ Novo Orçamento" para começar.</p>
+                    </div>
+                  ) : (
+                    filteredPropostas.map(p => (
+                      <div key={p.id} className="bg-white border-2 border-brand-border rounded-3xl p-5 shadow-md hover:shadow-lg transition-all active:scale-[0.99]">
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="space-y-1">
+                            <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">
+                              #{String(p.numero).padStart(3, '0')} • {new Date(p.created_at).toLocaleDateString()}
+                            </p>
+                            <h3 className="font-bold text-xl text-brand-text1 leading-tight">{p.cliente_nome}</h3>
+                            <p className="text-sm font-semibold text-brand-red uppercase tracking-wider">{p.tipo_movel}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-brand-green text-xl">{fmt(p.v_total)}</p>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-3 pt-4 border-t-2 border-brand-border">
+                          <button 
+                            onClick={() => { setFormData(p); setCurrentPage('preview'); }}
+                            className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
+                          >
+                            <Eye size={22} strokeWidth={2.5} />
+                            <span className="text-[11px] font-bold uppercase tracking-widest">Ver</span>
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setEditingId(p.id);
+                              setFormData(p);
+                              setCurrentStep(1);
+                              setCurrentPage('orcamento');
+                            }}
+                            className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90"
+                          >
+                            <Edit2 size={22} strokeWidth={2.5} />
+                            <span className="text-[11px] font-bold uppercase tracking-widest">Editar</span>
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteProposta(p.id)}
+                            className="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all active:scale-90"
+                          >
+                            <Trash2 size={22} strokeWidth={2.5} />
+                            <span className="text-[11px] font-bold uppercase tracking-widest">Excluir</span>
+                          </button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </motion.div>
+            )}
+
+            {currentPage === 'orcamento' && (
+              <motion.div 
+                key="orcamento"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                className="max-w-2xl mx-auto"
+              >
+                <OrcamentoForm 
+                  step={currentStep} 
+                  setStep={setCurrentStep} 
+                  data={formData} 
+                  setData={setFormData} 
+                  onSave={handleSaveProposta}
+                  onCancel={() => setCurrentPage('propostas')}
+                />
+              </motion.div>
+            )}
+
+            {currentPage === 'preview' && (
+              <motion.div 
+                key="preview"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="max-w-2xl mx-auto"
+              >
+                <PreviewPage 
+                  proposta={formData as Proposta} 
+                  profile={profile!} 
+                  onBack={() => setCurrentPage('propostas')} 
+                  onStatusUpdate={handleUpdateStatus}
+                />
+              </motion.div>
+            )}
+
+            {currentPage === 'perfil' && (
+              <motion.div 
+                key="perfil"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="max-w-2xl mx-auto"
+              >
+                <ProfilePage 
+                  profile={profile} 
+                  setProfile={setProfile} 
+                  userId={session.user.id} 
+                  showToast={showToast}
+                  setCurrentPage={setCurrentPage}
+                  onSaveSuccess={() => {
+                    setHasPersistedProfile(true);
+                    fetchProfile(session.user.id);
+                  }}
+                />
+              </motion.div>
+            )}
+
+            {currentPage === 'calculadora' && (
+              <motion.div
+                key="calculadora"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="max-w-md mx-auto"
+              >
+                <FullCalculator />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </main>
+
+        {/* Bottom Nav for Mobile */}
+        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border px-6 py-2 flex items-center justify-between z-50">
+          <button 
+            onClick={() => setCurrentPage('tutorial')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+              currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <Home size={20} strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
+            <span className="text-[9px] uppercase tracking-tight font-semibold">Início</span>
+          </button>
+
+          <button 
+            onClick={() => setCurrentPage('perfil')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+              currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <Settings size={20} strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
+            <span className="text-[9px] uppercase tracking-tight font-semibold">Perfil</span>
+          </button>
+
+          <button 
+            onClick={() => {
+              setEditingId(null);
+              setFormData({
+                ambientes: [],
+                chapa: 'MDF 15mm',
+                acabamento: '',
+                ferragens: '',
+                v_margem: 30,
+                status: 'nao_enviada',
+                pgto_formas: ['Dinheiro', 'PIX'],
+                pgto_parcelas: 1,
+                pgto_juros: false
+              });
+              setCurrentStep(1);
+              setCurrentPage('orcamento');
+            }}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+              currentPage === 'orcamento' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <Plus size={28} strokeWidth={3} />
+            <span className="text-[9px] uppercase tracking-tight font-semibold">Novo</span>
+          </button>
+
+          <button 
+            onClick={() => setCurrentPage('propostas')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
               currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
             )}
           >
-            <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Lista</span>
+            <FileText size={20} strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
+            <span className="text-[9px] uppercase tracking-tight font-semibold">Lista</span>
+          </button>
+
+          <button 
+            onClick={() => setCurrentPage('calculadora')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+              currentPage === 'calculadora' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <Calculator size={20} strokeWidth={currentPage === 'calculadora' ? 2.5 : 2} />
+            <span className="text-[9px] uppercase tracking-tight font-semibold">Calc</span>
           </button>
         </nav>
-      )}
+      </div>
 
       <AnimatePresence>
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </AnimatePresence>
-
-      <FloatingCalculator />
     </div>
   );
 }
 
-function FloatingCalculator() {
-  const [isOpen, setIsOpen] = useState(false);
+function FullCalculator() {
   const [display, setDisplay] = useState('0');
   const [equation, setEquation] = useState('');
 
@@ -713,7 +830,6 @@ function FloatingCalculator() {
     }
     if (val === '=') {
       try {
-        // Simple eval-like logic for basic math
         const res = eval(equation.replace('x', '*').replace('÷', '/'));
         setDisplay(String(res));
         setEquation(String(res));
@@ -735,54 +851,31 @@ function FloatingCalculator() {
   };
 
   return (
-    <div className="fixed bottom-24 right-4 z-[100]">
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            drag
-            dragMomentum={false}
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-zinc-900 text-white p-4 rounded-[2rem] shadow-2xl border border-white/10 w-64 mb-4 cursor-move"
+    <div className="bg-zinc-900 text-white p-6 rounded-[2.5rem] shadow-2xl border border-white/10 w-full max-w-sm mx-auto">
+      <div className="flex items-center justify-between mb-6 px-2">
+        <span className="text-xs font-bold uppercase tracking-widest text-zinc-500">Calculadora Profissional</span>
+      </div>
+      
+      <div className="bg-black/40 p-6 rounded-3xl mb-6 text-right overflow-hidden min-h-[100px] flex flex-col justify-end">
+        <div className="text-sm text-zinc-500 h-6 truncate mb-1">{equation}</div>
+        <div className="text-4xl font-bold truncate">{display}</div>
+      </div>
+
+      <div className="grid grid-cols-4 gap-3">
+        {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
+          <button
+            key={btn}
+            onClick={() => handleBtn(btn)}
+            className={cn(
+              "h-16 rounded-2xl font-bold text-xl transition-all active:scale-90",
+              btn === 'C' ? "bg-zinc-800 text-brand-red" :
+              ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white" : "bg-zinc-800 text-white hover:bg-zinc-700"
+            )}
           >
-            <div className="flex items-center justify-between mb-4 px-2">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Calculadora</span>
-              <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white"><X size={16} /></button>
-            </div>
-            
-            <div className="bg-black/40 p-4 rounded-2xl mb-4 text-right overflow-hidden">
-              <div className="text-[10px] text-zinc-500 h-4 truncate">{equation}</div>
-              <div className="text-2xl font-bold truncate">{display}</div>
-            </div>
-
-            <div className="grid grid-cols-4 gap-2">
-              {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
-                <button
-                  key={btn}
-                  onClick={() => handleBtn(btn)}
-                  className={cn(
-                    "h-12 rounded-xl font-bold text-sm transition-all active:scale-90",
-                    btn === 'C' ? "bg-zinc-800 text-brand-red" :
-                    ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white" : "bg-zinc-800 text-white hover:bg-zinc-700"
-                  )}
-                >
-                  {btn}
-                </button>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <motion.button
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-zinc-900 text-white rounded-full shadow-2xl flex items-center justify-center border border-white/10"
-      >
-        <Calculator size={24} />
-      </motion.button>
+            {btn}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -798,11 +891,25 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
     { title: '5. Orçamento', desc: 'Gere o PDF e envie ao cliente.', icon: <FileText size={18} />, color: 'bg-brand-red' },
   ];
 
+  const formatName = (name: string) => {
+    if (!name) return '';
+    return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  };
+
   return (
     <div className="space-y-6 py-4 max-w-xl mx-auto px-4">
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold text-brand-text1 tracking-tighter">
-          Bem-vindo ao <span className="text-brand-red">Fifty+</span> {profile?.user_name && <span className="text-brand-red uppercase">{profile.user_name}</span>}
+          Bem-vindo ao <span className="text-brand-red">Fifty+</span> 
+          {profile?.user_name && (
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-black font-bold ml-2 inline-block"
+            >
+              {formatName(profile.user_name)}
+            </motion.span>
+          )}
         </h2>
         <p className="text-brand-text3 font-medium text-[10px] uppercase tracking-widest">Sua ferramenta completa para orçamentos de marcenaria</p>
       </div>
@@ -849,7 +956,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
           }
         }}
         className={cn(
-          "w-full py-6 rounded-3xl font-bold text-lg shadow-2xl shadow-brand-red/30 active:scale-95 transition-all uppercase tracking-[0.2em] bg-brand-red text-white border-4 border-white/20"
+          "w-full py-4 rounded-2xl font-bold text-sm shadow-xl shadow-brand-red/20 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
         )}
       >
         {hasPersistedProfile ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
@@ -868,7 +975,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) showToast(error.message, 'error');
+    if (error) showToast('E-mail ou Senha incorreta.', 'error');
     setLoading(false);
   };
 
@@ -915,7 +1022,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
             </div>
             <button 
               disabled={loading}
-              className="w-full bg-brand-red text-white py-4 rounded-2xl font-bold text-lg hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-brand-red text-white py-3 rounded-xl font-bold text-base hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50 whitespace-nowrap"
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
@@ -926,6 +1033,19 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
             >
               Esqueci minha senha
             </button>
+            <div className="mt-4 text-center">
+              <p className="text-[10px] text-zinc-400">
+                Acesso exclusivo para cliente. Adquira o acesso em{' '}
+                <a 
+                  href="https://fiftymais.com.br" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-brand-red font-bold hover:underline"
+                >
+                  fiftymais.com.br
+                </a>
+              </p>
+            </div>
           </form>
         ) : (
           <form onSubmit={handleForgot} className="space-y-4">
@@ -1094,8 +1214,8 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               </div>
             </div>
           </div>
-          <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
-            PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
+          <button onClick={() => setStep(2)} className="w-full bg-zinc-900 text-white py-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-zinc-800 group">
+            PRÓXIMO PASSO <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       )}
@@ -1103,7 +1223,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
       {step === 2 && (
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
-            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">Adicionar Ambientes</h3>
+            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">ADICIONE OS AMBIENTES</h3>
             <div className="grid grid-cols-4 gap-2">
               {[
                 { label: 'Cozinha', emoji: '🍳', val: 'Cozinha Planejada' },
@@ -1169,11 +1289,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setStep(1)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
-              <ChevronLeft size={22} /> VOLTAR
+            <button onClick={() => setStep(1)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={14} /> Voltar
             </button>
-            <button onClick={() => setStep(3)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
-              PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
+            <button onClick={() => setStep(3)} className="flex-[1.5] bg-zinc-100 text-zinc-900 border border-zinc-200 py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-zinc-200 uppercase tracking-widest whitespace-nowrap">
+              Próximo Passo <ChevronRight size={14} />
             </button>
           </div>
         </div>
@@ -1215,33 +1335,33 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-semibold text-brand-text3 uppercase ml-1">Largura</label>
+                          <label className="text-[10px] font-semibold text-brand-text3 uppercase ml-1">Largura (mm)</label>
                           <input 
                             type="number" 
                             value={p.l} 
                             onChange={e => updatePeca(amb.id, pIdx, 'l', e.target.value)}
                             className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-semibold outline-none focus:border-brand-red transition-all text-center"
-                            placeholder="0.00"
+                            placeholder="0"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-semibold text-brand-text3 uppercase ml-1">Altura</label>
+                          <label className="text-[10px] font-semibold text-brand-text3 uppercase ml-1">Altura (mm)</label>
                           <input 
                             type="number" 
                             value={p.a} 
                             onChange={e => updatePeca(amb.id, pIdx, 'a', e.target.value)}
                             className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-semibold outline-none focus:border-brand-red transition-all text-center"
-                            placeholder="0.00"
+                            placeholder="0"
                           />
                         </div>
                         <div className="space-y-1.5">
-                          <label className="text-[10px] font-semibold text-brand-text3 uppercase ml-1">Profund.</label>
+                          <label className="text-[10px] font-semibold text-brand-text3 uppercase ml-1">Profund. (mm)</label>
                           <input 
                             type="number" 
                             value={p.p} 
                             onChange={e => updatePeca(amb.id, pIdx, 'p', e.target.value)}
                             className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-3 py-2.5 sm:py-3 text-sm sm:text-base font-semibold outline-none focus:border-brand-red transition-all text-center"
-                            placeholder="0.00"
+                            placeholder="0"
                           />
                         </div>
                       </div>
@@ -1264,11 +1384,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             )}
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
-              <ChevronLeft size={22} /> VOLTAR
+            <button onClick={() => setStep(2)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={14} /> Voltar
             </button>
-            <button onClick={() => setStep(4)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
-              PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
+            <button onClick={() => setStep(4)} className="flex-[1.5] bg-zinc-100 text-zinc-900 border border-zinc-200 py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-zinc-200 uppercase tracking-widest whitespace-nowrap">
+              Próximo Passo <ChevronRight size={14} />
             </button>
           </div>
         </div>
@@ -1330,11 +1450,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setStep(3)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
-              <ChevronLeft size={22} /> VOLTAR
+            <button onClick={() => setStep(3)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={14} /> Voltar
             </button>
-            <button onClick={() => setStep(5)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
-              PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
+            <button onClick={() => setStep(5)} className="flex-[1.5] bg-zinc-100 text-zinc-900 border border-zinc-200 py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-zinc-200 uppercase tracking-widest whitespace-nowrap">
+              Próximo Passo <ChevronRight size={14} />
             </button>
           </div>
         </div>
@@ -1344,7 +1464,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
         <div className="space-y-4">
           <div className="bg-white p-5 rounded-3xl border border-brand-border space-y-6">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest">Pagamento</h3>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {['Dinheiro', 'PIX', 'Cartão', 'Transferência', 'Cheque', 'Financiamento'].map(f => (
                 <button 
                   key={f}
@@ -1354,7 +1474,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
                     updateData('pgto_formas', next);
                   }}
                   className={cn(
-                    "p-4 rounded-2xl border-2 text-[11px] font-semibold transition-all uppercase tracking-tighter",
+                    "p-3 rounded-2xl border-2 text-[10px] font-semibold transition-all uppercase tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis",
                     (data.pgto_formas || []).includes(f) ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                   )}
                 >
@@ -1475,11 +1595,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             </div>
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setStep(4)} className="flex-1 bg-white border-2 border-brand-border py-4 sm:py-5 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
-              <ChevronLeft size={20} /> VOLTAR
+            <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border border-brand-border py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+              <ChevronLeft size={14} /> Voltar
             </button>
-            <button onClick={onSave} className="flex-[2] bg-brand-red text-white py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
-              FINALIZAR ORÇAMENTO <Check size={22} className="group-hover:scale-110 transition-transform" />
+            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-2.5 rounded-xl font-bold text-[10px] flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap">
+              Finalizar Orçamento <Check size={14} />
             </button>
           </div>
         </div>
@@ -1619,9 +1739,12 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
     }
 
     setLoading(true);
+    // Map 'user_name' to 'especialidade' to avoid DB column error
+    const { user_name, ...rest } = profile;
     const { error } = await supabase.from('profiles').upsert({
       id: userId,
-      ...profile,
+      ...rest,
+      especialidade: user_name,
       updated_at: new Date().toISOString()
     });
     if (error) {
@@ -1664,7 +1787,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
             </div>
             <div>
               <h3 className="text-2xl font-bold text-brand-text1 leading-tight">{profile.nome}</h3>
-              {profile.user_name && <p className="text-brand-red font-bold text-sm uppercase tracking-wider">{profile.user_name}</p>}
+              {profile.user_name && <p className="text-black font-bold text-sm uppercase tracking-wider">{profile.user_name}</p>}
               <p className="text-brand-text3 font-medium uppercase tracking-widest text-[10px] mt-1">{profile.cpf || 'CPF/CNPJ não informado'}</p>
             </div>
           </div>
@@ -1797,16 +1920,16 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   setCurrentPage('tutorial');
                 }
               }}
-              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-5 rounded-2xl font-bold text-base active:scale-95 transition-all uppercase"
+              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-3 rounded-xl font-bold text-xs active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
             >
               {profile?.nome ? 'Cancelar' : 'Voltar'}
             </button>
             <button 
               onClick={handleSave} 
               disabled={loading}
-              className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/20 uppercase"
+              className="flex-[1.5] bg-brand-red text-white py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/10 uppercase tracking-widest whitespace-nowrap"
             >
-              <Save size={22} /> {loading ? 'Salvando...' : 'Salvar Perfil'}
+              <Save size={16} /> {loading ? 'Salvando...' : 'Salvar Perfil'}
             </button>
           </div>
         </>
