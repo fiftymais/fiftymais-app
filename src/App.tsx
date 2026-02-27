@@ -24,7 +24,9 @@ import {
   ShieldCheck,
   Layout,
   Play,
-  Home
+  Home,
+  Calculator,
+  Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -36,6 +38,22 @@ function cn(...inputs: ClassValue[]) {
 
 // --- UTILS ---
 const fmt = (val: number) => 'R$ ' + (val || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+const formatPhone = (val: string) => {
+  const clean = val.replace(/\D/g, '');
+  if (clean.length <= 10) {
+    return clean.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3').slice(0, 14);
+  }
+  return clean.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3').slice(0, 15);
+};
+
+const formatCPFCNPJ = (val: string) => {
+  const clean = val.replace(/\D/g, '');
+  if (clean.length <= 11) {
+    return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4').slice(0, 14);
+  }
+  return clean.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5').slice(0, 18);
+};
 
 // --- COMPONENTS ---
 const Toast = ({ message, type = 'success', onClose }: { message: string, type?: 'success' | 'error', onClose: () => void }) => (
@@ -58,6 +76,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState<'propostas' | 'orcamento' | 'perfil' | 'preview' | 'tutorial'>('tutorial');
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [hasPersistedProfile, setHasPersistedProfile] = useState(false);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -93,14 +112,12 @@ export default function App() {
   };
 
   const formatPixKey = (val: string, type: string) => {
-    const clean = val.replace(/\D/g, '');
     switch (type) {
       case 'CPF':
-        return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4').slice(0, 14);
       case 'CNPJ':
-        return clean.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5').slice(0, 18);
+        return formatCPFCNPJ(val);
       case 'Celular':
-        return clean.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3').slice(0, 15);
+        return formatPhone(val);
       default:
         return val;
     }
@@ -140,9 +157,21 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Guard: If profile not set, only allow tutorial or perfil
+  useEffect(() => {
+    if (session && !loading) {
+      if (!hasPersistedProfile && currentPage !== 'tutorial' && currentPage !== 'perfil') {
+        setCurrentPage('tutorial');
+      }
+    }
+  }, [hasPersistedProfile, currentPage, session, loading]);
+
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase.from('profiles').select('*').eq('id', userId).single();
-    if (data) setProfile(data);
+    if (data) {
+      setProfile(data);
+      if (data.nome) setHasPersistedProfile(true);
+    }
   };
 
   const fetchPropostas = async (userId: string) => {
@@ -431,8 +460,9 @@ export default function App() {
             >
               <TutorialPage 
                 onStart={() => setCurrentPage('orcamento')} 
-                profile={profile}
+                hasPersistedProfile={hasPersistedProfile}
                 setCurrentPage={setCurrentPage}
+                profile={profile}
               />
             </motion.div>
           )}
@@ -589,6 +619,8 @@ export default function App() {
                 setProfile={setProfile} 
                 userId={session.user.id} 
                 showToast={showToast} 
+                setCurrentPage={setCurrentPage}
+                onSaveSuccess={() => setHasPersistedProfile(true)}
               />
             </motion.div>
           )}
@@ -596,77 +628,168 @@ export default function App() {
       </main>
 
       {/* Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-16 sm:h-20 flex items-center justify-around px-1 sm:px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-        <button 
-          onClick={() => setCurrentPage('tutorial')}
-          className={cn(
-            "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
-          )}
-        >
-          <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Início</span>
-        </button>
+      {hasPersistedProfile && (
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border h-16 sm:h-20 flex items-center justify-around px-1 sm:px-2 pb-safe z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+          <button 
+            onClick={() => setCurrentPage('tutorial')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+              currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <Home size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
+            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Início</span>
+          </button>
 
-        <button 
-          onClick={() => setCurrentPage('perfil')}
-          className={cn(
-            "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
-          )}
-        >
-          <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Perfil</span>
-        </button>
+          <button 
+            onClick={() => setCurrentPage('perfil')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+              currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <Settings size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
+            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Perfil</span>
+          </button>
 
-        <button 
-          onClick={() => {
-            setEditingId(null);
-            setFormData({
-              ambientes: [],
-              chapa: 'MDF 15mm',
-              acabamento: '',
-              ferragens: '',
-              v_margem: 30,
-              status: 'nao_enviada',
-              pgto_formas: ['Dinheiro', 'PIX'],
-              pgto_parcelas: 1,
-              pgto_juros: false
-            });
-            setCurrentStep(1);
-            setCurrentPage('orcamento');
-          }}
-          className={cn(
-            "flex flex-col items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'orcamento' ? "text-brand-text1" : "text-brand-text3"
-          )}
-        >
-          <Plus size={28} className="sm:w-8 sm:h-8" strokeWidth={3} />
-          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Novo</span>
-        </button>
+          <button 
+            onClick={() => {
+              setEditingId(null);
+              setFormData({
+                ambientes: [],
+                chapa: 'MDF 15mm',
+                acabamento: '',
+                ferragens: '',
+                v_margem: 30,
+                status: 'nao_enviada',
+                pgto_formas: ['Dinheiro', 'PIX'],
+                pgto_parcelas: 1,
+                pgto_juros: false
+              });
+              setCurrentStep(1);
+              setCurrentPage('orcamento');
+            }}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 sm:px-4 sm:py-2 rounded-2xl transition-all duration-300",
+              currentPage === 'orcamento' ? "text-brand-text1" : "text-brand-text3"
+            )}
+          >
+            <Plus size={28} className="sm:w-8 sm:h-8" strokeWidth={3} />
+            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Novo</span>
+          </button>
 
-        <button 
-          onClick={() => setCurrentPage('propostas')}
-          className={cn(
-            "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
-            currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
-          )}
-        >
-          <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-          <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Lista</span>
-        </button>
-      </nav>
+          <button 
+            onClick={() => setCurrentPage('propostas')}
+            className={cn(
+              "flex flex-col items-center gap-1 px-2 py-1 sm:px-3 sm:py-2 rounded-2xl transition-all duration-300",
+              currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
+            )}
+          >
+            <FileText size={20} className="sm:w-6 sm:h-6" strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
+            <span className="text-[9px] sm:text-[11px] uppercase tracking-tight font-semibold opacity-100">Lista</span>
+          </button>
+        </nav>
+      )}
 
       <AnimatePresence>
         {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
       </AnimatePresence>
+
+      <FloatingCalculator />
+    </div>
+  );
+}
+
+function FloatingCalculator() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [display, setDisplay] = useState('0');
+  const [equation, setEquation] = useState('');
+
+  const handleBtn = (val: string) => {
+    if (val === 'C') {
+      setDisplay('0');
+      setEquation('');
+      return;
+    }
+    if (val === '=') {
+      try {
+        // Simple eval-like logic for basic math
+        const res = eval(equation.replace('x', '*').replace('÷', '/'));
+        setDisplay(String(res));
+        setEquation(String(res));
+      } catch (e) {
+        setDisplay('Erro');
+        setEquation('');
+      }
+      return;
+    }
+    
+    const isOperator = ['+', '-', 'x', '÷'].includes(val);
+    if (isOperator) {
+      setEquation(prev => prev + val);
+      return;
+    }
+
+    setEquation(prev => prev === '0' ? val : prev + val);
+    setDisplay(prev => prev === '0' ? val : prev + val);
+  };
+
+  return (
+    <div className="fixed bottom-24 right-4 z-[100]">
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            drag
+            dragMomentum={false}
+            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+            className="bg-zinc-900 text-white p-4 rounded-[2rem] shadow-2xl border border-white/10 w-64 mb-4 cursor-move"
+          >
+            <div className="flex items-center justify-between mb-4 px-2">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Calculadora</span>
+              <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-white"><X size={16} /></button>
+            </div>
+            
+            <div className="bg-black/40 p-4 rounded-2xl mb-4 text-right overflow-hidden">
+              <div className="text-[10px] text-zinc-500 h-4 truncate">{equation}</div>
+              <div className="text-2xl font-bold truncate">{display}</div>
+            </div>
+
+            <div className="grid grid-cols-4 gap-2">
+              {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
+                <button
+                  key={btn}
+                  onClick={() => handleBtn(btn)}
+                  className={cn(
+                    "h-12 rounded-xl font-bold text-sm transition-all active:scale-90",
+                    btn === 'C' ? "bg-zinc-800 text-brand-red" :
+                    ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white" : "bg-zinc-800 text-white hover:bg-zinc-700"
+                  )}
+                >
+                  {btn}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.button
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-14 h-14 bg-zinc-900 text-white rounded-full shadow-2xl flex items-center justify-center border border-white/10"
+      >
+        <Calculator size={24} />
+      </motion.button>
     </div>
   );
 }
 
 // --- SUB-COMPONENTS ---
 
-function TutorialPage({ onStart, profile, setCurrentPage }: { onStart: () => void, profile: any, setCurrentPage: (p: string) => void }) {
+function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
   const steps = [
     { title: '1. Perfil', desc: 'Configure sua logo e dados.', icon: <Settings size={18} />, color: 'bg-blue-500' },
     { title: '2. Nova Proposta', desc: 'Inicie um orçamento rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
@@ -675,12 +798,12 @@ function TutorialPage({ onStart, profile, setCurrentPage }: { onStart: () => voi
     { title: '5. Orçamento', desc: 'Gere o PDF e envie ao cliente.', icon: <FileText size={18} />, color: 'bg-brand-red' },
   ];
 
-  const isProfileSet = profile && profile.nome;
-
   return (
     <div className="space-y-6 py-4 max-w-xl mx-auto px-4">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-brand-text1 uppercase tracking-tighter">Bem-vindo ao Fifty+</h2>
+        <h2 className="text-3xl font-bold text-brand-text1 tracking-tighter">
+          Bem-vindo ao <span className="text-brand-red">Fifty+</span> {profile?.user_name && <span className="text-brand-red uppercase">{profile.user_name}</span>}
+        </h2>
         <p className="text-brand-text3 font-medium text-[10px] uppercase tracking-widest">Sua ferramenta completa para orçamentos de marcenaria</p>
       </div>
 
@@ -688,24 +811,27 @@ function TutorialPage({ onStart, profile, setCurrentPage }: { onStart: () => voi
         <div className="p-6 border-b border-brand-border bg-brand-surface2">
            <h3 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
         </div>
-        <div className="divide-y divide-brand-border">
+        <div className="p-6 space-y-0 relative">
+          {/* Trail Line */}
+          <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
+          
           {steps.map((step, i) => (
             <motion.div 
               key={i}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="flex items-center gap-4 p-4 hover:bg-brand-surface2 transition-colors"
+              className="flex items-center gap-6 py-4 relative z-10"
             >
               <div className={cn(
-                "w-10 h-10 rounded-xl text-white flex items-center justify-center shrink-0 shadow-sm",
+                "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-md border-4 border-white",
                 step.color
               )}>
                 {step.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-xs font-semibold text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                <p className="text-[10px] text-brand-text3 font-medium truncate">{step.desc}</p>
+                <h4 className="text-sm font-bold text-brand-text1 uppercase tracking-tight">{step.title}</h4>
+                <p className="text-xs text-brand-text3 font-medium">{step.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -713,19 +839,20 @@ function TutorialPage({ onStart, profile, setCurrentPage }: { onStart: () => voi
       </div>
 
       <motion.button
+        whileHover={{ scale: 1.02, backgroundColor: '#E11D48' }}
         whileTap={{ scale: 0.98 }}
         onClick={() => {
-          if (isProfileSet) {
+          if (hasPersistedProfile) {
             onStart();
           } else {
             setCurrentPage('perfil');
           }
         }}
         className={cn(
-          "w-full py-5 rounded-2xl font-bold text-base shadow-xl active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white"
+          "w-full py-6 rounded-3xl font-bold text-lg shadow-2xl shadow-brand-red/30 active:scale-95 transition-all uppercase tracking-[0.2em] bg-brand-red text-white border-4 border-white/20"
         )}
       >
-        {isProfileSet ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
+        {hasPersistedProfile ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
       </motion.button>
     </div>
   );
@@ -891,14 +1018,12 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
   };
 
   const formatPixKey = (val: string, type: string) => {
-    const clean = val.replace(/\D/g, '');
     switch (type) {
       case 'CPF':
-        return clean.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4').slice(0, 14);
       case 'CNPJ':
-        return clean.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5').slice(0, 18);
+        return formatCPFCNPJ(val);
       case 'Celular':
-        return clean.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3').slice(0, 15);
+        return formatPhone(val);
       default:
         return val;
     }
@@ -933,7 +1058,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               <input 
                 type="tel" 
                 value={data.cliente_wpp || ''} 
-                onChange={e => updateData('cliente_wpp', e.target.value)}
+                onChange={e => updateData('cliente_wpp', formatPhone(e.target.value))}
                 className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="(00) 00000-0000"
               />
@@ -969,8 +1094,8 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
               </div>
             </div>
           </div>
-          <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all">
-            PRÓXIMO PASSO <ChevronRight size={22} />
+          <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
+            PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       )}
@@ -1047,8 +1172,8 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             <button onClick={() => setStep(1)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
               <ChevronLeft size={22} /> VOLTAR
             </button>
-            <button onClick={() => setStep(3)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all">
-              PRÓXIMO <ChevronRight size={22} />
+            <button onClick={() => setStep(3)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
+              PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -1139,11 +1264,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             )}
           </div>
           <div className="flex gap-3">
-            <button onClick={() => setStep(2)} className="flex-1 bg-white border border-brand-border py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
-              <ChevronLeft size={18} /> Voltar
+            <button onClick={() => setStep(2)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
+              <ChevronLeft size={22} /> VOLTAR
             </button>
-            <button onClick={() => setStep(4)} className="flex-[2] bg-brand-red text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2">
-              Próximo <ChevronRight size={18} />
+            <button onClick={() => setStep(4)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
+              PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -1208,8 +1333,8 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             <button onClick={() => setStep(3)} className="flex-1 bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
               <ChevronLeft size={22} /> VOLTAR
             </button>
-            <button onClick={() => setStep(5)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all">
-              PRÓXIMO <ChevronRight size={22} />
+            <button onClick={() => setStep(5)} className="flex-[2] bg-brand-red text-white py-5 rounded-2xl font-bold text-base flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
+              PRÓXIMO PASSO <ChevronRight size={22} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
@@ -1353,8 +1478,8 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel }: any) 
             <button onClick={() => setStep(4)} className="flex-1 bg-white border-2 border-brand-border py-4 sm:py-5 rounded-2xl font-bold text-sm sm:text-base flex items-center justify-center gap-2 active:scale-95 transition-all">
               <ChevronLeft size={20} /> VOLTAR
             </button>
-            <button onClick={onSave} className="flex-[2] bg-brand-green text-white py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-green/20 active:scale-95 transition-all">
-              <Plus size={20} /> BAIXAR ORÇAMENTO
+            <button onClick={onSave} className="flex-[2] bg-brand-red text-white py-4 sm:py-5 rounded-2xl font-bold text-base sm:text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all hover:bg-brand-red/90 group">
+              FINALIZAR ORÇAMENTO <Check size={22} className="group-hover:scale-110 transition-transform" />
             </button>
           </div>
         </div>
@@ -1473,13 +1598,26 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
   );
 }
 
-function ProfilePage({ profile, setProfile, userId, showToast }: any) {
+function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, onSaveSuccess }: any) {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(!profile?.nome);
 
   const updateProfile = (key: string, val: any) => setProfile((prev: any) => ({ ...prev, [key]: val }));
 
   const handleSave = async () => {
+    if (!profile?.user_name?.trim()) {
+      showToast('Seu nome é obrigatório', 'error');
+      return;
+    }
+    if (!profile?.nome?.trim()) {
+      showToast('O nome da marcenaria é obrigatório', 'error');
+      return;
+    }
+    if (!profile?.wpp?.trim()) {
+      showToast('O WhatsApp é obrigatório', 'error');
+      return;
+    }
+
     setLoading(true);
     const { error } = await supabase.from('profiles').upsert({
       id: userId,
@@ -1491,6 +1629,9 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
     } else {
       showToast('Perfil salvo com sucesso!');
       setIsEditing(false);
+      onSaveSuccess();
+      // Redirect to tutorial (home) as requested
+      setCurrentPage('tutorial');
     }
     setLoading(false);
   };
@@ -1512,66 +1653,73 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
       </div>
 
       {!isEditing && profile?.nome ? (
-        <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-md space-y-8">
-          <div className="flex flex-col items-center text-center space-y-5">
-            <div className="w-32 h-32 bg-brand-surface2 rounded-[2rem] border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner">
+        <div className="bg-white p-6 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-8">
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 bg-brand-surface2 rounded-3xl border-2 border-brand-border flex items-center justify-center overflow-hidden shrink-0">
               {profile.logo ? (
-                <img src={profile.logo} className="w-full h-full object-contain p-3" />
+                <img src={profile.logo} className="w-full h-full object-contain p-2" />
               ) : (
-                <span className="text-brand-red font-bold text-4xl">{profile.nome[0]}</span>
+                <span className="text-brand-red font-bold text-2xl">{profile.nome[0]}</span>
               )}
             </div>
             <div>
-              <h3 className="text-3xl font-bold text-brand-text1 leading-tight">{profile.nome}</h3>
-              <p className="text-brand-text3 font-semibold uppercase tracking-widest text-xs mt-1">{profile.cpf || 'CPF/CNPJ não informado'}</p>
+              <h3 className="text-2xl font-bold text-brand-text1 leading-tight">{profile.nome}</h3>
+              {profile.user_name && <p className="text-brand-red font-bold text-sm uppercase tracking-wider">{profile.user_name}</p>}
+              <p className="text-brand-text3 font-medium uppercase tracking-widest text-[10px] mt-1">{profile.cpf || 'CPF/CNPJ não informado'}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <div className="flex items-center gap-5 p-5 bg-brand-surface2 rounded-3xl border-2 border-brand-border shadow-sm">
-              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-brand-red shadow-sm border border-brand-border">
-                <MessageCircle size={24} strokeWidth={2.5} />
+          <div className="space-y-4 pt-4 border-t border-brand-border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="text-brand-red opacity-60"><MessageCircle size={18} /></div>
+                <span className="text-xs font-bold text-brand-text3 uppercase tracking-wider">WhatsApp</span>
               </div>
-              <div>
-                <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">WhatsApp</p>
-                <p className="font-bold text-lg text-brand-text1">{profile.wpp}</p>
-              </div>
+              <span className="font-bold text-brand-text1">{profile.wpp}</span>
             </div>
+
             {profile.insta && (
-              <div className="flex items-center gap-5 p-5 bg-brand-surface2 rounded-3xl border-2 border-brand-border shadow-sm">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-brand-red shadow-sm border border-brand-border">
-                  <Settings size={24} strokeWidth={2.5} />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="text-brand-red opacity-60"><Settings size={18} /></div>
+                  <span className="text-xs font-bold text-brand-text3 uppercase tracking-wider">Instagram</span>
                 </div>
-                <div>
-                  <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">Instagram</p>
-                  <p className="font-bold text-lg text-brand-text1">{profile.insta}</p>
-                </div>
+                <span className="font-bold text-brand-text1">{profile.insta}</span>
               </div>
             )}
+
             {profile.endereco && (
-              <div className="flex items-center gap-5 p-5 bg-brand-surface2 rounded-3xl border-2 border-brand-border shadow-sm">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-brand-red shadow-sm border border-brand-border">
-                  <Home size={24} strokeWidth={2.5} />
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="text-brand-red opacity-60"><Home size={18} /></div>
+                  <span className="text-xs font-bold text-brand-text3 uppercase tracking-wider">Endereço</span>
                 </div>
-                <div>
-                  <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">Endereço</p>
-                  <p className="font-bold text-base text-brand-text1 leading-tight">{profile.endereco}</p>
-                </div>
+                <p className="text-sm font-medium text-brand-text2 pl-7 leading-relaxed">{profile.endereco}</p>
               </div>
             )}
           </div>
 
           <button 
             onClick={() => setIsEditing(true)}
-            className="w-full bg-brand-red text-white py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-2 shadow-lg shadow-brand-red/20 active:scale-95 transition-all"
+            className="w-full bg-brand-surface2 border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-white hover:border-brand-red hover:text-brand-red transition-all active:scale-95 uppercase tracking-widest"
           >
-            <Edit2 size={22} /> EDITAR PERFIL
+            <Edit2 size={18} /> Editar Dados
           </button>
         </div>
       ) : (
         <>
           <div className="bg-white p-6 rounded-[2.5rem] border-2 border-brand-border space-y-6 shadow-sm">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-4">Dados da Empresa</h3>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-brand-text2 ml-1">Seu Nome *</label>
+              <input 
+                type="text" 
+                value={profile?.user_name || ''} 
+                onChange={e => updateProfile('user_name', e.target.value)}
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
+                placeholder="Como quer ser chamado?"
+              />
+            </div>
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-brand-text2 ml-1">Nome da Marcenaria *</label>
               <input 
@@ -1587,7 +1735,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
               <input 
                 type="text" 
                 value={profile?.cpf || ''} 
-                onChange={e => updateProfile('cpf', e.target.value)}
+                onChange={e => updateProfile('cpf', formatCPFCNPJ(e.target.value))}
                 className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                 placeholder="00.000.000/0000-00"
               />
@@ -1598,7 +1746,7 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
                 <input 
                   type="tel" 
                   value={profile?.wpp || ''} 
-                  onChange={e => updateProfile('wpp', e.target.value)}
+                  onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
                   className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 sm:py-4 text-sm sm:text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="(00) 00000-0000"
                 />
@@ -1641,14 +1789,18 @@ function ProfilePage({ profile, setProfile, userId, showToast }: any) {
           </div>
 
           <div className="flex gap-3">
-            {profile?.nome && (
-              <button 
-                onClick={() => setIsEditing(false)}
-                className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-5 rounded-2xl font-bold text-base active:scale-95 transition-all uppercase"
-              >
-                Cancelar
-              </button>
-            )}
+            <button 
+              onClick={() => {
+                if (profile?.nome) {
+                  setIsEditing(false);
+                } else {
+                  setCurrentPage('tutorial');
+                }
+              }}
+              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-5 rounded-2xl font-bold text-base active:scale-95 transition-all uppercase"
+            >
+              {profile?.nome ? 'Cancelar' : 'Voltar'}
+            </button>
             <button 
               onClick={handleSave} 
               disabled={loading}

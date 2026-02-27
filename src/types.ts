@@ -1,6 +1,7 @@
 export interface Profile {
   id: string;
   nome?: string;
+  user_name?: string;
   wpp?: string;
   cidade?: string;
   insta?: string;
