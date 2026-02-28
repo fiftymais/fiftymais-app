@@ -454,7 +454,7 @@ export default function App() {
         <div className="p-8 border-b border-brand-border">
           <button 
             onClick={() => setCurrentPage('tutorial')}
-            className="text-3xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+            className="text-3xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
           >
             Fifty+
           </button>
@@ -464,7 +464,7 @@ export default function App() {
           <button 
             onClick={() => setCurrentPage('tutorial')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
               currentPage === 'tutorial' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
@@ -474,7 +474,7 @@ export default function App() {
           <button 
             onClick={() => setCurrentPage('perfil')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
               currentPage === 'perfil' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
@@ -499,7 +499,7 @@ export default function App() {
               setCurrentPage('orcamento');
             }}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
               currentPage === 'orcamento' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
@@ -509,7 +509,7 @@ export default function App() {
           <button 
             onClick={() => setCurrentPage('propostas')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
               currentPage === 'propostas' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
@@ -519,7 +519,7 @@ export default function App() {
           <button 
             onClick={() => setCurrentPage('calculadora')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base transition-all",
+              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
               currentPage === 'calculadora' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
@@ -543,7 +543,7 @@ export default function App() {
         <header className="md:hidden sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-14 flex items-center justify-between">
           <button 
             onClick={() => setCurrentPage('tutorial')}
-            className="text-xl font-bold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+            className="text-xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
           >
             Fifty+
           </button>
@@ -584,7 +584,7 @@ export default function App() {
                 className="max-w-2xl mx-auto"
               >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-brand-text1">Seus Orçamentos</h2>
+                  <h2 className="text-2xl font-semibold text-brand-text1">Seus Orçamentos</h2>
                   <button 
                     onClick={() => {
                       setEditingId(null);
@@ -602,9 +602,9 @@ export default function App() {
                       setCurrentStep(1);
                       setCurrentPage('orcamento');
                     }}
-                    className="bg-brand-red text-white px-4 py-2 rounded-xl font-semibold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20"
+                    className="bg-brand-red text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-xs"
                   >
-                    <Plus size={18} /> Novo Orçamento
+                    <Plus size={16} /> Novo Orçamento
                   </button>
                 </div>
 
@@ -636,8 +636,8 @@ export default function App() {
                             <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">
                               #{String(p.numero).padStart(3, '0')} • {new Date(p.created_at).toLocaleDateString()}
                             </p>
-                            <h3 className="font-bold text-xl text-brand-text1 leading-tight whitespace-nowrap overflow-hidden text-ellipsis">{p.cliente_nome}</h3>
-                            <p className="text-sm font-semibold text-brand-red uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{p.tipo_movel}</p>
+                            <h3 className="font-semibold text-lg md:text-xl text-brand-text1 leading-tight whitespace-nowrap overflow-hidden text-ellipsis">{p.cliente_nome}</h3>
+                            <p className="text-xs md:text-sm font-medium text-brand-red uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{p.tipo_movel}</p>
                           </div>
                           <div className="text-right">
                             <p className="font-bold text-brand-green text-xl">{fmt(p.v_total)}</p>
@@ -969,7 +969,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
   return (
     <div className="pb-6 font-dm">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-extrabold text-brand-text1 uppercase tracking-wider">Novidades</h3>
+        <h3 className="text-sm font-medium text-brand-text1 uppercase tracking-wider">Novidades</h3>
         <div className="flex gap-1">
           {banners.map((_, i) => (
             <div
@@ -983,7 +983,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative overflow-hidden rounded-2xl border-2 border-brand-border bg-white shadow-md hover:shadow-lg transition-shadow duration-500">
+      <div className="relative overflow-hidden rounded-3xl border-2 border-brand-border bg-white shadow-sm hover:shadow-md transition-all duration-500">
         <motion.div 
           className="flex cursor-grab active:cursor-grabbing"
           animate={{ x: `-${index * 100}%` }}
@@ -999,23 +999,23 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
             <div 
               key={i} 
               className={cn(
-                "min-w-full min-h-[160px] md:min-h-[140px] p-5 flex items-center gap-4 relative overflow-hidden shrink-0",
+                "min-w-full min-h-[240px] md:min-h-[180px] p-6 flex flex-col justify-center md:flex-row md:items-center gap-4 relative overflow-hidden shrink-0",
                 b.bg.includes('white') ? 'bg-white' : b.bg
               )}
             >
-              <div className="flex-1 min-w-0 space-y-2 relative z-10">
+              <div className="flex-1 min-w-0 space-y-3 relative z-10">
                 <div className="flex items-center gap-2">
-                  <span className={cn("px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest", b.tagBg)}>
+                  <span className={cn("px-2 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest", b.tagBg)}>
                     {b.tag.split(' ')[0]}
                   </span>
-                  <span className={cn("text-[8px] font-bold uppercase tracking-widest opacity-60", b.textColor)}>
+                  <span className={cn("text-[8px] font-medium uppercase tracking-widest opacity-60", b.textColor)}>
                     {b.tag.split(' ').slice(1).join(' ')}
                   </span>
                 </div>
-                <h4 className={cn("text-base md:text-lg font-bold leading-tight", b.textColor)}>
+                <h4 className={cn("text-base md:text-lg font-medium leading-tight", b.textColor)}>
                   {b.title}
                 </h4>
-                <p className={cn("text-[10px] md:text-xs opacity-80 leading-relaxed font-medium", b.textColor)}>
+                <p className={cn("text-[10px] md:text-xs opacity-80 leading-relaxed font-normal", b.textColor)}>
                   {b.sub}
                 </p>
                 <div className="pt-2">
@@ -1025,7 +1025,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
                       b.action();
                     }}
                     className={cn(
-                      "px-5 py-2 rounded-xl font-bold text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-sm hover:shadow-md",
+                      "px-5 py-2 rounded-xl font-medium text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-sm hover:shadow-md",
                       b.btnBg
                     )}
                   >
@@ -1057,20 +1057,20 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
 
   return (
     <div className="space-y-6 py-4 max-w-3xl mx-auto px-4">
-      <div className="text-center space-y-2">
-        <h2 className="text-3xl font-semibold text-brand-text1 tracking-tighter">
-          Bem-vindo ao <span className="text-brand-red font-bold">Fifty+</span> 
+      <div className="text-center space-y-2 max-w-full overflow-hidden">
+        <h2 className="text-xl md:text-2xl font-medium text-brand-text1 tracking-tighter flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis px-2">
+          Bem-vindo ao <span className="text-brand-red font-medium">Fifty+</span> 
           {profile?.user_name && (
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-black font-semibold ml-2 inline-block"
+              className="text-black font-medium truncate inline-block"
             >
               {formatName(profile.user_name)}
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-medium text-xs uppercase tracking-widest">Sua ferramenta completa para orçamentos de marcenaria</p>
+        <p className="text-brand-text3 font-medium text-[10px] md:text-xs uppercase tracking-widest truncate">Sua ferramenta completa para orçamentos de marcenaria</p>
       </div>
 
       <NewsCarousel setCurrentPage={setCurrentPage} />
@@ -1153,7 +1153,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
       <div className="w-full max-w-sm bg-white rounded-3xl p-8 shadow-2xl">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-brand-red tracking-tighter mb-2">Fifty+</h1>
+          <h1 className="text-4xl font-semibold text-brand-red tracking-tighter mb-2">Fifty+</h1>
           <p className="text-zinc-500 text-sm font-medium">Propostas profissionais para marceneiros</p>
         </div>
 
@@ -1784,10 +1784,10 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             </div>
           </div>
           <div className="flex gap-4">
-            <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border-2 border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+            <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border-2 border-brand-border py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap px-4">
+            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap px-4">
               SALVAR E BAIXAR ORÇAMENTO <Check size={18} />
             </button>
           </div>
@@ -1836,11 +1836,11 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
             <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Informações do Cliente</h4>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">Nome</span>
-              <span className="text-base font-bold text-brand-text1 whitespace-nowrap overflow-hidden text-ellipsis ml-4">{proposta.cliente_nome}</span>
+              <span className="text-base font-semibold text-brand-text1 whitespace-nowrap overflow-hidden text-ellipsis ml-4">{proposta.cliente_nome}</span>
             </div>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">WhatsApp</span>
-              <span className="text-base font-bold text-brand-text1">{proposta.cliente_wpp}</span>
+              <span className="text-base font-semibold text-brand-text1">{proposta.cliente_wpp}</span>
             </div>
           </section>
 
@@ -1848,22 +1848,22 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
             <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Detalhes do Projeto</h4>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">Ambientes</span>
-              <span className="text-base font-bold text-brand-text1">{(proposta.ambientes || []).length}</span>
+              <span className="text-base font-semibold text-brand-text1">{(proposta.ambientes || []).length}</span>
             </div>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">Material</span>
-              <span className="text-base font-bold text-brand-text1">{proposta.chapa}</span>
+              <span className="text-base font-semibold text-brand-text1">{proposta.chapa}</span>
             </div>
             {proposta.inicio && (
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm font-semibold text-brand-text3 uppercase">Início</span>
-                <span className="text-base font-bold text-brand-text1">{new Date(proposta.inicio).toLocaleDateString('pt-BR')}</span>
+                <span className="text-base font-semibold text-brand-text1">{new Date(proposta.inicio).toLocaleDateString('pt-BR')}</span>
               </div>
             )}
             {proposta.entrega && (
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm font-semibold text-brand-text3 uppercase">Entrega</span>
-                <span className="text-base font-bold text-brand-text1">{new Date(proposta.entrega).toLocaleDateString('pt-BR')}</span>
+                <span className="text-base font-semibold text-brand-text1">{new Date(proposta.entrega).toLocaleDateString('pt-BR')}</span>
               </div>
             )}
           </section>
@@ -1872,34 +1872,34 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
             <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Condições de Pagamento</h4>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">Parcelas</span>
-              <span className="text-base font-bold text-brand-text1">{proposta.pgto_parcelas || 1}x {proposta.pgto_juros ? 'c/ juros' : 's/ juros'}</span>
+              <span className="text-base font-semibold text-brand-text1">{proposta.pgto_parcelas || 1}x {proposta.pgto_juros ? 'c/ juros' : 's/ juros'}</span>
             </div>
             {proposta.pgto_pix && (
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm font-semibold text-brand-text3 uppercase">Chave PIX</span>
-                <span className="text-base font-bold text-brand-text1">{proposta.pgto_pix}</span>
+                <span className="text-base font-semibold text-brand-text1">{proposta.pgto_pix}</span>
               </div>
             )}
             {proposta.validade && (
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm font-semibold text-brand-text3 uppercase">Validade</span>
-                <span className="text-base font-bold text-brand-text1">{proposta.validade}</span>
+                <span className="text-base font-semibold text-brand-text1">{proposta.validade}</span>
               </div>
             )}
           </section>
 
           <div className="bg-brand-text1 text-white p-6 rounded-3xl flex flex-col items-center gap-1 shadow-xl shadow-brand-text1/20">
             <span className="text-[10px] font-semibold uppercase tracking-[0.3em] opacity-50">Investimento Total</span>
-            <span className="text-4xl font-bold text-brand-red">{fmt(proposta.v_total)}</span>
+            <span className="text-4xl font-semibold text-brand-red">{fmt(proposta.v_total)}</span>
           </div>
         </div>
       </div>
 
       <div className="space-y-4">
-        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-6 rounded-2xl font-bold text-xl flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase px-4">
+        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-6 rounded-2xl font-semibold text-xl flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase px-4">
           <FileText size={24} strokeWidth={2.5} /> SALVAR E BAIXAR ORÇAMENTO
         </button>
-        <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base text-brand-text2 active:scale-95 transition-all uppercase">
+        <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-5 rounded-2xl font-semibold text-base text-brand-text2 active:scale-95 transition-all uppercase">
           VOLTAR PARA LISTA
         </button>
       </div>
