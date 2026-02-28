@@ -444,7 +444,14 @@ export default function App() {
   }
 
   if (!session) {
-    return <LoginScreen showToast={showToast} />;
+    return (
+      <>
+        <LoginScreen showToast={showToast} />
+        <AnimatePresence>
+          {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+        </AnimatePresence>
+      </>
+    );
   }
 
   return (
@@ -1099,7 +1106,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) showToast('E-mail ou Senha incorreta.', 'error');
+    if (error) showToast('E-mail ou Senha incorreto.', 'error');
     setLoading(false);
   };
 
