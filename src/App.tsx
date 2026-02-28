@@ -911,12 +911,12 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
   const banners = [
     {
       tag: '🏆 COPA DO MUNDO',
-      title: 'Entre no clima da Copa com orçamentos campeões',
-      sub: 'Mostre para seus clientes que sua marcenaria joga no time da elite.',
+      title: 'Orçamentos Campeões para sua Marcenaria',
+      sub: 'SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS',
       action: () => setCurrentPage('form'),
-      bg: 'bg-gradient-to-br from-[#009739] via-[#FEDD00] to-[#012169]',
-      textColor: 'text-white',
-      tagBg: 'bg-white/20 text-white',
+      bg: 'bg-white border-y-2 border-[#009739]',
+      textColor: 'text-brand-text1',
+      tagBg: 'bg-gradient-to-r from-[#009739] to-[#FEDD00] text-zinc-950',
     },
     {
       tag: '⚡ COMECE AGORA',
@@ -1056,7 +1056,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-medium text-[10px] md:text-xs uppercase tracking-widest truncate">Sua ferramenta completa para orçamentos de marcenaria</p>
+        <p className="text-brand-text3 font-medium text-[10px] md:text-xs uppercase tracking-widest truncate">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
       <div className="-mx-4 md:-mx-8">
