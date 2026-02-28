@@ -1943,71 +1943,76 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
       </div>
 
       {!isEditing && profile?.nome ? (
-        <div className="bg-white p-6 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-8">
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 bg-brand-surface2 rounded-3xl border-2 border-brand-border flex items-center justify-center overflow-hidden shrink-0">
+        <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-8">
+          <div className="flex flex-col items-center text-center gap-4">
+            <div className="w-24 h-24 bg-brand-surface2 rounded-3xl border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner">
               {profile.logo ? (
-                <img src={profile.logo} className="w-full h-full object-contain p-2" />
+                <img src={profile.logo} className="w-full h-full object-contain p-3" />
               ) : (
-                <span className="text-brand-red font-bold text-2xl">{profile.nome[0]}</span>
+                <span className="text-brand-red font-black text-3xl">{profile.nome[0]}</span>
               )}
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-brand-text1 leading-tight">{profile.nome}</h3>
-              {profile.user_name && <p className="text-black font-bold text-sm uppercase tracking-wider">{profile.user_name}</p>}
-              <p className="text-brand-text3 font-medium uppercase tracking-widest text-[10px] mt-1">{profile.cpf || 'CPF/CNPJ não informado'}</p>
+              <h3 className="text-2xl font-black text-brand-text1 tracking-tighter leading-none">{profile.nome}</h3>
+              <div className="flex items-center justify-center gap-2 mt-2">
+                {profile.user_name && <span className="text-brand-red font-bold text-[10px] uppercase tracking-[0.2em] bg-brand-red-light px-2 py-0.5 rounded-full">{profile.user_name}</span>}
+                <span className="text-brand-text3 font-bold uppercase tracking-[0.2em] text-[9px]">{profile.cpf || 'CPF/CNPJ não informado'}</span>
+              </div>
             </div>
           </div>
 
-          <div className="space-y-4 pt-4 border-t border-brand-border">
-            <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 gap-3 pt-6 border-t border-brand-border">
+            <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
               <div className="flex items-center gap-3">
-                <div className="text-brand-red opacity-60"><MessageCircle size={18} /></div>
-                <span className="text-xs font-bold text-brand-text3 uppercase tracking-wider">WhatsApp</span>
+                <div className="text-brand-red"><MessageCircle size={16} /></div>
+                <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">WhatsApp</span>
               </div>
-              <span className="font-bold text-brand-text1">{profile.wpp}</span>
+              <span className="text-sm font-bold text-brand-text1">{profile.wpp}</span>
             </div>
 
             {profile.insta && (
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
                 <div className="flex items-center gap-3">
-                  <div className="text-brand-red opacity-60"><Settings size={18} /></div>
-                  <span className="text-xs font-bold text-brand-text3 uppercase tracking-wider">Instagram</span>
+                  <div className="text-brand-red"><Settings size={16} /></div>
+                  <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Instagram</span>
                 </div>
-                <span className="font-bold text-brand-text1">{profile.insta}</span>
+                <span className="text-sm font-bold text-brand-text1">{profile.insta}</span>
               </div>
             )}
 
             {profile.endereco && (
-              <div className="space-y-2">
+              <div className="p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50 space-y-2">
                 <div className="flex items-center gap-3">
-                  <div className="text-brand-red opacity-60"><Home size={18} /></div>
-                  <span className="text-xs font-bold text-brand-text3 uppercase tracking-wider">Endereço</span>
+                  <div className="text-brand-red"><Home size={16} /></div>
+                  <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Endereço</span>
                 </div>
-                <p className="text-sm font-medium text-brand-text2 pl-7 leading-relaxed">{profile.endereco}</p>
+                <p className="text-xs font-semibold text-brand-text2 pl-7 leading-relaxed">{profile.endereco}</p>
               </div>
             )}
           </div>
 
           <button 
             onClick={() => setIsEditing(true)}
-            className="w-full bg-brand-surface2 border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 hover:bg-white hover:border-brand-red hover:text-brand-red transition-all active:scale-95 uppercase tracking-widest"
+            className="w-full bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 hover:border-brand-red hover:text-brand-red transition-all active:scale-95 uppercase tracking-[0.2em] shadow-sm"
           >
-            <Edit2 size={18} /> Editar Dados
+            <Edit2 size={16} /> Editar Perfil
           </button>
         </div>
       ) : (
         <>
           <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border space-y-8 shadow-sm">
-            <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-2">Configurações e Dados</h3>
+            <div className="space-y-1">
+              <h3 className="text-xs font-black text-brand-red uppercase tracking-[0.3em]">Configurações</h3>
+              <p className="text-[10px] text-brand-text3 font-medium uppercase tracking-widest opacity-60">Personalize sua ferramenta</p>
+            </div>
             
             <div className="space-y-3">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Unidade de Medida Padrão</label>
+              <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Unidade de Medida</label>
               <div className="grid grid-cols-2 gap-3">
                 <button 
                   onClick={() => updateProfile('unidade_medida', 'mm')}
                   className={cn(
-                    "py-3 rounded-xl font-bold text-xs border-2 transition-all uppercase tracking-widest",
+                    "py-3.5 rounded-xl font-bold text-[10px] border-2 transition-all uppercase tracking-widest",
                     (profile?.unidade_medida || 'mm') === 'mm' ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                   )}
                 >
@@ -2016,7 +2021,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                 <button 
                   onClick={() => updateProfile('unidade_medida', 'cm')}
                   className={cn(
-                    "py-3 rounded-xl font-bold text-xs border-2 transition-all uppercase tracking-widest",
+                    "py-3.5 rounded-xl font-bold text-[10px] border-2 transition-all uppercase tracking-widest",
                     profile?.unidade_medida === 'cm' ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
                   )}
                 >
@@ -2025,86 +2030,90 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Seu Nome *</label>
-              <input 
-                type="text" 
-                value={profile?.user_name || ''} 
-                onChange={e => updateProfile('user_name', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                placeholder="Como quer ser chamado?"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome da Marcenaria *</label>
-              <input 
-                type="text" 
-                value={profile?.nome || ''} 
-                onChange={e => updateProfile('nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                placeholder="Ex: Marcenaria Silva"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">CNPJ ou CPF</label>
-              <input 
-                type="text" 
-                value={profile?.cpf || ''} 
-                onChange={e => updateProfile('cpf', formatCPFCNPJ(e.target.value))}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                placeholder="00.000.000/0000-00"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
-                <input 
-                  type="tel" 
-                  value={profile?.wpp || ''} 
-                  onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                  placeholder="(00) 00000-0000"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Instagram</label>
+                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Primeiro Nome *</label>
                 <input 
                   type="text" 
-                  value={profile?.insta || ''} 
-                  onChange={e => updateProfile('insta', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                  placeholder="@marcenaria"
+                  value={profile?.user_name || ''} 
+                  onChange={e => updateProfile('user_name', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
+                  placeholder="Como quer ser chamado?"
                 />
               </div>
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Endereço Completo</label>
-              <input 
-                type="text" 
-                value={profile?.endereco || ''} 
-                onChange={e => updateProfile('endereco', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-semibold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                placeholder="Rua, número, bairro, cidade - UF"
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Logo da Empresa</label>
-              <label className="w-full h-32 border-2 border-dashed border-brand-border rounded-2xl flex flex-col items-center justify-center text-brand-text3 cursor-pointer hover:border-brand-red hover:text-brand-red transition-all overflow-hidden bg-brand-surface2 shadow-inner relative">
-                {profile?.logo ? (
-                  <div className="w-full h-full flex items-center justify-center p-4">
-                    <img src={profile.logo} className="max-w-full max-h-full object-contain" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
-                       <Camera size={24} className="text-white" />
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Nome da Marcenaria *</label>
+                <input 
+                  type="text" 
+                  value={profile?.nome || ''} 
+                  onChange={e => updateProfile('nome', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
+                  placeholder="Ex: Marcenaria Silva"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">CNPJ ou CPF</label>
+                <input 
+                  type="text" 
+                  value={profile?.cpf || ''} 
+                  onChange={e => updateProfile('cpf', formatCPFCNPJ(e.target.value))}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
+                  placeholder="00.000.000/0000-00"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">WhatsApp *</label>
+                  <input 
+                    type="tel" 
+                    value={profile?.wpp || ''} 
+                    onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
+                    className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Instagram</label>
+                  <input 
+                    type="text" 
+                    value={profile?.insta || ''} 
+                    onChange={e => updateProfile('insta', e.target.value)}
+                    className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
+                    placeholder="@marcenaria"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Endereço Completo</label>
+                <input 
+                  type="text" 
+                  value={profile?.endereco || ''} 
+                  onChange={e => updateProfile('endereco', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
+                  placeholder="Rua, número, bairro, cidade - UF"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Logo da Empresa</label>
+                <label className="w-full h-40 border-2 border-dashed border-brand-border rounded-3xl flex flex-col items-center justify-center text-brand-text3 cursor-pointer hover:border-brand-red hover:text-brand-red transition-all overflow-hidden bg-brand-surface2 shadow-inner relative group">
+                  {profile?.logo ? (
+                    <div className="w-full h-full flex items-center justify-center p-6">
+                      <img src={profile.logo} className="max-w-full max-h-full object-contain" />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                         <Camera size={32} className="text-white" />
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <>
-                    <Camera size={24} strokeWidth={2.5} />
-                    <span className="text-[10px] font-bold mt-1 uppercase tracking-widest">Upload Logo</span>
-                  </>
-                )}
-                <input type="file" className="hidden" accept="image/*" onChange={handleLogo} />
-              </label>
+                  ) : (
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-12 h-12 rounded-2xl bg-white border-2 border-brand-border flex items-center justify-center text-brand-red shadow-sm group-hover:scale-110 transition-transform">
+                        <Camera size={20} strokeWidth={2.5} />
+                      </div>
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] mt-1">Upload Logo</span>
+                    </div>
+                  )}
+                  <input type="file" className="hidden" accept="image/*" onChange={handleLogo} />
+                </label>
+              </div>
             </div>
           </div>
 
