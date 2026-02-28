@@ -636,8 +636,8 @@ export default function App() {
                             <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">
                               #{String(p.numero).padStart(3, '0')} • {new Date(p.created_at).toLocaleDateString()}
                             </p>
-                            <h3 className="font-bold text-xl text-brand-text1 leading-tight">{p.cliente_nome}</h3>
-                            <p className="text-sm font-semibold text-brand-red uppercase tracking-wider">{p.tipo_movel}</p>
+                            <h3 className="font-bold text-xl text-brand-text1 leading-tight whitespace-nowrap overflow-hidden text-ellipsis">{p.cliente_nome}</h3>
+                            <p className="text-sm font-semibold text-brand-red uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{p.tipo_movel}</p>
                           </div>
                           <div className="text-right">
                             <p className="font-bold text-brand-green text-xl">{fmt(p.v_total)}</p>
@@ -983,7 +983,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative overflow-hidden rounded-2xl border-2 border-brand-border bg-white shadow-sm">
+      <div className="relative overflow-hidden rounded-2xl border-2 border-brand-border bg-white shadow-md hover:shadow-lg transition-shadow duration-500">
         <motion.div 
           className="flex cursor-grab active:cursor-grabbing"
           animate={{ x: `-${index * 100}%` }}
@@ -999,33 +999,33 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
             <div 
               key={i} 
               className={cn(
-                "min-w-full h-[120px] p-4 flex items-center gap-4 relative overflow-hidden shrink-0",
+                "min-w-full min-h-[160px] md:min-h-[140px] p-5 flex items-center gap-4 relative overflow-hidden shrink-0",
                 b.bg.includes('white') ? 'bg-white' : b.bg
               )}
             >
-              <div className="flex-1 min-w-0 space-y-1 relative z-10">
+              <div className="flex-1 min-w-0 space-y-2 relative z-10">
                 <div className="flex items-center gap-2">
-                  <span className={cn("px-1.5 py-0.5 rounded text-[7px] font-bold uppercase tracking-widest", b.tagBg)}>
+                  <span className={cn("px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest", b.tagBg)}>
                     {b.tag.split(' ')[0]}
                   </span>
-                  <span className={cn("text-[7px] font-bold uppercase tracking-widest opacity-60", b.textColor)}>
+                  <span className={cn("text-[8px] font-bold uppercase tracking-widest opacity-60", b.textColor)}>
                     {b.tag.split(' ').slice(1).join(' ')}
                   </span>
                 </div>
-                <h4 className={cn("text-sm md:text-base font-bold leading-tight truncate", b.textColor)}>
+                <h4 className={cn("text-base md:text-lg font-bold leading-tight", b.textColor)}>
                   {b.title}
                 </h4>
-                <p className={cn("text-[9px] md:text-[10px] opacity-70 truncate", b.textColor)}>
+                <p className={cn("text-[10px] md:text-xs opacity-80 leading-relaxed font-medium", b.textColor)}>
                   {b.sub}
                 </p>
-                <div className="pt-1">
+                <div className="pt-2">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       b.action();
                     }}
                     className={cn(
-                      "px-4 py-1.5 rounded-lg font-bold text-[8px] uppercase tracking-widest transition-all active:scale-95",
+                      "px-5 py-2 rounded-xl font-bold text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-sm hover:shadow-md",
                       b.btnBg
                     )}
                   >
@@ -1058,13 +1058,13 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   return (
     <div className="space-y-6 py-4 max-w-3xl mx-auto px-4">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold text-brand-text1 tracking-tighter">
-          Bem-vindo ao <span className="text-brand-red">Fifty+</span> 
+        <h2 className="text-3xl font-semibold text-brand-text1 tracking-tighter">
+          Bem-vindo ao <span className="text-brand-red font-bold">Fifty+</span> 
           {profile?.user_name && (
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-black font-bold ml-2 inline-block"
+              className="text-black font-semibold ml-2 inline-block"
             >
               {formatName(profile.user_name)}
             </motion.span>
@@ -1077,7 +1077,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
 
       <div className="bg-white rounded-[2rem] border-2 border-brand-border overflow-hidden shadow-sm">
         <div className="p-6 border-b border-brand-border bg-brand-surface2">
-           <h3 className="text-sm font-bold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
+           <h3 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
         </div>
         <div className="p-6 space-y-0 relative">
           {/* Trail Line */}
@@ -1098,8 +1098,8 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                 {step.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-bold text-brand-text1 uppercase tracking-wider">{step.title}</h4>
-                <p className="text-xs text-brand-text3 font-bold uppercase tracking-tighter opacity-70">{step.desc}</p>
+                <h4 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">{step.title}</h4>
+                <p className="text-xs text-brand-text3 font-medium uppercase tracking-tighter opacity-70">{step.desc}</p>
               </div>
             </motion.div>
           ))}
@@ -1117,7 +1117,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
           }
         }}
         className={cn(
-          "w-full py-4 rounded-2xl font-bold text-sm shadow-xl shadow-brand-red/10 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
+          "w-full py-4 rounded-2xl font-semibold text-sm shadow-xl shadow-brand-red/10 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
         )}
       >
         {hasPersistedProfile ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
@@ -1154,7 +1154,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
       <div className="w-full max-w-sm bg-white rounded-3xl p-8 shadow-2xl">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-brand-red tracking-tighter mb-2">Fifty+</h1>
-          <p className="text-zinc-500 text-sm">Propostas profissionais para marceneiros</p>
+          <p className="text-zinc-500 text-sm font-medium">Propostas profissionais para marceneiros</p>
         </div>
 
         {mode === 'login' ? (
@@ -1183,7 +1183,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
             </div>
             <button 
               disabled={loading}
-              className="w-full bg-brand-red text-white py-3 rounded-xl font-bold text-base hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50 whitespace-nowrap"
+              className="w-full bg-brand-red text-white py-3 rounded-xl font-semibold text-base hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50 whitespace-nowrap"
             >
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
@@ -1223,7 +1223,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
             </div>
             <button 
               disabled={loading}
-              className="w-full bg-brand-red text-white py-4 rounded-2xl font-bold text-lg hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-brand-red text-white py-4 rounded-2xl font-semibold text-lg hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loading ? 'Enviando...' : 'Recuperar Senha'}
             </button>
@@ -1787,8 +1787,8 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border-2 border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap">
-              Finalizar Orçamento <Check size={18} />
+            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap px-4">
+              SALVAR E BAIXAR ORÇAMENTO <Check size={18} />
             </button>
           </div>
         </div>
@@ -1836,7 +1836,7 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
             <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Informações do Cliente</h4>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">Nome</span>
-              <span className="text-base font-bold text-brand-text1">{proposta.cliente_nome}</span>
+              <span className="text-base font-bold text-brand-text1 whitespace-nowrap overflow-hidden text-ellipsis ml-4">{proposta.cliente_nome}</span>
             </div>
             <div className="flex justify-between items-center py-1">
               <span className="text-sm font-semibold text-brand-text3 uppercase">WhatsApp</span>
@@ -1896,8 +1896,8 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
       </div>
 
       <div className="space-y-4">
-        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-6 rounded-2xl font-bold text-xl flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase">
-          <FileText size={24} strokeWidth={2.5} /> BAIXAR ORÇAMENTO
+        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-6 rounded-2xl font-bold text-xl flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase px-4">
+          <FileText size={24} strokeWidth={2.5} /> SALVAR E BAIXAR ORÇAMENTO
         </button>
         <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-5 rounded-2xl font-bold text-base text-brand-text2 active:scale-95 transition-all uppercase">
           VOLTAR PARA LISTA

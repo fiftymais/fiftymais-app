@@ -286,5 +286,29 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.text('Agradecemos a oportunidade de apresentar esta proposta.', M, y);
 
   const nome = (proposta.cliente_nome || 'Cliente').replace(/\s/g, '_');
-  doc.save(`Proposta_${nome}_${hoje.replace(/\//g, '-')}.pdf`);
+  const filename = `Proposta_${nome}_${hoje.replace(/\//g, '-')}.pdf`;
+
+  // iOS Fix: Use bloburl for mobile if save fails or as a more robust alternative
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  
+  if (isIOS) {
+    try {
+      const blob = doc.output('blob');
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    } catch (e) {
+      console.error('iOS PDF Save Error:', e);
+      doc.save(filename);
+    }
+  } else {
+    doc.save(filename);
+  }
 };
