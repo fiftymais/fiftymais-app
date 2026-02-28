@@ -904,7 +904,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % total);
-    }, 6000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -983,46 +983,38 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm hover:shadow-md transition-all duration-500">
-        <motion.div 
-          className="flex cursor-grab active:cursor-grabbing"
-          animate={{ x: `-${index * 100}%` }}
-          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          onDragEnd={(_, info) => {
-            if (info.offset.x < -50 && index < total - 1) setIndex(index + 1);
-            if (info.offset.x > 50 && index > 0) setIndex(index - 1);
-          }}
-        >
-          {banners.map((b, i) => (
-            <div 
-              key={i} 
-              className={cn(
-                "min-w-full min-h-[140px] md:min-h-[120px] p-6 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden shrink-0 cursor-pointer",
-                b.bg.includes('white') ? 'bg-white' : b.bg
-              )}
-              onClick={b.action}
-            >
-              <div className="flex-1 min-w-0 space-y-2 relative z-10 flex flex-col items-center justify-center">
-                <div className="flex items-center gap-2 justify-center">
-                  <span className={cn("px-2 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest", b.tagBg)}>
-                    {b.tag.split(' ')[0]}
-                  </span>
-                  <span className={cn("text-[8px] font-medium uppercase tracking-widest opacity-60", b.textColor)}>
-                    {b.tag.split(' ').slice(1).join(' ')}
-                  </span>
-                </div>
-                <h4 className={cn(b.titleClass || "text-sm md:text-base font-medium leading-tight", b.textColor)}>
-                  {b.title}
-                </h4>
-                <p className={cn("text-[9px] md:text-[10px] opacity-80 leading-relaxed font-normal max-w-md", b.textColor)}>
-                  {b.sub}
-                </p>
+      <div className="relative h-[160px] md:h-[140px] overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm hover:shadow-md transition-all duration-500">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={index}
+            initial={{ opacity: 0, scale: 1.02 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
+            className={cn(
+              "absolute inset-0 p-6 flex flex-col items-center justify-center text-center gap-3 cursor-pointer",
+              banners[index].bg.includes('white') ? 'bg-white' : banners[index].bg
+            )}
+            onClick={banners[index].action}
+          >
+            <div className="flex-1 min-w-0 space-y-2 relative z-10 flex flex-col items-center justify-center">
+              <div className="flex items-center gap-2 justify-center">
+                <span className={cn("px-2 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest", banners[index].tagBg)}>
+                  {banners[index].tag.split(' ')[0]}
+                </span>
+                <span className={cn("text-[8px] font-medium uppercase tracking-widest opacity-60", banners[index].textColor)}>
+                  {banners[index].tag.split(' ').slice(1).join(' ')}
+                </span>
               </div>
+              <h4 className={cn(banners[index].titleClass || "text-sm md:text-base font-medium leading-tight", banners[index].textColor)}>
+                {banners[index].title}
+              </h4>
+              <p className={cn("text-[9px] md:text-[10px] opacity-80 leading-relaxed font-normal max-w-md", banners[index].textColor)}>
+                {banners[index].sub}
+              </p>
             </div>
-          ))}
-        </motion.div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   );
