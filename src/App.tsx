@@ -450,35 +450,35 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex w-64 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
-        <div className="p-8 border-b border-brand-border">
+      <aside className="hidden md:flex w-52 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
+        <div className="p-6 border-b border-brand-border">
           <button 
             onClick={() => setCurrentPage('tutorial')}
-            className="text-3xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+            className="text-2xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
           >
             Fifty+
           </button>
         </div>
         
-        <nav className="flex-1 p-6 space-y-3">
+        <nav className="flex-1 p-4 space-y-1.5">
           <button 
             onClick={() => setCurrentPage('tutorial')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
-              currentPage === 'tutorial' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              currentPage === 'tutorial' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Home size={18} strokeWidth={1.5} /> INÍCIO
+            <Home size={16} strokeWidth={1.5} /> INÍCIO
           </button>
           
           <button 
             onClick={() => setCurrentPage('perfil')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
-              currentPage === 'perfil' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              currentPage === 'perfil' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Settings size={18} strokeWidth={1.5} /> PERFIL
+            <Settings size={16} strokeWidth={1.5} /> PERFIL
           </button>
 
           <button 
@@ -499,40 +499,40 @@ export default function App() {
               setCurrentPage('orcamento');
             }}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
-              currentPage === 'orcamento' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              currentPage === 'orcamento' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Plus size={18} strokeWidth={1.5} /> NOVO ORÇAMENTO
+            <Plus size={16} strokeWidth={1.5} /> NOVO ORÇAMENTO
           </button>
 
           <button 
             onClick={() => setCurrentPage('propostas')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
-              currentPage === 'propostas' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              currentPage === 'propostas' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <FileText size={18} strokeWidth={1.5} /> LISTA
+            <FileText size={16} strokeWidth={1.5} /> LISTA
           </button>
 
           <button 
             onClick={() => setCurrentPage('calculadora')}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-4 rounded-xl font-medium text-base transition-all",
-              currentPage === 'calculadora' ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "text-brand-text3 hover:bg-brand-surface2"
+              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              currentPage === 'calculadora' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Calculator size={18} strokeWidth={1.5} /> CALCULADORA
+            <Calculator size={16} strokeWidth={1.5} /> CALCULADORA
           </button>
         </nav>
 
-        <div className="p-6 border-t border-brand-border">
+        <div className="p-4 border-t border-brand-border">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-4 rounded-xl font-semibold text-base text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
+            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
           >
-            <LogOut size={18} strokeWidth={1.5} /> SAIR
+            <LogOut size={16} strokeWidth={1.5} /> SAIR
           </button>
         </div>
       </aside>
@@ -899,70 +899,69 @@ function FullCalculator() {
 
 function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void }) {
   const [index, setIndex] = useState(0);
-  const total = 5;
+  const total = 6;
 
   useEffect(() => {
     const timer = setInterval(() => {
       setIndex((prev) => (prev + 1) % total);
-    }, 4000);
+    }, 6000);
     return () => clearInterval(timer);
   }, []);
 
   const banners = [
     {
+      tag: '🏆 COPA DO MUNDO',
+      title: 'Entre no clima da Copa com orçamentos campeões',
+      sub: 'Mostre para seus clientes que sua marcenaria joga no time da elite.',
+      action: () => setCurrentPage('form'),
+      bg: 'bg-gradient-to-br from-[#009739] via-[#FEDD00] to-[#012169]',
+      textColor: 'text-white',
+      tagBg: 'bg-white/20 text-white',
+    },
+    {
       tag: '⚡ COMECE AGORA',
       title: 'Sua proposta em PDF em menos de 5 minutos',
       sub: 'Preenche no celular, gera o PDF com sua logo e manda pelo WhatsApp.',
-      btn: 'CRIAR MINHA PROPOSTA',
       action: () => setCurrentPage('form'),
       bg: 'bg-[#111111]',
       textColor: 'text-white',
       tagBg: 'bg-brand-red/20 text-brand-red',
-      btnBg: 'bg-[#D42B2B] text-white',
     },
     {
       tag: '✅ IDENTIDADE PROFISSIONAL',
       title: 'Sua logo aparece em todas as propostas automaticamente',
       sub: 'Configure uma vez no seu perfil e nunca mais se preocupe.',
-      btn: 'CONFIGURAR PERFIL',
       action: () => setCurrentPage('profile'),
       bg: 'bg-gradient-to-br from-[#D42B2B] to-[#AA2020]',
       textColor: 'text-white',
       tagBg: 'bg-white/20 text-white',
-      btnBg: 'bg-white text-[#D42B2B]',
     },
     {
       tag: '📊 FERRAMENTA EXCLUSIVA',
       title: 'Descubra quanto cobrar em cada projeto',
       sub: 'Use a calculadora de custos e pare de trabalhar no prejuízo.',
-      btn: 'CALCULAR AGORA',
       action: () => setCurrentPage('calculator'),
       bg: 'bg-[#0F172A]',
       textColor: 'text-white',
       tagBg: 'bg-blue-500/20 text-blue-400',
-      btnBg: 'bg-[#D42B2B] text-white',
     },
     {
       tag: '☁️ SEUS DADOS SALVOS',
       title: 'Todas as suas propostas salvas na nuvem',
       sub: 'Acesse de qualquer celular. Nunca mais perca um orçamento.',
-      btn: 'VER MINHAS PROPOSTAS',
       action: () => setCurrentPage('propostas'),
       bg: 'bg-white border-2 border-[#EEEEEE]',
       textColor: 'text-brand-text1',
       tagBg: 'bg-zinc-100 text-zinc-500',
-      btnBg: 'bg-[#D42B2B] text-white',
     },
     {
       tag: '🎁 PROGRAMA DE INDICAÇÃO',
       title: 'Indique um amigo marceneiro e ganhe 1 mês grátis',
       sub: 'Ele também ganha desconto. Todo mundo sai ganhando.',
-      btn: 'INDICAR AGORA',
       action: () => window.open('https://wa.me/?text=Olá! Estou usando o Fifty+ para meus orçamentos e é excelente. Use meu link para ganhar desconto!'),
       bg: 'bg-[#111111]',
       textColor: 'text-white',
       tagBg: 'bg-[#FFE566] text-black',
-      btnBg: 'bg-[#D42B2B] text-white',
     }
   ];
 
@@ -987,7 +986,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         <motion.div 
           className="flex cursor-grab active:cursor-grabbing"
           animate={{ x: `-${index * 100}%` }}
-          transition={{ duration: 0.42, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(_, info) => {
@@ -999,9 +998,10 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
             <div 
               key={i} 
               className={cn(
-                "min-w-full min-h-[140px] md:min-h-[120px] p-6 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden shrink-0",
+                "min-w-full min-h-[140px] md:min-h-[120px] p-6 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden shrink-0 cursor-pointer",
                 b.bg.includes('white') ? 'bg-white' : b.bg
               )}
+              onClick={b.action}
             >
               <div className="flex-1 min-w-0 space-y-2 relative z-10 flex flex-col items-center justify-center">
                 <div className="flex items-center gap-2 justify-center">
@@ -1018,20 +1018,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
                 <p className={cn("text-[9px] md:text-[10px] opacity-80 leading-relaxed font-normal max-w-md", b.textColor)}>
                   {b.sub}
                 </p>
-                <div className="pt-1">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      b.action();
-                    }}
-                    className={cn(
-                      "px-5 py-1.5 rounded-xl font-medium text-[8px] uppercase tracking-widest transition-all active:scale-95 shadow-sm hover:shadow-md",
-                      b.btnBg
-                    )}
-                  >
-                    {b.btn}
-                  </button>
-                </div>
               </div>
             </div>
           ))}
