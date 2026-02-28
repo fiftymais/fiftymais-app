@@ -450,35 +450,35 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex w-52 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
-        <div className="p-6 border-b border-brand-border">
+      <aside className="hidden md:flex w-44 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
+        <div className="p-4 border-b border-brand-border">
           <button 
             onClick={() => setCurrentPage('tutorial')}
-            className="text-2xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+            className="text-xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
           >
             Fifty+
           </button>
         </div>
         
-        <nav className="flex-1 p-4 space-y-1.5">
+        <nav className="flex-1 p-3 space-y-1">
           <button 
             onClick={() => setCurrentPage('tutorial')}
             className={cn(
-              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
               currentPage === 'tutorial' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Home size={16} strokeWidth={1.5} /> INÍCIO
+            <Home size={14} strokeWidth={1.5} /> INÍCIO
           </button>
           
           <button 
             onClick={() => setCurrentPage('perfil')}
             className={cn(
-              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
               currentPage === 'perfil' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Settings size={16} strokeWidth={1.5} /> PERFIL
+            <Settings size={14} strokeWidth={1.5} /> PERFIL
           </button>
 
           <button 
@@ -499,40 +499,40 @@ export default function App() {
               setCurrentPage('orcamento');
             }}
             className={cn(
-              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
               currentPage === 'orcamento' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Plus size={16} strokeWidth={1.5} /> NOVO ORÇAMENTO
+            <Plus size={14} strokeWidth={1.5} /> NOVO ORÇAMENTO
           </button>
 
           <button 
             onClick={() => setCurrentPage('propostas')}
             className={cn(
-              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
               currentPage === 'propostas' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <FileText size={16} strokeWidth={1.5} /> LISTA
+            <FileText size={14} strokeWidth={1.5} /> LISTA
           </button>
 
           <button 
             onClick={() => setCurrentPage('calculadora')}
             className={cn(
-              "w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm transition-all",
+              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
               currentPage === 'calculadora' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
             )}
           >
-            <Calculator size={16} strokeWidth={1.5} /> CALCULADORA
+            <Calculator size={14} strokeWidth={1.5} /> CALCULADORA
           </button>
         </nav>
 
-        <div className="p-4 border-t border-brand-border">
+        <div className="p-3 border-t border-brand-border">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg font-medium text-sm text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
+            className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
           >
-            <LogOut size={16} strokeWidth={1.5} /> SAIR
+            <LogOut size={14} strokeWidth={1.5} /> SAIR
           </button>
         </div>
       </aside>
@@ -911,12 +911,13 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
   const banners = [
     {
       tag: '🇧🇷 BRASIL 2026',
-      title: 'Marcenaria de Elite: Rumo ao Hexa 🏆',
+      title: 'RUMO AO HEXA 🏆',
       sub: 'Orçamentos campeões que conquistam o cliente na hora. Profissionalismo em campo.',
       action: () => setCurrentPage('form'),
       bg: 'bg-[#009739] bg-[radial-gradient(circle_at_top_right,_#FEDD00_0%,_transparent_25%),_radial-gradient(circle_at_bottom_left,_#012169_0%,_transparent_25%)]',
       textColor: 'text-white',
-      tagBg: 'bg-[#FEDD00] text-[#009739] shadow-sm font-bold',
+      tagBg: 'bg-[#FEDD00] text-[#009739] shadow-md font-bold text-[10px] px-3 py-1',
+      titleClass: 'text-2xl md:text-3xl font-black tracking-tighter'
     },
     {
       tag: '⚡ COMECE AGORA',
@@ -1012,7 +1013,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
                     {b.tag.split(' ').slice(1).join(' ')}
                   </span>
                 </div>
-                <h4 className={cn("text-sm md:text-base font-medium leading-tight", b.textColor)}>
+                <h4 className={cn(b.titleClass || "text-sm md:text-base font-medium leading-tight", b.textColor)}>
                   {b.title}
                 </h4>
                 <p className={cn("text-[9px] md:text-[10px] opacity-80 leading-relaxed font-normal max-w-md", b.textColor)}>
