@@ -58,11 +58,12 @@ const formatCPFCNPJ = (val: string) => {
 // --- COMPONENTS ---
 const Toast = ({ message, type = 'success', onClose }: { message: string, type?: 'success' | 'error', onClose: () => void }) => (
   <motion.div 
+    key={message}
     initial={{ opacity: 0, y: 50, x: '-50%' }}
     animate={{ opacity: 1, y: 0, x: '-50%' }}
     exit={{ opacity: 0, y: 50, x: '-50%' }}
     className={cn(
-      "fixed bottom-24 left-1/2 z-[9999] px-6 py-3 rounded-full text-white text-sm font-medium shadow-lg flex items-center gap-2",
+      "fixed bottom-24 left-1/2 z-[999999] px-6 py-3 rounded-full text-white text-sm font-medium shadow-lg flex items-center gap-2",
       type === 'success' ? "bg-zinc-900" : "bg-red-600"
     )}
   >
@@ -447,8 +448,14 @@ export default function App() {
     return (
       <>
         <LoginScreen showToast={showToast} />
-        <AnimatePresence>
-          {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+        <AnimatePresence mode="wait">
+          {toast && (
+            <Toast 
+              message={toast.message} 
+              type={toast.type} 
+              onClose={() => setToast(null)} 
+            />
+          )}
         </AnimatePresence>
       </>
     );
@@ -810,8 +817,14 @@ export default function App() {
         </nav>
       </div>
 
-      <AnimatePresence>
-        {toast && <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />}
+      <AnimatePresence mode="wait">
+        {toast && (
+          <Toast 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
       </AnimatePresence>
     </div>
   );
@@ -977,10 +990,9 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
             exit={{ opacity: 0, scale: 0.98 }}
             transition={{ duration: 0.6, ease: "easeInOut" }}
             className={cn(
-              "absolute inset-0 p-6 flex flex-col items-center justify-center text-center gap-3 cursor-pointer",
+              "absolute inset-0 p-6 flex flex-col items-center justify-center text-center gap-3 cursor-default",
               banners[index].bg.includes('white') ? 'bg-white' : banners[index].bg
             )}
-            onClick={banners[index].action}
           >
             <div className="flex-1 min-w-0 space-y-2 relative z-10 flex flex-col items-center justify-center">
               <div className="flex items-center gap-2 justify-center">
