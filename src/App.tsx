@@ -451,38 +451,21 @@ export default function App() {
     <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
       <aside className="hidden md:flex w-44 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
-        <div className="p-4 border-b border-brand-border">
+        <div className="p-6 mb-4">
           <button 
             onClick={() => setCurrentPage('tutorial')}
-            className="text-xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+            className="text-2xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
           >
             Fifty+
           </button>
+          <p className="text-[8px] font-bold text-brand-text3 uppercase tracking-widest opacity-40 mt-0.5">Marcenaria de Elite</p>
         </div>
         
-        <nav className="flex-1 p-3 space-y-1">
-          <button 
-            onClick={() => setCurrentPage('tutorial')}
-            className={cn(
-              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
-              currentPage === 'tutorial' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
-            )}
-          >
-            <Home size={14} strokeWidth={1.5} /> INÍCIO
-          </button>
-          
-          <button 
-            onClick={() => setCurrentPage('perfil')}
-            className={cn(
-              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
-              currentPage === 'perfil' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
-            )}
-          >
-            <Settings size={14} strokeWidth={1.5} /> PERFIL
-          </button>
-
-          <button 
-            onClick={() => {
+        <nav className="flex-1 px-3 space-y-1">
+          {[
+            { id: 'tutorial', label: 'Início', icon: <Home size={14} /> },
+            { id: 'perfil', label: 'Meu Perfil', icon: <Settings size={14} /> },
+            { id: 'orcamento', label: 'Novo Orçamento', icon: <Plus size={14} />, action: () => {
               setEditingId(null);
               setFormData({
                 ambientes: [],
@@ -497,42 +480,37 @@ export default function App() {
               });
               setCurrentStep(1);
               setCurrentPage('orcamento');
-            }}
-            className={cn(
-              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
-              currentPage === 'orcamento' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
-            )}
-          >
-            <Plus size={14} strokeWidth={1.5} /> NOVO ORÇAMENTO
-          </button>
-
-          <button 
-            onClick={() => setCurrentPage('propostas')}
-            className={cn(
-              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
-              currentPage === 'propostas' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
-            )}
-          >
-            <FileText size={14} strokeWidth={1.5} /> LISTA
-          </button>
-
-          <button 
-            onClick={() => setCurrentPage('calculadora')}
-            className={cn(
-              "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs transition-all",
-              currentPage === 'calculadora' ? "bg-brand-red text-white shadow-md shadow-brand-red/10" : "text-brand-text3 hover:bg-brand-surface2"
-            )}
-          >
-            <Calculator size={14} strokeWidth={1.5} /> CALCULADORA
-          </button>
+            }},
+            { id: 'propostas', label: 'Lista', icon: <FileText size={14} /> },
+            { id: 'calculadora', label: 'Calculadora', icon: <Calculator size={14} /> },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={item.action || (() => setCurrentPage(item.id as any))}
+              className={cn(
+                "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-[10px] transition-all uppercase tracking-tight",
+                currentPage === item.id 
+                  ? "bg-brand-red text-white shadow-md shadow-brand-red/10" 
+                  : "text-brand-text3 hover:bg-brand-surface2 hover:text-brand-text1"
+              )}
+            >
+              <span className={cn(
+                "transition-transform duration-300",
+                currentPage === item.id ? "text-white" : "text-brand-red"
+              )}>
+                {item.icon}
+              </span>
+              {item.label}
+            </button>
+          ))}
         </nav>
 
         <div className="p-3 border-t border-brand-border">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-xs text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all"
+            className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-bold text-[10px] text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all uppercase tracking-tight"
           >
-            <LogOut size={14} strokeWidth={1.5} /> SAIR
+            <LogOut size={14} /> Sair
           </button>
         </div>
       </aside>
@@ -857,7 +835,7 @@ function FullCalculator() {
     const isOperator = ['+', '-', 'x', '÷'].includes(val);
     if (isOperator) {
       setEquation(prev => prev + val);
-      setDisplay(val); // Show operator in main display
+      setDisplay(val);
       return;
     }
 
@@ -866,25 +844,25 @@ function FullCalculator() {
   };
 
   return (
-    <div className="bg-zinc-900 text-white p-8 rounded-[3rem] shadow-2xl border border-white/10 w-full max-w-md mx-auto">
-      <div className="flex items-center justify-between mb-8 px-2">
-        <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Calculadora Profissional</span>
+    <div className="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-brand-border w-full max-w-md mx-auto">
+      <div className="flex items-center justify-between mb-6 px-2">
+        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-text3">Calculadora Profissional</span>
       </div>
       
-      <div className="bg-black/60 p-8 rounded-3xl mb-8 text-right overflow-hidden min-h-[120px] flex flex-col justify-end border border-white/5">
-        <div className="text-base text-zinc-400 h-6 truncate mb-2 font-mono">{equation}</div>
-        <div className="text-5xl font-bold truncate font-mono">{display}</div>
+      <div className="bg-brand-surface2 p-8 rounded-3xl mb-6 text-right overflow-hidden min-h-[120px] flex flex-col justify-end border-2 border-brand-border shadow-inner">
+        <div className="text-sm text-brand-text3 h-6 truncate mb-1 font-mono font-medium">{equation || ' '}</div>
+        <div className="text-5xl font-bold truncate font-mono text-brand-text1 tracking-tighter">{display}</div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-4 gap-3">
         {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
           <button
             key={btn}
             onClick={() => handleBtn(btn)}
             className={cn(
-              "h-20 rounded-2xl font-bold text-2xl transition-all active:scale-90 flex items-center justify-center",
-              btn === 'C' ? "bg-zinc-800 text-brand-red" :
-              ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "bg-zinc-800 text-white hover:bg-zinc-700"
+              "h-16 md:h-20 rounded-2xl font-bold text-xl transition-all active:scale-90 flex items-center justify-center shadow-sm",
+              btn === 'C' ? "bg-zinc-100 text-brand-red border-2 border-brand-border" :
+              ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "bg-white text-brand-text1 border-2 border-brand-border hover:bg-brand-surface2"
             )}
           >
             {btn}
@@ -917,7 +895,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       bg: 'bg-[#009739] bg-[radial-gradient(circle_at_top_right,_#FEDD00_0%,_transparent_25%),_radial-gradient(circle_at_bottom_left,_#012169_0%,_transparent_25%)]',
       textColor: 'text-white',
       tagBg: 'bg-[#FEDD00] text-[#009739] shadow-md font-bold text-[10px] px-3 py-1',
-      titleClass: 'text-2xl md:text-3xl font-black tracking-tighter'
+      titleClass: 'text-3xl md:text-4xl font-black tracking-tighter'
     },
     {
       tag: '⚡ COMECE AGORA',
@@ -1037,7 +1015,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   return (
     <div className="space-y-6 py-4">
       <div className="max-w-3xl mx-auto px-4 text-center space-y-2 max-w-full overflow-hidden">
-        <h2 className="text-xl md:text-2xl font-medium text-brand-text1 tracking-tighter flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis px-2">
+        <h2 className="text-2xl md:text-3xl font-medium text-brand-text1 tracking-tighter flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis px-2">
           Bem-vindo ao <span className="text-brand-red font-medium">Fifty+</span> 
           {profile?.user_name && (
             <motion.span 
@@ -1049,7 +1027,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-medium text-[10px] md:text-xs uppercase tracking-widest truncate">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
+        <p className="text-brand-text3 font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] truncate opacity-60">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
       <div className="-mx-4 md:mx-auto md:max-w-3xl md:px-4">
@@ -1135,11 +1113,17 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6">
-      <div className="w-full max-w-sm bg-white rounded-3xl p-8 shadow-2xl">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-semibold text-brand-red tracking-tighter mb-2">Fifty+</h1>
-          <p className="text-zinc-500 text-sm font-medium">Propostas profissionais para marceneiros</p>
+    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6 relative overflow-hidden">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-red rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-red rounded-full blur-[120px]" />
+      </div>
+
+      <div className="w-full max-w-sm bg-white rounded-[2.5rem] p-10 shadow-2xl relative z-10 border border-white/20">
+        <div className="text-center mb-10">
+          <h1 className="text-5xl font-black text-brand-red tracking-tighter mb-3">Fifty+</h1>
+          <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.2em]">Propostas Profissionais</p>
         </div>
 
         {mode === 'login' ? (
