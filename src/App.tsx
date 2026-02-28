@@ -999,12 +999,12 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
             <div 
               key={i} 
               className={cn(
-                "min-w-full min-h-[240px] md:min-h-[180px] p-6 flex flex-col justify-center md:flex-row md:items-center gap-4 relative overflow-hidden shrink-0",
+                "min-w-full min-h-[140px] md:min-h-[120px] p-6 flex flex-col items-center justify-center text-center gap-3 relative overflow-hidden shrink-0",
                 b.bg.includes('white') ? 'bg-white' : b.bg
               )}
             >
-              <div className="flex-1 min-w-0 space-y-3 relative z-10">
-                <div className="flex items-center gap-2">
+              <div className="flex-1 min-w-0 space-y-2 relative z-10 flex flex-col items-center justify-center">
+                <div className="flex items-center gap-2 justify-center">
                   <span className={cn("px-2 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest", b.tagBg)}>
                     {b.tag.split(' ')[0]}
                   </span>
@@ -1012,20 +1012,20 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
                     {b.tag.split(' ').slice(1).join(' ')}
                   </span>
                 </div>
-                <h4 className={cn("text-base md:text-lg font-medium leading-tight", b.textColor)}>
+                <h4 className={cn("text-sm md:text-base font-medium leading-tight", b.textColor)}>
                   {b.title}
                 </h4>
-                <p className={cn("text-[10px] md:text-xs opacity-80 leading-relaxed font-normal", b.textColor)}>
+                <p className={cn("text-[9px] md:text-[10px] opacity-80 leading-relaxed font-normal max-w-md", b.textColor)}>
                   {b.sub}
                 </p>
-                <div className="pt-2">
+                <div className="pt-1">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();
                       b.action();
                     }}
                     className={cn(
-                      "px-5 py-2 rounded-xl font-medium text-[9px] uppercase tracking-widest transition-all active:scale-95 shadow-sm hover:shadow-md",
+                      "px-5 py-1.5 rounded-xl font-medium text-[8px] uppercase tracking-widest transition-all active:scale-95 shadow-sm hover:shadow-md",
                       b.btnBg
                     )}
                   >
