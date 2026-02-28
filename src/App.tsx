@@ -967,7 +967,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
 
   return (
     <div className="pb-6 font-dm">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 px-4 md:px-8">
         <h3 className="text-sm font-medium text-brand-text1 uppercase tracking-wider">Novidades</h3>
         <div className="flex gap-1">
           {banners.map((_, i) => (
@@ -982,7 +982,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative overflow-hidden rounded-3xl border-2 border-brand-border bg-white shadow-sm hover:shadow-md transition-all duration-500">
+      <div className="relative overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-500">
         <motion.div 
           className="flex cursor-grab active:cursor-grabbing"
           animate={{ x: `-${index * 100}%` }}
@@ -1042,8 +1042,8 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   };
 
   return (
-    <div className="space-y-6 py-4 max-w-3xl mx-auto px-4">
-      <div className="text-center space-y-2 max-w-full overflow-hidden">
+    <div className="space-y-6 py-4">
+      <div className="max-w-3xl mx-auto px-4 text-center space-y-2 max-w-full overflow-hidden">
         <h2 className="text-xl md:text-2xl font-medium text-brand-text1 tracking-tighter flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis px-2">
           Bem-vindo ao <span className="text-brand-red font-medium">Fifty+</span> 
           {profile?.user_name && (
@@ -1059,55 +1059,61 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         <p className="text-brand-text3 font-medium text-[10px] md:text-xs uppercase tracking-widest truncate">Sua ferramenta completa para orçamentos de marcenaria</p>
       </div>
 
-      <NewsCarousel setCurrentPage={setCurrentPage} />
-
-      <div className="bg-white rounded-[2rem] border-2 border-brand-border overflow-hidden shadow-sm">
-        <div className="p-6 border-b border-brand-border bg-brand-surface2">
-           <h3 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
-        </div>
-        <div className="p-6 space-y-0 relative">
-          {/* Trail Line */}
-          <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
-          
-          {steps.map((step, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, x: -15 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="flex items-center gap-6 py-4 relative z-10"
-            >
-              <div className={cn(
-                "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
-                step.color
-              )}>
-                {step.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">{step.title}</h4>
-                <p className="text-xs text-brand-text3 font-medium uppercase tracking-tighter opacity-70">{step.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+      <div className="-mx-4 md:-mx-8">
+        <NewsCarousel setCurrentPage={setCurrentPage} />
       </div>
 
-      <motion.button
-        whileHover={{ scale: 1.02, backgroundColor: '#E11D48' }}
-        whileTap={{ scale: 0.98 }}
-        onClick={() => {
-          if (hasPersistedProfile) {
-            onStart();
-          } else {
-            setCurrentPage('perfil');
-          }
-        }}
-        className={cn(
-          "w-full py-4 rounded-2xl font-semibold text-sm shadow-xl shadow-brand-red/10 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
-        )}
-      >
-        {hasPersistedProfile ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
-      </motion.button>
+      <div className="max-w-3xl mx-auto px-4 space-y-6">
+        <div className="bg-white rounded-[2rem] border-2 border-brand-border overflow-hidden shadow-sm">
+          <div className="p-6 border-b border-brand-border bg-brand-surface2">
+             <h3 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
+          </div>
+          <div className="p-6 space-y-0 relative">
+            {/* Trail Line */}
+            <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
+            
+            {steps.map((step, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, x: -15 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="flex items-center gap-6 py-4 relative z-10"
+              >
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
+                  step.color
+                )}>
+                  {step.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">{step.title}</h4>
+                  <p className="text-xs text-brand-text3 font-medium uppercase tracking-tighter opacity-70">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        <div className="max-w-sm mx-auto w-full">
+          <motion.button
+            whileHover={{ scale: 1.02, backgroundColor: '#E11D48' }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              if (hasPersistedProfile) {
+                onStart();
+              } else {
+                setCurrentPage('perfil');
+              }
+            }}
+            className={cn(
+              "w-full py-4 rounded-2xl font-semibold text-sm shadow-xl shadow-brand-red/10 active:scale-95 transition-all uppercase tracking-widest bg-brand-red text-white border-2 border-white/10 whitespace-nowrap"
+            )}
+          >
+            {hasPersistedProfile ? "CRIAR UM NOVO ORÇAMENTO" : "CADASTRE O SEU PERFIL AGORA"}
+          </motion.button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -1769,7 +1775,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
               </div>
             </div>
           </div>
-          <div className="flex gap-4">
+          <div className="flex gap-4 max-w-md mx-auto w-full">
             <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border-2 border-brand-border py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
@@ -1874,18 +1880,18 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
             )}
           </section>
 
-          <div className="bg-brand-text1 text-white p-6 rounded-3xl flex flex-col items-center gap-1 shadow-xl shadow-brand-text1/20">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.3em] opacity-50">Investimento Total</span>
-            <span className="text-4xl font-semibold text-brand-red">{fmt(proposta.v_total)}</span>
+          <div className="bg-zinc-900 text-white p-4 rounded-2xl flex flex-col items-center gap-0.5 shadow-lg max-w-[240px] mx-auto">
+            <span className="text-[9px] font-medium uppercase tracking-[0.2em] opacity-60">Investimento Total</span>
+            <span className="text-2xl font-semibold">{fmt(proposta.v_total)}</span>
           </div>
         </div>
       </div>
 
-      <div className="space-y-4">
-        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-6 rounded-2xl font-semibold text-xl flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase px-4">
-          <FileText size={24} strokeWidth={2.5} /> SALVAR E BAIXAR ORÇAMENTO
+      <div className="space-y-4 max-w-sm mx-auto w-full">
+        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase px-4">
+          <FileText size={22} strokeWidth={2.5} /> SALVAR E BAIXAR ORÇAMENTO
         </button>
-        <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-5 rounded-2xl font-semibold text-base text-brand-text2 active:scale-95 transition-all uppercase">
+        <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-4 rounded-2xl font-semibold text-sm text-brand-text2 active:scale-95 transition-all uppercase">
           VOLTAR PARA LISTA
         </button>
       </div>
@@ -2118,7 +2124,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
             </div>
           </div>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 max-w-md mx-auto w-full">
             <button 
               onClick={() => {
                 if (profile?.nome) {
@@ -2127,14 +2133,14 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   setCurrentPage('tutorial');
                 }
               }}
-              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-bold text-sm active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
+              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-semibold text-sm active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
             >
               {profile?.nome ? 'Cancelar' : 'Voltar'}
             </button>
             <button 
               onClick={handleSave} 
               disabled={loading}
-              className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap"
+              className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap"
             >
               <Save size={18} /> {loading ? 'Salvando...' : 'Salvar Perfil'}
             </button>
