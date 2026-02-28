@@ -910,13 +910,13 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
 
   const banners = [
     {
-      tag: '🏆 COPA DO MUNDO',
-      title: 'Orçamentos Campeões para sua Marcenaria',
-      sub: 'SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS',
+      tag: '🇧🇷 BRASIL 2026',
+      title: 'Marcenaria de Elite: Rumo ao Hexa 🏆',
+      sub: 'Orçamentos campeões que conquistam o cliente na hora. Profissionalismo em campo.',
       action: () => setCurrentPage('form'),
-      bg: 'bg-white border-y-2 border-[#009739]',
-      textColor: 'text-brand-text1',
-      tagBg: 'bg-gradient-to-r from-[#009739] to-[#FEDD00] text-zinc-950',
+      bg: 'bg-[#009739] bg-[radial-gradient(circle_at_top_right,_#FEDD00_0%,_transparent_25%),_radial-gradient(circle_at_bottom_left,_#012169_0%,_transparent_25%)]',
+      textColor: 'text-white',
+      tagBg: 'bg-[#FEDD00] text-[#009739] shadow-sm font-bold',
     },
     {
       tag: '⚡ COMECE AGORA',
@@ -967,7 +967,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
 
   return (
     <div className="pb-6 font-dm">
-      <div className="flex items-center justify-between mb-3 px-4 md:px-8">
+      <div className="flex items-center justify-between mb-3 px-4 md:px-0">
         <h3 className="text-sm font-medium text-brand-text1 uppercase tracking-wider">Novidades</h3>
         <div className="flex gap-1">
           {banners.map((_, i) => (
@@ -982,7 +982,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative overflow-hidden bg-white shadow-sm hover:shadow-md transition-all duration-500">
+      <div className="relative overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm hover:shadow-md transition-all duration-500">
         <motion.div 
           className="flex cursor-grab active:cursor-grabbing"
           animate={{ x: `-${index * 100}%` }}
@@ -1059,7 +1059,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         <p className="text-brand-text3 font-medium text-[10px] md:text-xs uppercase tracking-widest truncate">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
-      <div className="-mx-4 md:-mx-8">
+      <div className="-mx-4 md:mx-auto md:max-w-3xl md:px-4">
         <NewsCarousel setCurrentPage={setCurrentPage} />
       </div>
 
