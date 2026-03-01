@@ -300,6 +300,7 @@ export default function App() {
       obs_final,
       cliente_end,
       cliente_ref,
+      validade,
       ...rest 
     } = formData;
 
@@ -312,8 +313,8 @@ export default function App() {
       created_at: formData.created_at || new Date().toISOString(),
       numero: formData.numero || propostas.length + 1,
       // Compatibility fields: store the rich structure in 'medidas' column
-      tipo_movel: ambientes?.[0]?.tipo || 'Móvel Planejado',
       medidas: {
+        tipo_movel: ambientes?.[0]?.tipo || 'Móvel Planejado',
         ambientes: ambientes || [],
         cliente: {
           endereco: cliente_end,
@@ -337,7 +338,8 @@ export default function App() {
           garantia,
           incluso,
           excluso,
-          obs_final
+          obs_final,
+          validade
         },
         pgto: {
           formas: pgto_formas,

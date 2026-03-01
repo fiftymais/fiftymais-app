@@ -239,9 +239,6 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.text(splitExcluso, M, y);
   y += splitExcluso.length * 5 + 15;
 
-  doc.setFont('helvetica', 'italic');
-  doc.text('Proposta sujeita a alterações após medição técnica final.', M, y);
-
   const nome = (proposta.cliente_nome || 'Cliente').replace(/\s/g, '_');
   const filename = `Proposta_${nome}_${hoje.replace(/\//g, '-')}.pdf`;
 
