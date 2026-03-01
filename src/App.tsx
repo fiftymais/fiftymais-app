@@ -912,7 +912,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       tag: '🇧🇷 BRASIL 2026',
       title: 'RUMO AO HEXA 🏆',
       sub: 'Orçamentos campeões que conquistam o cliente na hora. Profissionalismo em campo.',
-      action: () => setCurrentPage('form'),
       bg: 'bg-[#009739] bg-[radial-gradient(circle_at_top_right,_#FEDD00_0%,_transparent_25%),_radial-gradient(circle_at_bottom_left,_#012169_0%,_transparent_25%)]',
       textColor: 'text-white',
       tagBg: 'bg-[#FEDD00] text-[#009739] shadow-md font-bold text-[10px] px-3 py-1',
@@ -922,7 +921,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       tag: '⚡ COMECE AGORA',
       title: 'Sua proposta em PDF em menos de 5 minutos',
       sub: 'Preenche no celular, gera o PDF com sua logo e manda pelo WhatsApp.',
-      action: () => setCurrentPage('form'),
       bg: 'bg-[#111111]',
       textColor: 'text-white',
       tagBg: 'bg-brand-red/20 text-brand-red',
@@ -931,7 +929,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       tag: '✅ IDENTIDADE PROFISSIONAL',
       title: 'Sua logo aparece em todas as propostas automaticamente',
       sub: 'Configure uma vez no seu perfil e nunca mais se preocupe.',
-      action: () => setCurrentPage('profile'),
       bg: 'bg-gradient-to-br from-[#D42B2B] to-[#AA2020]',
       textColor: 'text-white',
       tagBg: 'bg-white/20 text-white',
@@ -940,7 +937,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       tag: '📊 FERRAMENTA EXCLUSIVA',
       title: 'Descubra quanto cobrar em cada projeto',
       sub: 'Use a calculadora de custos e pare de trabalhar no prejuízo.',
-      action: () => setCurrentPage('calculator'),
       bg: 'bg-[#0F172A]',
       textColor: 'text-white',
       tagBg: 'bg-blue-500/20 text-blue-400',
@@ -949,7 +945,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       tag: '☁️ SEUS DADOS SALVOS',
       title: 'Todas as suas propostas salvas na nuvem',
       sub: 'Acesse de qualquer celular. Nunca mais perca um orçamento.',
-      action: () => setCurrentPage('propostas'),
       bg: 'bg-white border-2 border-[#EEEEEE]',
       textColor: 'text-brand-text1',
       tagBg: 'bg-zinc-100 text-zinc-500',
@@ -958,7 +953,6 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
       tag: '🎁 PROGRAMA DE INDICAÇÃO',
       title: 'Indique um amigo marceneiro e ganhe 1 mês grátis',
       sub: 'Ele também ganha desconto. Todo mundo sai ganhando.',
-      action: () => window.open('https://wa.me/?text=Olá! Estou usando o Fifty+ para meus orçamentos e é excelente. Use meu link para ganhar desconto!'),
       bg: 'bg-[#111111]',
       textColor: 'text-white',
       tagBg: 'bg-[#FFE566] text-black',
@@ -1134,58 +1128,59 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-brand-red rounded-full blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-brand-red rounded-full blur-[120px]" />
-      </div>
-
-      <div className="w-full max-w-sm bg-white rounded-[2.5rem] p-10 shadow-2xl relative z-10 border border-white/20">
-        <div className="text-center mb-10">
-          <h1 className="text-5xl font-black text-brand-red tracking-tighter mb-3">Fifty+</h1>
-          <p className="text-zinc-500 text-xs font-bold uppercase tracking-[0.2em]">Propostas Profissionais</p>
+      {/* Background Elements */}
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-red/10 blur-[120px] rounded-full" />
+      <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-red/5 blur-[120px] rounded-full" />
+      
+      <div className="w-full max-w-sm bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative z-10">
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-20 h-20 bg-brand-red rounded-3xl flex items-center justify-center shadow-2xl shadow-brand-red/40 mb-4 group transition-transform hover:scale-105">
+            <span className="text-white font-black text-3xl tracking-tighter">F+</span>
+          </div>
+          <h1 className="text-3xl font-black text-white tracking-tighter mb-1">FIFTY+</h1>
+          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em]">Marcenaria de Elite</p>
         </div>
 
         {mode === 'login' ? (
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 ml-1">E-mail</label>
+              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">E-mail</label>
               <input 
                 type="email" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all text-center"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white/10 transition-all text-center text-white placeholder:text-zinc-600 outline-none"
                 placeholder="seu@email.com"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 ml-1">Senha</label>
+              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">Senha</label>
               <input 
                 type="password" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all text-center"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white/10 transition-all text-center text-white placeholder:text-zinc-600 outline-none"
                 placeholder="••••••••"
                 required
               />
             </div>
             <button 
               disabled={loading}
-              className="w-full bg-brand-red text-white py-3 rounded-xl font-semibold text-base hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50 whitespace-nowrap"
+              className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-sm hover:bg-brand-red/90 active:scale-[0.98] transition-all disabled:opacity-50 whitespace-nowrap shadow-xl shadow-brand-red/20 uppercase tracking-widest"
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Entrando...' : 'Entrar na Plataforma'}
             </button>
             <button 
               type="button"
               onClick={() => setMode('forgot')}
-              className="w-full text-zinc-400 text-sm font-medium py-2"
+              className="w-full text-zinc-500 text-[10px] font-bold uppercase tracking-widest py-2 hover:text-white transition-colors"
             >
               Esqueci minha senha
             </button>
-            <div className="mt-4 text-center">
-              <p className="text-[10px] text-zinc-400">
-                Acesso exclusivo para cliente. Adquira o acesso em{' '}
+            <div className="mt-6 text-center pt-6 border-t border-white/5">
+              <p className="text-[9px] text-zinc-500 font-medium leading-relaxed">
+                Acesso exclusivo para clientes ativos.<br />Adquira sua licença em{' '}
                 <a 
                   href="https://fiftymais.com.br" 
                   target="_blank" 
@@ -1200,26 +1195,26 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
         ) : (
           <form onSubmit={handleForgot} className="space-y-4">
              <div>
-              <label className="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-1.5 ml-1">E-mail cadastrado</label>
+              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">E-mail cadastrado</label>
               <input 
                 type="email" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-4 py-3 focus:border-brand-red focus:bg-white transition-all text-center"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white/10 transition-all text-center text-white placeholder:text-zinc-600 outline-none"
                 placeholder="seu@email.com"
                 required
               />
             </div>
             <button 
               disabled={loading}
-              className="w-full bg-brand-red text-white py-4 rounded-2xl font-semibold text-lg hover:bg-brand-red-dark active:scale-[0.98] transition-all disabled:opacity-50"
+              className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-sm hover:bg-brand-red/90 active:scale-[0.98] transition-all disabled:opacity-50 uppercase tracking-widest shadow-xl shadow-brand-red/20"
             >
-              {loading ? 'Enviando...' : 'Recuperar Senha'}
+              {loading ? 'Enviando...' : 'Recuperar Acesso'}
             </button>
             <button 
               type="button"
               onClick={() => setMode('login')}
-              className="w-full text-zinc-400 text-sm font-medium py-2"
+              className="w-full text-zinc-500 text-[10px] font-bold uppercase tracking-widest py-2 hover:text-white transition-colors"
             >
               Voltar ao login
             </button>
@@ -1365,7 +1360,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
               </div>
             </div>
           </div>
-          <button onClick={() => setStep(2)} className="w-full bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+          <button onClick={() => setStep(2)} className="w-full bg-[#01bd23] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#019a1d] uppercase tracking-widest whitespace-nowrap shadow-lg shadow-green-600/20">
             PRÓXIMO PASSO <ChevronRight size={18} />
           </button>
         </div>
