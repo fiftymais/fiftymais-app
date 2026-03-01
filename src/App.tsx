@@ -399,10 +399,6 @@ export default function App() {
       
       setFormData(mappedProposta);
       setCurrentPage('preview');
-      
-      if (profile) {
-        generateProposalPDF(mappedProposta, profile);
-      }
     } catch (err: any) {
       console.error('Unexpected Save Error:', err);
       showToast('Erro inesperado: ' + err.message, 'error');
