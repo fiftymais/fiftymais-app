@@ -304,15 +304,16 @@ export default function App() {
       ...rest 
     } = formData;
 
+    // Explicitly pick core columns to avoid Supabase schema errors
     const payload = {
-      ...rest,
       user_id: session.user.id,
+      cliente_nome: formData.cliente_nome,
+      cliente_wpp: formData.cliente_wpp,
       v_total: total,
-      status: 'enviada', // Force status to 'enviada' as requested
+      status: 'enviada',
       updated_at: new Date().toISOString(),
       created_at: formData.created_at || new Date().toISOString(),
       numero: formData.numero || propostas.length + 1,
-      // Compatibility fields: store the rich structure in 'medidas' column
       medidas: {
         tipo_movel: ambientes?.[0]?.tipo || 'Móvel Planejado',
         ambientes: ambientes || [],
@@ -993,11 +994,8 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
           >
             <div className="flex-1 min-w-0 space-y-2 relative z-10 flex flex-col items-center justify-center">
               <div className="flex items-center gap-2 justify-center">
-                <span className={cn("px-2 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest", banners[index].tagBg)}>
-                  {banners[index].tag.split(' ')[0]}
-                </span>
-                <span className={cn("text-[8px] font-medium uppercase tracking-widest opacity-60", banners[index].textColor)}>
-                  {banners[index].tag.split(' ').slice(1).join(' ')}
+                <span className={cn("px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest shadow-sm", banners[index].tagBg)}>
+                  {banners[index].tag}
                 </span>
               </div>
               <h4 className={cn(banners[index].titleClass || "text-sm md:text-base font-medium leading-tight", banners[index].textColor)}>
@@ -1029,8 +1027,8 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   };
 
   return (
-    <div className="space-y-6 py-4">
-      <div className="max-w-3xl mx-auto px-4 text-center space-y-2 max-w-full overflow-hidden">
+    <div className="space-y-6 py-4 max-w-2xl mx-auto">
+      <div className="px-4 text-center space-y-2 overflow-hidden">
         <h2 className="text-2xl md:text-3xl font-medium text-brand-text1 tracking-tighter flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis px-2">
           Bem-vindo ao <span className="text-brand-red font-medium">Fifty+</span> 
           {profile?.user_name && (
@@ -1046,16 +1044,16 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         <p className="text-brand-text3 font-bold text-[9px] md:text-xs uppercase tracking-[0.2em] opacity-60 whitespace-nowrap">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
-      <div className="-mx-4 md:mx-auto md:max-w-3xl md:px-4">
+      <div className="-mx-4 md:mx-0">
         <NewsCarousel setCurrentPage={setCurrentPage} />
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 space-y-6">
+      <div className="px-4 space-y-6">
         <div className="bg-white rounded-[2rem] border-2 border-brand-border overflow-hidden shadow-sm">
           <div className="p-6 border-b border-brand-border bg-brand-surface2">
-             <h3 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider">Como funciona:</h3>
+             <h3 className="text-sm font-semibold text-brand-text1 uppercase tracking-wider text-center">Como funciona:</h3>
           </div>
-          <div className="p-6 space-y-0 relative">
+          <div className="p-6 space-y-0 relative max-w-sm mx-auto">
             {/* Trail Line */}
             <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
             
@@ -1916,15 +1914,25 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
     }
 
     setLoading(true);
-    const { user_name, unidade_medida, ...rest } = profile;
-    const especialidadeJson = JSON.stringify({ user_name, unidade_medida });
     
-    const { error } = await supabase.from('profiles').upsert({
+    // Explicitly pick core columns to avoid Supabase schema errors
+    const payload = {
       id: userId,
-      ...rest,
-      especialidade: especialidadeJson,
+      nome: profile.nome,
+      wpp: profile.wpp,
+      cidade: profile.cidade,
+      insta: profile.insta,
+      cpf: profile.cpf,
+      endereco: profile.endereco,
+      logo: profile.logo,
+      especialidade: JSON.stringify({ 
+        user_name: profile.user_name, 
+        unidade_medida: profile.unidade_medida 
+      }),
       updated_at: new Date().toISOString()
-    });
+    };
+    
+    const { error } = await supabase.from('profiles').upsert(payload);
     if (error) {
       showToast(error.message, 'error');
     } else {
