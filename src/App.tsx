@@ -26,7 +26,9 @@ import {
   Play,
   Home,
   Calculator,
-  Check
+  Check,
+  ExternalLink,
+  Lock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { clsx, type ClassValue } from 'clsx';
@@ -478,7 +480,7 @@ export default function App() {
         <nav className="flex-1 px-3 space-y-1">
           {[
             { id: 'tutorial', label: 'Início', icon: <Home size={14} /> },
-            { id: 'perfil', label: 'Meu Perfil', icon: <Settings size={14} /> },
+            { id: 'perfil', label: 'Configurações', icon: <Settings size={14} /> },
             { id: 'orcamento', label: 'Novo Orçamento', icon: <Plus size={14} />, action: () => {
               setEditingId(null);
               setFormData({
@@ -764,7 +766,7 @@ export default function App() {
             )}
           >
             <Settings size={20} strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-            <span className="text-[9px] uppercase tracking-tight font-semibold">Perfil</span>
+            <span className="text-[9px] uppercase tracking-tight font-semibold">Ajustes</span>
           </button>
 
           <button 
@@ -789,7 +791,10 @@ export default function App() {
               currentPage === 'orcamento' ? "text-brand-red" : "text-brand-text3"
             )}
           >
-            <Plus size={28} strokeWidth={3} />
+            <div className={cn(
+              "w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] border-2 transition-all",
+              currentPage === 'orcamento' ? "bg-brand-red text-white border-brand-red" : "bg-white text-brand-red border-brand-red"
+            )}>F+</div>
             <span className="text-[9px] uppercase tracking-tight font-semibold">Novo</span>
           </button>
 
@@ -1020,7 +1025,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
 function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
   const steps = [
     { title: '1. Perfil', desc: 'Logo e dados.', icon: <Settings size={18} />, color: 'bg-blue-500' },
-    { title: '2. Proposta', desc: 'Inicie rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
+    { title: '2. Proposta', desc: 'Inicie rápido.', icon: <div className="font-black text-xs">Fifty+</div>, color: 'bg-emerald-500' },
     { title: '3. Ambientes', desc: 'Escolha cômodos.', icon: <Layout size={18} />, color: 'bg-amber-500' },
     { title: '4. Medidas', desc: 'Dimensões técnicas.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
     { title: '5. Orçamento', desc: 'Gere o PDF.', icon: <FileText size={18} />, color: 'bg-brand-red' },
@@ -1046,7 +1051,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-bold text-[10px] md:text-xs uppercase tracking-[0.3em] truncate opacity-60">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
+        <p className="text-brand-text3 font-bold text-[9px] md:text-xs uppercase tracking-[0.2em] opacity-60 whitespace-nowrap">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
       <div className="-mx-4 md:mx-auto md:max-w-3xl md:px-4">
@@ -1441,10 +1446,10 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             </div>
           </div>
           <div className="flex gap-4">
-            <button onClick={() => setStep(1)} className="flex-1 bg-brand-surface2 border border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+            <button onClick={() => setStep(1)} className="flex-1 bg-red-600 text-white border border-red-700 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={() => setStep(3)} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+            <button onClick={() => setStep(3)} className="flex-[1.5] bg-[#01bd23] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#019a1d] uppercase tracking-widest whitespace-nowrap shadow-lg shadow-green-600/20">
               Próximo Passo <ChevronRight size={18} />
             </button>
           </div>
@@ -1536,10 +1541,10 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             )}
           </div>
           <div className="flex gap-4">
-            <button onClick={() => setStep(2)} className="flex-1 bg-brand-surface2 border border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+            <button onClick={() => setStep(2)} className="flex-1 bg-red-600 text-white border border-red-700 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={() => setStep(4)} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+            <button onClick={() => setStep(4)} className="flex-[1.5] bg-[#01bd23] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#019a1d] uppercase tracking-widest whitespace-nowrap shadow-lg shadow-green-600/20">
               Próximo Passo <ChevronRight size={18} />
             </button>
           </div>
@@ -1620,17 +1625,17 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 <span className="text-xs font-bold text-brand-text3 uppercase tracking-widest">Subtotal</span>
                 <span className="text-base font-bold text-brand-text2">{fmt(subtotal)}</span>
               </div>
-              <div className="bg-brand-red text-white p-6 rounded-[2rem] flex flex-col items-center gap-1 shadow-xl shadow-brand-red/20">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">Valor Total Cliente</span>
-                <span className="text-3xl font-bold">{fmt(total)}</span>
+              <div className="bg-brand-red text-white p-4 rounded-2xl flex flex-col items-center gap-0.5 shadow-xl shadow-brand-red/20">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Valor Total Cliente</span>
+                <span className="text-2xl font-bold">{fmt(total)}</span>
               </div>
             </div>
           </div>
           <div className="flex gap-4">
-            <button onClick={() => setStep(3)} className="flex-1 bg-brand-surface2 border border-brand-border py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+            <button onClick={() => setStep(3)} className="flex-1 bg-red-600 text-white border border-red-700 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={() => setStep(5)} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-brand-red/90 uppercase tracking-widest whitespace-nowrap shadow-lg shadow-brand-red/20">
+            <button onClick={() => setStep(5)} className="flex-[1.5] bg-[#01bd23] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-[#019a1d] uppercase tracking-widest whitespace-nowrap shadow-lg shadow-green-600/20">
               Próximo Passo <ChevronRight size={18} />
             </button>
           </div>
@@ -1772,11 +1777,11 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             </div>
           </div>
           <div className="flex gap-4 max-w-md mx-auto w-full">
-            <button onClick={() => setStep(4)} className="flex-1 bg-brand-surface2 border-2 border-brand-border py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all text-brand-text3 uppercase tracking-widest whitespace-nowrap">
+            <button onClick={() => setStep(4)} className="flex-1 bg-red-600 text-white border border-red-700 py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap">
               <ChevronLeft size={18} /> Voltar
             </button>
-            <button onClick={onSave} className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-brand-red/90 shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap px-4">
-              SALVAR E BAIXAR ORÇAMENTO <Check size={18} />
+            <button onClick={onSave} className="flex-[1.5] bg-[#01bd23] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 active:scale-95 transition-all hover:bg-[#019a1d] shadow-lg shadow-green-600/20 uppercase tracking-widest whitespace-nowrap px-4">
+              PRÓXIMO PASSO <ChevronRight size={18} />
             </button>
           </div>
         </div>
@@ -1884,7 +1889,7 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
       </div>
 
       <div className="space-y-4 max-w-sm mx-auto w-full">
-        <button onClick={handleDownload} className="w-full bg-brand-red text-white py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 shadow-lg shadow-brand-red/20 active:scale-95 transition-all uppercase px-4">
+        <button onClick={handleDownload} className="w-full bg-[#01bd23] text-white py-5 rounded-2xl font-semibold text-lg flex items-center justify-center gap-3 shadow-lg shadow-green-600/20 active:scale-95 transition-all uppercase px-4">
           <FileText size={22} strokeWidth={2.5} /> SALVAR E BAIXAR ORÇAMENTO
         </button>
         <button onClick={onBack} className="w-full bg-white border-2 border-brand-border py-4 rounded-2xl font-semibold text-sm text-brand-text2 active:scale-95 transition-all uppercase">
@@ -1898,6 +1903,8 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
 function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, onSaveSuccess }: any) {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(!profile?.nome);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [passwords, setPasswords] = useState({ new: '', confirm: '' });
 
   const updateProfile = (key: string, val: any) => setProfile((prev: any) => ({ ...prev, [key]: val }));
 
@@ -1916,7 +1923,6 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
     }
 
     setLoading(true);
-    // Map 'user_name' and 'unidade_medida' to 'especialidade' as JSON to avoid DB column error
     const { user_name, unidade_medida, ...rest } = profile;
     const especialidadeJson = JSON.stringify({ user_name, unidade_medida });
     
@@ -1932,8 +1938,33 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
       showToast('Perfil salvo com sucesso!');
       setIsEditing(false);
       onSaveSuccess();
-      // Redirect to tutorial (home) as requested
       setCurrentPage('tutorial');
+    }
+    setLoading(false);
+  };
+
+  const handleUpdatePassword = async () => {
+    if (!passwords.new || !passwords.confirm) {
+      showToast('Preencha os campos de senha', 'error');
+      return;
+    }
+    if (passwords.new !== passwords.confirm) {
+      showToast('As senhas não conferem', 'error');
+      return;
+    }
+    if (passwords.new.length < 6) {
+      showToast('A senha deve ter no mínimo 6 caracteres', 'error');
+      return;
+    }
+
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password: passwords.new });
+    if (error) {
+      showToast(error.message, 'error');
+    } else {
+      showToast('Senha atualizada com sucesso!');
+      setShowPasswordForm(false);
+      setPasswords({ new: '', confirm: '' });
     }
     setLoading(false);
   };
@@ -1950,65 +1981,121 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Perfil</h2>
-        <p className="text-xs text-brand-text3">Configurações da Marcenaria</p>
+        <h2 className="text-xl font-bold">Configurações</h2>
+        <p className="text-xs text-brand-text3">Gerencie sua conta</p>
       </div>
 
       {!isEditing && profile?.nome ? (
-        <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-8">
-          <div className="flex flex-col items-center text-center gap-4">
-            <div className="w-24 h-24 bg-brand-surface2 rounded-3xl border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner">
-              {profile.logo ? (
-                <img src={profile.logo} className="w-full h-full object-contain p-3" />
-              ) : (
-                <span className="text-brand-red font-black text-3xl">{profile.nome[0]}</span>
-              )}
-            </div>
-            <div>
-              <h3 className="text-2xl font-black text-brand-text1 tracking-tighter leading-none">{profile.nome}</h3>
-              <div className="flex items-center justify-center gap-2 mt-2">
-                {profile.user_name && <span className="text-brand-red font-bold text-[10px] uppercase tracking-[0.2em] bg-brand-red-light px-2 py-0.5 rounded-full">{profile.user_name}</span>}
-                <span className="text-brand-text3 font-bold uppercase tracking-[0.2em] text-[9px]">{profile.cpf || 'CPF/CNPJ não informado'}</span>
+        <div className="space-y-4">
+          <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-8">
+            <div className="flex flex-col items-center text-center gap-4">
+              <div className="w-24 h-24 bg-brand-surface2 rounded-3xl border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner">
+                {profile.logo ? (
+                  <img src={profile.logo} className="w-full h-full object-contain p-3" />
+                ) : (
+                  <span className="text-brand-red font-black text-3xl">{profile.nome[0]}</span>
+                )}
+              </div>
+              <div>
+                <h3 className="text-2xl font-black text-brand-text1 tracking-tighter leading-none">{profile.nome}</h3>
+                <div className="flex items-center justify-center gap-2 mt-2">
+                  {profile.user_name && <span className="text-brand-red font-bold text-[10px] uppercase tracking-[0.2em] bg-brand-red-light px-2 py-0.5 rounded-full">{profile.user_name}</span>}
+                  <span className="text-brand-text3 font-bold uppercase tracking-[0.2em] text-[9px]">{profile.cpf || 'CPF/CNPJ não informado'}</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-3 pt-6 border-t border-brand-border">
-            <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
-              <div className="flex items-center gap-3">
-                <div className="text-brand-red"><MessageCircle size={16} /></div>
-                <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">WhatsApp</span>
-              </div>
-              <span className="text-sm font-bold text-brand-text1">{profile.wpp}</span>
-            </div>
-
-            {profile.insta && (
+            <div className="grid grid-cols-1 gap-3 pt-6 border-t border-brand-border">
               <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
                 <div className="flex items-center gap-3">
-                  <div className="text-brand-red"><Settings size={16} /></div>
-                  <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Instagram</span>
+                  <div className="text-brand-red"><MessageCircle size={16} /></div>
+                  <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">WhatsApp</span>
                 </div>
-                <span className="text-sm font-bold text-brand-text1">{profile.insta}</span>
+                <span className="text-sm font-bold text-brand-text1">{profile.wpp}</span>
               </div>
-            )}
 
-            {profile.endereco && (
-              <div className="p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50 space-y-2">
-                <div className="flex items-center gap-3">
-                  <div className="text-brand-red"><Home size={16} /></div>
-                  <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Endereço</span>
+              {profile.insta && (
+                <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="text-brand-red"><Settings size={16} /></div>
+                    <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Instagram</span>
+                  </div>
+                  <span className="text-sm font-bold text-brand-text1">{profile.insta}</span>
                 </div>
-                <p className="text-xs font-semibold text-brand-text2 pl-7 leading-relaxed">{profile.endereco}</p>
-              </div>
+              )}
+
+              {profile.endereco && (
+                <div className="p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50 space-y-2">
+                  <div className="flex items-center gap-3">
+                    <div className="text-brand-red"><Home size={16} /></div>
+                    <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Endereço</span>
+                  </div>
+                  <p className="text-xs font-semibold text-brand-text2 pl-7 leading-relaxed">{profile.endereco}</p>
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 gap-3">
+              <button 
+                onClick={() => setIsEditing(true)}
+                className="w-full bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 hover:border-brand-red hover:text-brand-red transition-all active:scale-95 uppercase tracking-[0.2em] shadow-sm"
+              >
+                <Edit2 size={16} /> Editar Perfil
+              </button>
+              
+              <button 
+                onClick={() => window.open('https://billing.stripe.com/p/login/6oU4gz6HobERbDm1uPd7q00', '_blank')}
+                className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-[0.2em] shadow-lg"
+              >
+                <ExternalLink size={16} /> Gerenciar Assinatura
+              </button>
+
+              <button 
+                onClick={() => setShowPasswordForm(!showPasswordForm)}
+                className="w-full bg-brand-surface2 border-2 border-brand-border text-brand-text3 py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-[0.2em]"
+              >
+                <Lock size={16} /> Alterar Senha
+              </button>
+            </div>
+
+            {showPasswordForm && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="space-y-4 pt-6 border-t border-brand-border"
+              >
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Nova Senha</label>
+                    <input 
+                      type="password" 
+                      value={passwords.new}
+                      onChange={e => setPasswords(p => ({ ...p, new: e.target.value }))}
+                      className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                      placeholder="••••••"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Confirmar Senha</label>
+                    <input 
+                      type="password" 
+                      value={passwords.confirm}
+                      onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
+                      className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                      placeholder="••••••"
+                    />
+                  </div>
+                  <button 
+                    onClick={handleUpdatePassword}
+                    disabled={loading}
+                    className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-[0.2em] shadow-lg shadow-brand-red/20"
+                  >
+                    {loading ? 'Salvando...' : 'Salvar Nova Senha'}
+                  </button>
+                </div>
+              </motion.div>
             )}
           </div>
-
-          <button 
-            onClick={() => setIsEditing(true)}
-            className="w-full bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 hover:border-brand-red hover:text-brand-red transition-all active:scale-95 uppercase tracking-[0.2em] shadow-sm"
-          >
-            <Edit2 size={16} /> Editar Perfil
-          </button>
         </div>
       ) : (
         <>
