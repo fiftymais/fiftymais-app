@@ -239,18 +239,25 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   doc.text(splitExcluso, M, y);
   y += splitExcluso.length * 5 + 15;
 
-  const nome = (proposta.cliente_nome || 'Cliente').replace(/\s/g, '_');
-  const filename = `Proposta_${nome}_${hoje.replace(/\//g, '-')}.pdf`;
+  const sanitizedNome = (proposta.cliente_nome || 'Cliente').trim().replace(/[^a-z0-9]/gi, '_').substring(0, 30);
+  const filename = `Proposta_${sanitizedNome}_${hoje.replace(/\//g, '-')}.pdf`;
 
-  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-  if (isIOS) {
-    try {
-      const pdfData = doc.output('bloburl');
-      window.open(pdfData, '_blank');
-    } catch (e) {
+  const pdfBlob = doc.output('blob');
+  const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+
+  // Tenta usar a API de Compartilhamento Nativa (Melhor para Mobile/WhatsApp)
+  // Isso envia o ARQUIVO diretamente, sem o link "blob:"
+  if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({
+      files: [file],
+      title: `Orçamento - ${proposta.cliente_nome}`,
+      text: `Segue a proposta de orçamento para ${proposta.cliente_nome}.`,
+    }).catch(() => {
+      // Se o usuário cancelar ou der erro, faz o download normal
       doc.save(filename);
-    }
+    });
   } else {
+    // Fallback para Desktop ou navegadores que não suportam Share API
     doc.save(filename);
   }
 };
