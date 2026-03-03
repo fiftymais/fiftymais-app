@@ -1081,7 +1081,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative h-64 md:h-80 overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
+      <div className="relative h-[480px] md:h-[600px] overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
         <AnimatePresence mode="wait">
           <motion.div 
             key={index}
@@ -1182,23 +1182,21 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
           </div>
         </div>
 
-        <div className="mt-12 max-w-sm mx-auto pb-24">
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              if (hasPersistedProfile) {
-                onStart();
-              } else {
+        {!hasPersistedProfile && (
+          <div className="mt-12 max-w-sm mx-auto pb-24">
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
                 setCurrentPage('perfil');
-              }
-            }}
-            className="w-full bg-brand-red text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-brand-red/20 active:scale-95 transition-all flex items-center justify-center gap-3"
-          >
-            <Zap size={18} fill="currentColor" />
-            {hasPersistedProfile ? 'COMEÇAR AGORA' : 'CONFIGURAR PERFIL'}
-          </motion.button>
-        </div>
+              }}
+              className="w-full bg-[#01bd23] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-green-600/20 active:scale-95 transition-all flex items-center justify-center gap-3"
+            >
+              <Settings size={18} />
+              CONFIGURE SEU PERFIL
+            </motion.button>
+          </div>
+        )}
       </div>
     </div>
   );
