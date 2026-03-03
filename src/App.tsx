@@ -445,6 +445,8 @@ export default function App() {
     );
   }
 
+  const isFullScreen = ['calculadora', 'perfil', 'orcamento', 'preview'].includes(currentPage);
+
   if (!session) {
     return (
       <>
@@ -465,18 +467,22 @@ export default function App() {
   return (
     <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
       {/* Sidebar for Desktop */}
-      <aside className="hidden md:flex w-44 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
-        <div className="p-6 mb-4">
-          <button 
-            onClick={() => setCurrentPage('tutorial')}
-            className="text-2xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
-          >
-            Fifty+
-          </button>
-          <p className="text-[8px] font-bold text-brand-text3 uppercase tracking-widest opacity-40 mt-0.5">Marcenaria de Elite</p>
-        </div>
-        
-        <nav className="flex-1 px-3 space-y-1">
+      {!isFullScreen && (
+        <aside className="hidden md:flex w-44 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
+          <div className="p-6 mb-4">
+            <button 
+              onClick={() => setCurrentPage('tutorial')}
+              className="text-2xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
+            >
+              Fifty+
+            </button>
+            <div className="flex items-center gap-1 mt-1 opacity-60">
+              <span className="text-[10px]">🇧🇷</span>
+              <span className="text-[7px] font-bold uppercase tracking-tighter text-zinc-400">Brasil</span>
+            </div>
+          </div>
+          
+          <nav className="flex-1 px-3 space-y-1">
           {[
             { id: 'tutorial', label: 'Início', icon: <Home size={14} /> },
             { id: 'perfil', label: 'Configurações', icon: <Settings size={14} /> },
@@ -529,28 +535,47 @@ export default function App() {
           </button>
         </div>
       </aside>
+    )}
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
+    {/* Main Content */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         {/* Top Bar for Mobile */}
-        <header className="md:hidden sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-14 flex items-center justify-between">
-          <button 
-            onClick={() => setCurrentPage('tutorial')}
-            className="text-xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
-          >
-            Fifty+
-          </button>
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center text-xs font-bold">
-              {session.user.email?.[0].toUpperCase()}
+        {!isFullScreen && (
+          <header className="md:hidden sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-14 flex items-center justify-between">
+            <div className="flex flex-col">
+              <button 
+                onClick={() => setCurrentPage('tutorial')}
+                className="text-xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+              >
+                Fifty+
+              </button>
+              <span className="text-[7px] font-black uppercase tracking-widest text-zinc-400 -mt-1">🇧🇷 Brasil</span>
             </div>
-            <button onClick={handleLogout} className="p-2 text-brand-text3 hover:text-brand-red transition-colors">
-              <LogOut size={18} />
-            </button>
-          </div>
-        </header>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center text-xs font-bold">
+                {session.user.email?.[0].toUpperCase()}
+              </div>
+              <button onClick={handleLogout} className="p-2 text-brand-text3 hover:text-brand-red transition-colors">
+                <LogOut size={18} />
+              </button>
+            </div>
+          </header>
+        )}
 
-        <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 overflow-y-auto">
+        <main className={cn(
+          "flex-1 overflow-y-auto",
+          isFullScreen ? "p-0" : "p-4 md:p-8 pb-24 md:pb-8"
+        )}>
+          {isFullScreen && (
+            <div className="fixed top-4 right-4 z-[100]">
+              <button 
+                onClick={() => setCurrentPage(currentPage === 'preview' ? 'orcamento' : 'propostas')}
+                className="w-10 h-10 bg-white shadow-xl border border-zinc-100 rounded-full flex items-center justify-center text-brand-text3 active:scale-90 transition-transform"
+              >
+                <X size={20} />
+              </button>
+            </div>
+          )}
           <AnimatePresence mode="wait">
             {currentPage === 'tutorial' && (
               <motion.div
@@ -745,80 +770,82 @@ export default function App() {
         </main>
 
         {/* Bottom Nav for Mobile */}
-        <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border px-6 py-2 flex items-center justify-between z-50">
-          <button 
-            onClick={() => setCurrentPage('tutorial')}
-            className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-              currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
-            )}
-          >
-            <Home size={20} strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-            <span className="text-[9px] uppercase tracking-tight font-semibold">Início</span>
-          </button>
+        {!isFullScreen && (
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border px-6 py-2 flex items-center justify-between z-50">
+            <button 
+              onClick={() => setCurrentPage('tutorial')}
+              className={cn(
+                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+                currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
+              )}
+            >
+              <Home size={20} strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
+              <span className="text-[9px] uppercase tracking-tight font-semibold">Início</span>
+            </button>
 
-          <button 
-            onClick={() => setCurrentPage('perfil')}
-            className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-              currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
-            )}
-          >
-            <Settings size={20} strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-            <span className="text-[9px] uppercase tracking-tight font-semibold">Ajustes</span>
-          </button>
+            <button 
+              onClick={() => setCurrentPage('perfil')}
+              className={cn(
+                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+                currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
+              )}
+            >
+              <Settings size={20} strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
+              <span className="text-[9px] uppercase tracking-tight font-semibold">Ajustes</span>
+            </button>
 
-          <button 
-            onClick={() => {
-              setEditingId(null);
-              setFormData({
-                ambientes: [],
-                chapa: 'MDF 15mm',
-                acabamento: '',
-                ferragens: '',
-                v_margem: 30,
-                status: 'nao_enviada',
-                pgto_formas: ['Dinheiro', 'PIX'],
-                pgto_parcelas: 1,
-                pgto_juros: false
-              });
-              setCurrentStep(1);
-              setCurrentPage('orcamento');
-            }}
-            className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-              currentPage === 'orcamento' ? "text-brand-red" : "text-brand-text3"
-            )}
-          >
-            <div className={cn(
-              "w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] border-2 transition-all",
-              currentPage === 'orcamento' ? "bg-brand-red text-white border-brand-red" : "bg-white text-brand-red border-brand-red"
-            )}>F+</div>
-            <span className="text-[9px] uppercase tracking-tight font-semibold">Novo</span>
-          </button>
+            <button 
+              onClick={() => {
+                setEditingId(null);
+                setFormData({
+                  ambientes: [],
+                  chapa: 'MDF 15mm',
+                  acabamento: '',
+                  ferragens: '',
+                  v_margem: 30,
+                  status: 'nao_enviada',
+                  pgto_formas: ['Dinheiro', 'PIX'],
+                  pgto_parcelas: 1,
+                  pgto_juros: false
+                });
+                setCurrentStep(1);
+                setCurrentPage('orcamento');
+              }}
+              className={cn(
+                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+                currentPage === 'orcamento' ? "text-brand-red" : "text-brand-text3"
+              )}
+            >
+              <div className={cn(
+                "w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] border-2 transition-all",
+                currentPage === 'orcamento' ? "bg-brand-red text-white border-brand-red" : "bg-white text-brand-red border-brand-red"
+              )}>F+</div>
+              <span className="text-[9px] uppercase tracking-tight font-semibold">Novo</span>
+            </button>
 
-          <button 
-            onClick={() => setCurrentPage('propostas')}
-            className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-              currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
-            )}
-          >
-            <FileText size={20} strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-            <span className="text-[9px] uppercase tracking-tight font-semibold">Lista</span>
-          </button>
+            <button 
+              onClick={() => setCurrentPage('propostas')}
+              className={cn(
+                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+                currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
+              )}
+            >
+              <FileText size={20} strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
+              <span className="text-[9px] uppercase tracking-tight font-semibold">Lista</span>
+            </button>
 
-          <button 
-            onClick={() => setCurrentPage('calculadora')}
-            className={cn(
-              "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-              currentPage === 'calculadora' ? "text-brand-red" : "text-brand-text3"
-            )}
-          >
-            <Calculator size={20} strokeWidth={currentPage === 'calculadora' ? 2.5 : 2} />
-            <span className="text-[9px] uppercase tracking-tight font-semibold">Calc</span>
-          </button>
-        </nav>
+            <button 
+              onClick={() => setCurrentPage('calculadora')}
+              className={cn(
+                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
+                currentPage === 'calculadora' ? "text-brand-red" : "text-brand-text3"
+              )}
+            >
+              <Calculator size={20} strokeWidth={currentPage === 'calculadora' ? 2.5 : 2} />
+              <span className="text-[9px] uppercase tracking-tight font-semibold">Calc</span>
+            </button>
+          </nav>
+        )}
       </div>
 
       <AnimatePresence mode="wait">
@@ -1028,20 +1055,21 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
 
   return (
     <div className="space-y-6 py-4 max-w-2xl mx-auto">
-      <div className="px-4 text-center space-y-2 overflow-hidden">
-        <h2 className="text-2xl md:text-3xl font-medium text-brand-text1 tracking-tighter flex items-center justify-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis px-2">
-          Bem-vindo ao <span className="text-brand-red font-medium">Fifty+</span> 
+      <div className="px-4 text-center space-y-1 overflow-hidden">
+        <h2 className="text-xl md:text-3xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
+          <span>Bem-vindo ao</span>
+          <span className="text-brand-red">Fifty+</span> 
           {profile?.user_name && (
             <motion.span 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-black font-medium truncate inline-block"
+              className="text-brand-text1 truncate max-w-[200px] md:max-w-none"
             >
               {formatName(profile.user_name)}
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-bold text-[9px] md:text-xs uppercase tracking-[0.2em] opacity-60 whitespace-nowrap">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
+        <p className="text-brand-text3 font-bold text-[8px] md:text-xs uppercase tracking-[0.2em] opacity-60">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
       <div className="-mx-4 md:mx-0">
@@ -1127,40 +1155,42 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6 relative overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-red/10 blur-[120px] rounded-full" />
+      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-brand-red/5 blur-[120px] rounded-full" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-brand-red/5 blur-[120px] rounded-full" />
       
-      <div className="w-full max-w-sm bg-white/5 backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] shadow-2xl relative z-10">
+      <div className="w-full max-w-sm bg-white border border-zinc-100 p-8 rounded-[2.5rem] shadow-2xl relative z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-20 h-20 bg-brand-red rounded-3xl flex items-center justify-center shadow-2xl shadow-brand-red/40 mb-4 group transition-transform hover:scale-105">
+          <div className="w-20 h-20 bg-brand-red rounded-3xl flex items-center justify-center shadow-2xl shadow-brand-red/20 mb-4 group transition-transform hover:scale-105">
             <span className="text-white font-black text-3xl tracking-tighter">F+</span>
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tighter mb-1">FIFTY+</h1>
-          <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-[0.3em]">Marcenaria de Elite</p>
+          <h1 className="text-3xl font-black text-brand-text1 tracking-tighter mb-1 flex items-center gap-2">
+            FIFTY+ <span className="text-xl">🇧🇷</span>
+          </h1>
+          <p className="text-zinc-400 text-[9px] font-medium mt-2 italic">"Orgulho de ser Brasileiro"</p>
         </div>
 
         {mode === 'login' ? (
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">E-mail</label>
+              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2 ml-1">E-mail</label>
               <input 
                 type="email" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white/10 transition-all text-center text-white placeholder:text-zinc-600 outline-none"
+                className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white transition-all text-center text-brand-text1 placeholder:text-zinc-300 outline-none"
                 placeholder="seu@email.com"
                 required
               />
             </div>
             <div>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">Senha</label>
+              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2 ml-1">Senha</label>
               <input 
                 type="password" 
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white/10 transition-all text-center text-white placeholder:text-zinc-600 outline-none"
+                className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white transition-all text-center text-brand-text1 placeholder:text-zinc-300 outline-none"
                 placeholder="••••••••"
                 required
               />
@@ -1174,12 +1204,12 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
             <button 
               type="button"
               onClick={() => setMode('forgot')}
-              className="w-full text-zinc-500 text-[10px] font-bold uppercase tracking-widest py-2 hover:text-white transition-colors"
+              className="w-full text-zinc-400 text-[10px] font-bold uppercase tracking-widest py-2 hover:text-brand-red transition-colors"
             >
               Esqueci minha senha
             </button>
-            <div className="mt-6 text-center pt-6 border-t border-white/5">
-              <p className="text-[9px] text-zinc-500 font-medium leading-relaxed">
+            <div className="mt-6 text-center pt-6 border-t border-zinc-50">
+              <p className="text-[9px] text-zinc-400 font-medium leading-relaxed">
                 Acesso exclusivo para clientes ativos.<br />Adquira sua licença em{' '}
                 <a 
                   href="https://fiftymais.com.br" 
@@ -1195,12 +1225,12 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
         ) : (
           <form onSubmit={handleForgot} className="space-y-4">
              <div>
-              <label className="block text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2 ml-1">E-mail cadastrado</label>
+              <label className="block text-[10px] font-black text-zinc-400 uppercase tracking-widest mb-2 ml-1">E-mail cadastrado</label>
               <input 
                 type="email" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white/10 transition-all text-center text-white placeholder:text-zinc-600 outline-none"
+                className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 focus:border-brand-red focus:bg-white transition-all text-center text-brand-text1 placeholder:text-zinc-300 outline-none"
                 placeholder="seu@email.com"
                 required
               />
@@ -1214,7 +1244,7 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
             <button 
               type="button"
               onClick={() => setMode('login')}
-              className="w-full text-zinc-500 text-[10px] font-bold uppercase tracking-widest py-2 hover:text-white transition-colors"
+              className="w-full text-zinc-400 text-[10px] font-bold uppercase tracking-widest py-2 hover:text-brand-red transition-colors"
             >
               Voltar ao login
             </button>
@@ -1470,56 +1500,70 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 
                 <div className="space-y-4">
                   {amb.pecas.map((p: any, pIdx: number) => (
-                    <div key={pIdx} className="bg-white p-5 rounded-3xl border-2 border-brand-border space-y-4 shadow-sm">
+                    <div key={pIdx} className="bg-white p-4 rounded-3xl border border-zinc-100 space-y-3 shadow-sm">
                       <div className="flex items-center justify-between gap-3">
-                        <input 
-                          type="text" 
-                          value={p.nome} 
-                          onChange={e => updatePeca(amb.id, pIdx, 'nome', e.target.value)}
-                          className="flex-1 bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-sm font-bold outline-none focus:border-brand-red transition-all uppercase text-center"
-                          placeholder="Módulo/item"
-                        />
-                        <button onClick={() => removePeca(amb.id, pIdx)} className="text-red-500 p-1 active:scale-90 transition-transform"><Trash2 size={20} /></button>
+                        <div className="flex-1 space-y-1">
+                          <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">Módulo / Item</label>
+                          <input 
+                            type="text" 
+                            value={p.nome} 
+                            onChange={e => updatePeca(amb.id, pIdx, 'nome', e.target.value)}
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all uppercase text-center"
+                            placeholder="Ex: Armário Superior"
+                          />
+                        </div>
+                        <button onClick={() => removePeca(amb.id, pIdx)} className="text-zinc-300 hover:text-red-500 p-1 active:scale-90 transition-transform mt-5"><Trash2 size={16} /></button>
                       </div>
-                      <div className="grid grid-cols-3 gap-3">
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-brand-text3 ml-1 uppercase">Larg. ({unit})</label>
+                      
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black text-zinc-400 ml-1 uppercase tracking-tighter">Larg. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.l} 
                             onChange={e => updatePeca(amb.id, pIdx, 'l', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-brand-red transition-all text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-2 py-2 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all text-center"
                             placeholder="0"
                           />
                         </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-brand-text3 uppercase ml-1">Alt. ({unit})</label>
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black text-zinc-400 uppercase ml-1 tracking-tighter">Alt. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.a} 
                             onChange={e => updatePeca(amb.id, pIdx, 'a', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-brand-red transition-all text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-2 py-2 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all text-center"
                             placeholder="0"
                           />
                         </div>
-                        <div className="space-y-1.5">
-                          <label className="text-[10px] font-bold text-brand-text3 uppercase ml-1">Prof. ({unit})</label>
+                        <div className="space-y-1">
+                          <label className="text-[8px] font-black text-zinc-400 uppercase ml-1 tracking-tighter">Prof. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.p} 
                             onChange={e => updatePeca(amb.id, pIdx, 'p', e.target.value)}
-                            className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold outline-none focus:border-brand-red transition-all text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-2 py-2 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all text-center"
                             placeholder="0"
                           />
                         </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="text-[8px] font-black text-zinc-400 ml-1 uppercase tracking-widest">Observações do Módulo</label>
+                        <textarea 
+                          value={p.obs || ''} 
+                          onChange={e => updatePeca(amb.id, pIdx, 'obs', e.target.value)}
+                          className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-4 py-2 text-xs focus:border-brand-red focus:bg-white transition-all min-h-[40px] outline-none font-normal text-center"
+                          placeholder="Ex: 2 portas, 3 prateleiras..."
+                        />
                       </div>
                     </div>
                   ))}
                   <button 
                     onClick={() => addPeca(amb.id)}
-                    className="w-full py-4 border-2 border-dashed border-brand-border rounded-2xl text-brand-text3 font-bold text-xs hover:border-brand-red hover:text-brand-red transition-all bg-white active:scale-95 uppercase"
+                    className="w-full py-3 border border-dashed border-zinc-200 rounded-2xl text-zinc-400 font-bold text-[10px] hover:border-brand-red hover:text-brand-red transition-all bg-white active:scale-95 uppercase tracking-widest"
                   >
-                    + ADICIONAR MÓDULO EM {amb.tipo.toUpperCase()}
+                    + ADICIONAR ITEM EM {amb.tipo.toUpperCase()}
                   </button>
                 </div>
               </div>
@@ -1611,14 +1655,19 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 </div>
               </div>
             </div>
-            <div className="pt-4 border-t border-brand-border">
-              <div className="flex justify-between items-center mb-3 px-1">
-                <span className="text-xs font-bold text-brand-text3 uppercase tracking-widest">Subtotal</span>
-                <span className="text-base font-bold text-brand-text2">{fmt(subtotal)}</span>
+            <div className="pt-4 border-t border-zinc-100 space-y-3">
+              <div className="flex justify-between items-center px-2">
+                <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Subtotal</span>
+                <span className="text-sm font-bold text-brand-text1">{fmt(subtotal)}</span>
               </div>
-              <div className="bg-brand-red text-white p-4 rounded-2xl flex flex-col items-center gap-0.5 shadow-xl shadow-brand-red/20">
-                <span className="text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Valor Total Cliente</span>
-                <span className="text-2xl font-bold">{fmt(total)}</span>
+              <div className="bg-zinc-50 border border-zinc-100 p-4 rounded-2xl flex items-center justify-between shadow-sm">
+                <div className="flex flex-col">
+                  <span className="text-[8px] font-black uppercase tracking-[0.2em] text-zinc-400">Valor Total Cliente</span>
+                  <span className="text-xl font-black text-brand-red tracking-tighter">{fmt(total)}</span>
+                </div>
+                <div className="w-10 h-10 bg-brand-red rounded-xl flex items-center justify-center text-white shadow-lg shadow-brand-red/20">
+                  <Check size={20} />
+                </div>
               </div>
             </div>
           </div>
@@ -1703,6 +1752,16 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                   onChange={e => updateData('pgto_condicao', e.target.value)}
                   className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
                   placeholder="Ex: 50% entrada + 50% entrega"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-brand-text2 ml-1">Garantia do Serviço</label>
+                <input 
+                  type="text" 
+                  value={data.garantia || ''} 
+                  onChange={e => updateData('garantia', e.target.value)}
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none"
+                  placeholder="Ex: 5 anos contra defeitos de fabricação"
                 />
               </div>
               <div className="space-y-2">
@@ -1981,265 +2040,235 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Configurações</h2>
-        <p className="text-xs text-brand-text3">Gerencie sua conta</p>
-      </div>
-
-      {!isEditing && profile?.nome ? (
-        <div className="space-y-4">
-          <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-8">
-            <div className="flex flex-col items-center text-center gap-4">
-              <div className="w-24 h-24 bg-brand-surface2 rounded-3xl border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner">
-                {profile.logo ? (
-                  <img src={profile.logo} className="w-full h-full object-contain p-3" />
-                ) : (
-                  <span className="text-brand-red font-black text-3xl">{profile.nome[0]}</span>
-                )}
-              </div>
-              <div>
-                <h3 className="text-2xl font-black text-brand-text1 tracking-tighter leading-none">{profile.nome}</h3>
-                <div className="flex items-center justify-center gap-2 mt-2">
-                  {profile.user_name && <span className="text-brand-red font-bold text-[10px] uppercase tracking-[0.2em] bg-brand-red-light px-2 py-0.5 rounded-full">{profile.user_name}</span>}
-                  <span className="text-brand-text3 font-bold uppercase tracking-[0.2em] text-[9px]">{profile.cpf || 'CPF/CNPJ não informado'}</span>
-                </div>
-              </div>
+      <AnimatePresence mode="wait">
+        {showPasswordForm ? (
+          <motion.div 
+            key="password-form"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="fixed inset-0 bg-white z-[100] p-6 flex flex-col"
+          >
+            <div className="flex items-center justify-between mb-8">
+              <h2 className="text-xl font-black uppercase tracking-tight">Alterar Senha</h2>
+              <button onClick={() => setShowPasswordForm(false)} className="text-brand-text3 p-2 active:scale-90 transition-transform"><X size={24} /></button>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 pt-6 border-t border-brand-border">
-              <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
-                <div className="flex items-center gap-3">
-                  <div className="text-brand-red"><MessageCircle size={16} /></div>
-                  <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">WhatsApp</span>
+            <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full space-y-6">
+              <div className="text-center space-y-2 mb-4">
+                <div className="w-16 h-16 bg-brand-red/10 rounded-full flex items-center justify-center mx-auto text-brand-red">
+                  <Lock size={32} />
                 </div>
-                <span className="text-sm font-bold text-brand-text1">{profile.wpp}</span>
+                <p className="text-xs text-brand-text3 font-bold uppercase tracking-widest">Segurança da Conta</p>
               </div>
 
-              {profile.insta && (
-                <div className="flex items-center justify-between p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50">
-                  <div className="flex items-center gap-3">
-                    <div className="text-brand-red"><Settings size={16} /></div>
-                    <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Instagram</span>
-                  </div>
-                  <span className="text-sm font-bold text-brand-text1">{profile.insta}</span>
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Nova Senha</label>
+                  <input 
+                    type="password" 
+                    value={passwords.new} 
+                    onChange={e => setPasswords(prev => ({ ...prev, new: e.target.value }))}
+                    className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                    placeholder="••••••"
+                  />
                 </div>
-              )}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Confirmar Senha</label>
+                  <input 
+                    type="password" 
+                    value={passwords.confirm} 
+                    onChange={e => setPasswords(prev => ({ ...prev, confirm: e.target.value }))}
+                    className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                    placeholder="••••••"
+                  />
+                </div>
+              </div>
 
-              {profile.endereco && (
-                <div className="p-4 bg-brand-surface2 rounded-2xl border border-brand-border/50 space-y-2">
-                  <div className="flex items-center gap-3">
-                    <div className="text-brand-red"><Home size={16} /></div>
-                    <span className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Endereço</span>
-                  </div>
-                  <p className="text-xs font-semibold text-brand-text2 pl-7 leading-relaxed">{profile.endereco}</p>
-                </div>
-              )}
+              <div className="space-y-3 pt-4">
+                <button 
+                  onClick={handleUpdatePassword}
+                  disabled={loading}
+                  className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-brand-red/20 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {loading ? 'Atualizando...' : 'Confirmar Alteração'}
+                </button>
+                <button 
+                  onClick={() => setShowPasswordForm(false)}
+                  className="w-full text-zinc-400 text-[10px] font-bold uppercase tracking-widest py-2"
+                >
+                  Cancelar e Voltar
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        ) : (
+          <motion.div 
+            key="profile-main"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="space-y-6"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-black uppercase tracking-tight">Configurações</h2>
+              <p className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Gerencie sua conta</p>
             </div>
 
-            <div className="grid grid-cols-1 gap-3">
-              <button 
-                onClick={() => setIsEditing(true)}
-                className="w-full bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 hover:border-brand-red hover:text-brand-red transition-all active:scale-95 uppercase tracking-[0.2em] shadow-sm"
-              >
-                <Edit2 size={16} /> Editar Perfil
-              </button>
-              
-              <button 
-                onClick={() => window.open('https://billing.stripe.com/p/login/6oU4gz6HobERbDm1uPd7q00', '_blank')}
-                className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-[0.2em] shadow-lg"
-              >
-                <ExternalLink size={16} /> Gerenciar Assinatura
-              </button>
-
-              <button 
-                onClick={() => setShowPasswordForm(!showPasswordForm)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border text-brand-text3 py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-[0.2em]"
-              >
-                <Lock size={16} /> Alterar Senha
-              </button>
-            </div>
-
-            {showPasswordForm && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="space-y-4 pt-6 border-t border-brand-border"
-              >
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Nova Senha</label>
-                    <input 
-                      type="password" 
-                      value={passwords.new}
-                      onChange={e => setPasswords(p => ({ ...p, new: e.target.value }))}
-                      className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                      placeholder="••••••"
-                    />
+            {!isEditing && profile?.nome ? (
+              <div className="space-y-4">
+                <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-6">
+                  <div className="flex flex-col items-center text-center gap-4">
+                    <div className="relative group">
+                      <div className="w-24 h-24 rounded-[2rem] bg-brand-surface2 border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner">
+                        {profile.logo ? (
+                          <img src={profile.logo} className="w-full h-full object-contain p-2" />
+                        ) : (
+                          <Camera className="text-brand-text3 opacity-20" size={32} />
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-black text-brand-text1 uppercase tracking-tight leading-none">{profile.nome}</h3>
+                      <p className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest mt-2">{profile.cidade || 'Cidade não informada'}</p>
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Confirmar Senha</label>
-                    <input 
-                      type="password" 
-                      value={passwords.confirm}
-                      onChange={e => setPasswords(p => ({ ...p, confirm: e.target.value }))}
-                      className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
-                      placeholder="••••••"
-                    />
+
+                  <div className="grid grid-cols-2 gap-3 pt-4 border-t border-brand-border">
+                    <div className="p-4 bg-brand-surface2 rounded-2xl border border-brand-border text-center">
+                      <p className="text-[8px] font-black text-brand-text3 uppercase tracking-widest mb-1">WhatsApp</p>
+                      <p className="text-xs font-bold text-brand-text1">{profile.wpp}</p>
+                    </div>
+                    <div className="p-4 bg-brand-surface2 rounded-2xl border border-brand-border text-center">
+                      <p className="text-[8px] font-black text-brand-text3 uppercase tracking-widest mb-1">Medida</p>
+                      <p className="text-xs font-bold text-brand-text1 uppercase">{profile.unidade_medida || 'mm'}</p>
+                    </div>
                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-3">
                   <button 
-                    onClick={handleUpdatePassword}
-                    disabled={loading}
-                    className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-xs flex items-center justify-center gap-2 active:scale-95 transition-all uppercase tracking-[0.2em] shadow-lg shadow-brand-red/20"
+                    onClick={() => setIsEditing(true)}
+                    className="w-full bg-white border-2 border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
                   >
-                    {loading ? 'Salvando...' : 'Salvar Nova Senha'}
+                    <Settings size={16} /> Editar Perfil
+                  </button>
+                  <button 
+                    onClick={() => setShowPasswordForm(true)}
+                    className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
+                  >
+                    <Lock size={16} /> Alterar Senha
+                  </button>
+                  <button 
+                    onClick={() => supabase.auth.signOut()}
+                    className="w-full text-brand-red py-4 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
+                  >
+                    Sair da Conta
                   </button>
                 </div>
-              </motion.div>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-6">
+                  <div className="flex flex-col items-center gap-4">
+                    <label className="relative group cursor-pointer">
+                      <div className="w-24 h-24 rounded-[2rem] bg-brand-surface2 border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner group-hover:border-brand-red transition-all">
+                        {profile.logo ? (
+                          <img src={profile.logo} className="w-full h-full object-contain p-2" />
+                        ) : (
+                          <Camera className="text-brand-text3 opacity-40" size={32} />
+                        )}
+                      </div>
+                      <input type="file" accept="image/*" onChange={handleLogo} className="hidden" />
+                      <div className="absolute -bottom-1 -right-1 bg-brand-red text-white p-2 rounded-xl shadow-lg">
+                        <Camera size={14} />
+                      </div>
+                    </label>
+                    <p className="text-[8px] font-black text-brand-text3 uppercase tracking-widest">Toque para alterar logo</p>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Seu Nome Completo *</label>
+                      <input 
+                        type="text" 
+                        value={profile.user_name || ''} 
+                        onChange={e => updateProfile('user_name', e.target.value)}
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        placeholder="Seu Nome"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Nome da Marcenaria *</label>
+                      <input 
+                        type="text" 
+                        value={profile.nome || ''} 
+                        onChange={e => updateProfile('nome', e.target.value)}
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        placeholder="Nome da Marcenaria"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">WhatsApp de Contato *</label>
+                      <input 
+                        type="tel" 
+                        value={profile.wpp || ''} 
+                        onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        placeholder="(00) 00000-0000"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Cidade / Estado</label>
+                      <input 
+                        type="text" 
+                        value={profile.cidade || ''} 
+                        onChange={e => updateProfile('cidade', e.target.value)}
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        placeholder="Cidade - UF"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Unidade de Medida</label>
+                      <div className="flex gap-2">
+                        {['mm', 'cm', 'm'].map(u => (
+                          <button 
+                            key={u}
+                            onClick={() => updateProfile('unidade_medida', u)}
+                            className={cn(
+                              "flex-1 py-4 rounded-xl border-2 text-xs font-black transition-all uppercase tracking-widest",
+                              profile.unidade_medida === u ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-zinc-100 bg-zinc-50 text-zinc-400"
+                            )}
+                          >
+                            {u}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <button 
+                    onClick={handleSave}
+                    disabled={loading}
+                    className="w-full bg-[#01bd23] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-green-600/20 active:scale-95 transition-all disabled:opacity-50"
+                  >
+                    {loading ? 'Salvando...' : 'Salvar Configurações'}
+                  </button>
+                  {profile?.nome && (
+                    <button 
+                      onClick={() => setIsEditing(false)}
+                      className="w-full text-zinc-400 text-[10px] font-bold uppercase tracking-widest py-2"
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              </div>
             )}
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border space-y-8 shadow-sm">
-            <div className="space-y-1">
-              <h3 className="text-xs font-black text-brand-red uppercase tracking-[0.3em]">Configurações</h3>
-              <p className="text-[10px] text-brand-text3 font-medium uppercase tracking-widest opacity-60">Personalize sua ferramenta</p>
-            </div>
-            
-            <div className="space-y-3">
-              <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Unidade de Medida</label>
-              <div className="grid grid-cols-2 gap-3">
-                <button 
-                  onClick={() => updateProfile('unidade_medida', 'mm')}
-                  className={cn(
-                    "py-3.5 rounded-xl font-bold text-[10px] border-2 transition-all uppercase tracking-widest",
-                    (profile?.unidade_medida || 'mm') === 'mm' ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
-                  )}
-                >
-                  Milímetros (mm)
-                </button>
-                <button 
-                  onClick={() => updateProfile('unidade_medida', 'cm')}
-                  className={cn(
-                    "py-3.5 rounded-xl font-bold text-[10px] border-2 transition-all uppercase tracking-widest",
-                    profile?.unidade_medida === 'cm' ? "border-brand-red bg-brand-red-light text-brand-red shadow-sm" : "border-brand-border bg-brand-surface2 text-brand-text2"
-                  )}
-                >
-                  Centímetros (cm)
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Primeiro Nome *</label>
-                <input 
-                  type="text" 
-                  value={profile?.user_name || ''} 
-                  onChange={e => updateProfile('user_name', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
-                  placeholder="Como quer ser chamado?"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Nome da Marcenaria *</label>
-                <input 
-                  type="text" 
-                  value={profile?.nome || ''} 
-                  onChange={e => updateProfile('nome', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
-                  placeholder="Ex: Marcenaria Silva"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">CNPJ ou CPF</label>
-                <input 
-                  type="text" 
-                  value={profile?.cpf || ''} 
-                  onChange={e => updateProfile('cpf', formatCPFCNPJ(e.target.value))}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
-                  placeholder="00.000.000/0000-00"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">WhatsApp *</label>
-                  <input 
-                    type="tel" 
-                    value={profile?.wpp || ''} 
-                    onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
-                    className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
-                    placeholder="(00) 00000-0000"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Instagram</label>
-                  <input 
-                    type="text" 
-                    value={profile?.insta || ''} 
-                    onChange={e => updateProfile('insta', e.target.value)}
-                    className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
-                    placeholder="@marcenaria"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Endereço Completo</label>
-                <input 
-                  type="text" 
-                  value={profile?.endereco || ''} 
-                  onChange={e => updateProfile('endereco', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center placeholder:text-brand-text3/30"
-                  placeholder="Rua, número, bairro, cidade - UF"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em] ml-1">Logo da Empresa</label>
-                <label className="w-full h-40 border-2 border-dashed border-brand-border rounded-3xl flex flex-col items-center justify-center text-brand-text3 cursor-pointer hover:border-brand-red hover:text-brand-red transition-all overflow-hidden bg-brand-surface2 shadow-inner relative group">
-                  {profile?.logo ? (
-                    <div className="w-full h-full flex items-center justify-center p-6">
-                      <img src={profile.logo} className="max-w-full max-h-full object-contain" />
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                         <Camera size={32} className="text-white" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="w-12 h-12 rounded-2xl bg-white border-2 border-brand-border flex items-center justify-center text-brand-red shadow-sm group-hover:scale-110 transition-transform">
-                        <Camera size={20} strokeWidth={2.5} />
-                      </div>
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] mt-1">Upload Logo</span>
-                    </div>
-                  )}
-                  <input type="file" className="hidden" accept="image/*" onChange={handleLogo} />
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex gap-4 max-w-md mx-auto w-full">
-            <button 
-              onClick={() => {
-                if (profile?.nome) {
-                  setIsEditing(false);
-                } else {
-                  setCurrentPage('tutorial');
-                }
-              }}
-              className="flex-1 bg-white border-2 border-brand-border text-brand-text2 py-4 rounded-2xl font-semibold text-sm active:scale-95 transition-all uppercase tracking-widest whitespace-nowrap"
-            >
-              {profile?.nome ? 'Cancelar' : 'Voltar'}
-            </button>
-            <button 
-              onClick={handleSave} 
-              disabled={loading}
-              className="flex-[1.5] bg-brand-red text-white py-4 rounded-2xl font-semibold text-sm flex items-center justify-center gap-3 disabled:opacity-50 active:scale-95 transition-all shadow-lg shadow-brand-red/20 uppercase tracking-widest whitespace-nowrap"
-            >
-              <Save size={18} /> {loading ? 'Salvando...' : 'Salvar Perfil'}
-            </button>
-          </div>
-        </>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
