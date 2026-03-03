@@ -567,12 +567,13 @@ export default function App() {
           isFullScreen ? "p-0" : "p-4 md:p-8 pb-24 md:pb-8"
         )}>
           {isFullScreen && (
-            <div className="fixed top-4 right-4 z-[100]">
+            <div className="fixed top-6 right-6 z-[100]">
               <button 
-                onClick={() => setCurrentPage(currentPage === 'preview' ? 'orcamento' : 'propostas')}
-                className="w-10 h-10 bg-white shadow-xl border border-zinc-100 rounded-full flex items-center justify-center text-brand-text3 active:scale-90 transition-transform"
+                onClick={() => setCurrentPage('tutorial')}
+                className="w-14 h-14 bg-white shadow-2xl border-2 border-brand-border rounded-full flex items-center justify-center text-brand-red active:scale-90 transition-all hover:bg-brand-red hover:text-white group"
+                title="Fechar e Voltar ao Início"
               >
-                <X size={20} />
+                <X size={28} strokeWidth={3} className="transition-transform group-hover:rotate-90" />
               </button>
             </div>
           )}
@@ -1162,11 +1163,8 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
       
       <div className="w-full max-w-sm bg-white border border-zinc-100 p-8 rounded-[2.5rem] shadow-2xl relative z-10">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-20 h-20 bg-brand-red rounded-3xl flex items-center justify-center shadow-2xl shadow-brand-red/20 mb-4 group transition-transform hover:scale-105">
-            <span className="text-white font-black text-3xl tracking-tighter">F+</span>
-          </div>
-          <h1 className="text-3xl font-black text-brand-text1 tracking-tighter mb-1 flex items-center gap-2">
-            FIFTY+ <span className="text-xl">🇧🇷</span>
+          <h1 className="text-4xl font-black text-brand-red tracking-tighter mb-1 flex items-center gap-2">
+            Fifty+ <span className="text-2xl">🇧🇷</span>
           </h1>
           <p className="text-zinc-400 text-[9px] font-medium mt-2 italic">"Orgulho de ser Brasileiro"</p>
         </div>
@@ -1332,7 +1330,6 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-base font-bold uppercase tracking-tight">Nova Proposta</h2>
-        <button onClick={onCancel} className="text-brand-text3"><X size={18} /></button>
       </div>
 
       {step === 1 && (
@@ -1340,22 +1337,22 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
           <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-2">Dados do Cliente</h3>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome Completo *</label>
+              <label className="text-sm font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome Completo *</label>
               <input 
                 type="text" 
                 value={data.cliente_nome || ''} 
                 onChange={e => updateData('cliente_nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-lg font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Ex: João Silva"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
+              <label className="text-sm font-bold text-brand-text3 uppercase tracking-wider ml-1">WhatsApp *</label>
               <input 
                 type="tel" 
                 value={data.cliente_wpp || ''} 
                 onChange={e => updateData('cliente_wpp', formatPhone(e.target.value))}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-normal focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-lg font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -1489,71 +1486,71 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-brand-text3 ml-1 uppercase tracking-wider">OBS: Material e detalhamento</label>
+                  <label className="text-sm font-bold text-brand-text3 ml-1 uppercase tracking-wider">OBS: Material e detalhamento</label>
                   <textarea 
                     value={amb.detalhes || ''} 
                     onChange={e => updateAmbiente(amb.id, 'detalhes', e.target.value)}
-                    className="w-full bg-white border-2 border-brand-border rounded-xl px-4 py-3 text-base focus:border-brand-red transition-all min-h-[80px] outline-none font-normal text-center"
+                    className="w-full bg-white border-2 border-brand-border rounded-xl px-4 py-4 text-lg focus:border-brand-red transition-all min-h-[100px] outline-none font-bold text-center"
                     placeholder="Cores, puxadores..."
                   />
                 </div>
                 
                 <div className="space-y-4">
                   {amb.pecas.map((p: any, pIdx: number) => (
-                    <div key={pIdx} className="bg-white p-4 rounded-3xl border border-zinc-100 space-y-3 shadow-sm">
+                    <div key={pIdx} className="bg-white p-6 rounded-[2.5rem] border border-zinc-100 space-y-4 shadow-sm">
                       <div className="flex items-center justify-between gap-3">
-                        <div className="flex-1 space-y-1">
-                          <label className="text-[9px] font-black text-zinc-400 uppercase tracking-widest ml-1">Módulo / Item</label>
+                        <div className="flex-1 space-y-1.5">
+                          <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Módulo / Item</label>
                           <input 
                             type="text" 
                             value={p.nome} 
                             onChange={e => updatePeca(amb.id, pIdx, 'nome', e.target.value)}
-                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all uppercase text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-lg font-black outline-none focus:border-brand-red focus:bg-white transition-all uppercase text-center"
                             placeholder="Ex: Armário Superior"
                           />
                         </div>
-                        <button onClick={() => removePeca(amb.id, pIdx)} className="text-zinc-300 hover:text-red-500 p-1 active:scale-90 transition-transform mt-5"><Trash2 size={16} /></button>
+                        <button onClick={() => removePeca(amb.id, pIdx)} className="text-zinc-300 hover:text-red-500 p-2 active:scale-90 transition-transform mt-6"><Trash2 size={20} /></button>
                       </div>
                       
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-black text-zinc-400 ml-1 uppercase tracking-tighter">Larg. ({unit})</label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <div className="space-y-1.5">
+                          <label className="text-[9px] font-black text-zinc-400 ml-1 uppercase tracking-tighter">Larg. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.l} 
                             onChange={e => updatePeca(amb.id, pIdx, 'l', e.target.value)}
-                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-2 py-2 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-2 py-4 text-lg font-black outline-none focus:border-brand-red focus:bg-white transition-all text-center"
                             placeholder="0"
                           />
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-black text-zinc-400 uppercase ml-1 tracking-tighter">Alt. ({unit})</label>
+                        <div className="space-y-1.5">
+                          <label className="text-[9px] font-black text-zinc-400 uppercase ml-1 tracking-tighter">Alt. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.a} 
                             onChange={e => updatePeca(amb.id, pIdx, 'a', e.target.value)}
-                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-2 py-2 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-2 py-4 text-lg font-black outline-none focus:border-brand-red focus:bg-white transition-all text-center"
                             placeholder="0"
                           />
                         </div>
-                        <div className="space-y-1">
-                          <label className="text-[8px] font-black text-zinc-400 uppercase ml-1 tracking-tighter">Prof. ({unit})</label>
+                        <div className="space-y-1.5">
+                          <label className="text-[9px] font-black text-zinc-400 uppercase ml-1 tracking-tighter">Prof. ({unit})</label>
                           <input 
                             type="number" 
                             value={p.p} 
                             onChange={e => updatePeca(amb.id, pIdx, 'p', e.target.value)}
-                            className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-2 py-2 text-sm font-bold outline-none focus:border-brand-red focus:bg-white transition-all text-center"
+                            className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-2 py-4 text-lg font-black outline-none focus:border-brand-red focus:bg-white transition-all text-center"
                             placeholder="0"
                           />
                         </div>
                       </div>
 
-                      <div className="space-y-1">
-                        <label className="text-[8px] font-black text-zinc-400 ml-1 uppercase tracking-widest">Observações do Módulo</label>
+                      <div className="space-y-1.5">
+                        <label className="text-[9px] font-black text-zinc-400 ml-1 uppercase tracking-widest">Observações do Módulo</label>
                         <textarea 
                           value={p.obs || ''} 
                           onChange={e => updatePeca(amb.id, pIdx, 'obs', e.target.value)}
-                          className="w-full bg-zinc-50 border border-zinc-100 rounded-xl px-4 py-2 text-xs focus:border-brand-red focus:bg-white transition-all min-h-[40px] outline-none font-normal text-center"
+                          className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-3 text-sm focus:border-brand-red focus:bg-white transition-all min-h-[60px] outline-none font-bold text-center"
                           placeholder="Ex: 2 portas, 3 prateleiras..."
                         />
                       </div>
@@ -1596,22 +1593,22 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Materiais</label>
+                <label className="text-sm font-bold text-brand-text3 uppercase tracking-widest ml-1">Materiais</label>
                 <input 
                   type="number" 
                   value={data.v_mat || ''} 
                   onChange={e => updateData('v_mat', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-2xl px-4 py-4 text-xl font-black focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="0,00"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Despesas</label>
+                <label className="text-sm font-bold text-brand-text3 uppercase tracking-widest ml-1">Despesas</label>
                 <input 
                   type="number" 
                   value={data.v_despesas || ''} 
                   onChange={e => updateData('v_despesas', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-2xl px-4 py-4 text-xl font-black focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="0,00"
                 />
               </div>
@@ -1619,22 +1616,22 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Ferragens</label>
+                <label className="text-sm font-bold text-brand-text3 uppercase tracking-widest ml-1">Ferragens</label>
                 <input 
                   type="number" 
                   value={data.v_ferr || ''} 
                   onChange={e => updateData('v_ferr', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-2xl px-4 py-4 text-xl font-black focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="0,00"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-xs font-bold text-brand-text3 uppercase tracking-widest ml-1">Outros</label>
+                <label className="text-sm font-bold text-brand-text3 uppercase tracking-widest ml-1">Outros</label>
                 <input 
                   type="number" 
                   value={data.v_outros || ''} 
                   onChange={e => updateData('v_outros', e.target.value)}
-                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-3 text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                  className="w-full bg-brand-surface2 border-2 border-brand-border rounded-2xl px-4 py-4 text-xl font-black focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                   placeholder="0,00"
                 />
               </div>
@@ -1854,7 +1851,6 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
     <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-brand-text1">Proposta ✅</h2>
-        <button onClick={onBack} className="text-brand-text3 p-2 active:scale-90 transition-transform"><X size={24} /></button>
       </div>
 
       <div className="bg-white border-2 border-brand-border rounded-[2.5rem] overflow-hidden shadow-lg">
@@ -2051,7 +2047,6 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
           >
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-black uppercase tracking-tight">Alterar Senha</h2>
-              <button onClick={() => setShowPasswordForm(false)} className="text-brand-text3 p-2 active:scale-90 transition-transform"><X size={24} /></button>
             </div>
 
             <div className="flex-1 flex flex-col justify-center max-w-sm mx-auto w-full space-y-6">
@@ -2157,6 +2152,12 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                     className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
                   >
                     <Lock size={16} /> Alterar Senha
+                  </button>
+                  <button 
+                    onClick={() => window.open('https://billing.stripe.com/p/login/6oU4gz6HobERbDm1uPd7q00', '_blank')}
+                    className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-brand-red/20"
+                  >
+                    <ExternalLink size={16} /> Gerenciar Assinatura
                   </button>
                   <button 
                     onClick={() => supabase.auth.signOut()}
