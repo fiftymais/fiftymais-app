@@ -1129,6 +1129,12 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
 }
 
 function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
+  if (!profile) return (
+    <div className="flex-1 flex items-center justify-center bg-brand-bg">
+      <div className="w-8 h-8 border-2 border-zinc-100 border-t-brand-red rounded-full animate-spin" />
+    </div>
+  );
+
   const formatName = (name: string) => {
     if (!name) return '';
     return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
@@ -1166,15 +1172,15 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-8">
-        <div className="max-w-sm mx-auto mb-10 text-center">
+      <div className="flex-1 overflow-y-auto px-4 py-8">
+        <div className="max-w-md mx-auto mb-10 text-center px-4">
           <h3 className="text-xs font-black text-brand-red uppercase tracking-[0.3em] mb-2">Como Funciona</h3>
-          <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-widest opacity-60">Siga o passo a passo para ter sua proposta pronta em 5 minutos</p>
+          <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-widest opacity-90">Siga o passo a passo para ter sua proposta pronta em 5 minutos</p>
         </div>
 
-        <div className="max-w-sm mx-auto relative">
+        <div className="max-w-md mx-auto relative px-4">
           {/* Vertical Line */}
-          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-brand-border opacity-50" />
+          <div className="absolute left-10 top-0 bottom-0 w-0.5 bg-brand-border opacity-50" />
           
           <div className="space-y-12">
             {steps.map((step, i) => (
@@ -1187,7 +1193,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                 className="flex items-center gap-6 relative z-10"
               >
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-lg border-2 border-white",
+                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-lg border-2 border-white ml-4",
                   step.color
                 )}>
                   {step.icon}
@@ -1195,7 +1201,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                 <div className="flex-1 min-w-0">
                   <p className="text-[8px] font-black text-brand-red uppercase tracking-widest mb-0.5">{step.step}</p>
                   <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-40">{step.desc}</p>
+                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-80 whitespace-nowrap">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -1203,7 +1209,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         </div>
 
         {!hasPersistedProfile && (
-          <div className="mt-12 max-w-sm mx-auto pb-24">
+          <div className="mt-12 max-w-md mx-auto pb-24 px-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
@@ -2040,9 +2046,21 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
 
 function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, onSaveSuccess, isRecovery }: any) {
   const [loading, setLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(!profile?.nome);
+  const [isEditing, setIsEditing] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(isRecovery);
   const [passwords, setPasswords] = useState({ new: '', confirm: '' });
+
+  useEffect(() => {
+    if (profile && !profile.nome) {
+      setIsEditing(true);
+    }
+  }, [profile]);
+
+  if (!profile) return (
+    <div className="flex-1 flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-zinc-100 border-t-brand-red rounded-full animate-spin" />
+    </div>
+  );
 
   useEffect(() => {
     if (isRecovery) setShowPasswordForm(true);
