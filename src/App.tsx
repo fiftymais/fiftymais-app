@@ -1102,80 +1102,61 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   };
 
   return (
-    <div className="space-y-0 py-0 w-full">
-      {/* Business Card Header */}
-      <div className="bg-white px-6 pt-10 pb-12 text-center space-y-4 relative overflow-hidden border-b border-brand-border">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-brand-red" />
-        <div className="absolute -right-10 -top-10 w-40 h-40 bg-brand-red/5 rounded-full blur-3xl" />
-        <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-brand-red/5 rounded-full blur-3xl" />
-        
-        <div className="flex flex-col items-center gap-2 relative z-10">
-          <motion.div 
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="w-20 h-20 rounded-[2rem] bg-brand-red text-white flex items-center justify-center font-black text-2xl shadow-2xl shadow-brand-red/30 mb-4 border-4 border-white"
-          >
-            50+
-          </motion.div>
-          <h2 className="text-3xl md:text-5xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-2 leading-none">
-            <span>Bem-vindo ao</span>
-            <span className="text-brand-red">Fifty+</span> 
-            {profile?.user_name && (
-              <motion.span 
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-brand-text1 truncate max-w-[250px] md:max-w-none"
-              >
-                {formatName(profile.user_name)}
-              </motion.span>
-            )}
-          </h2>
-          <p className="text-brand-text3 font-black text-[10px] md:text-base uppercase tracking-[0.4em] opacity-80 mt-2">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
-          <div className="flex items-center gap-3 mt-4">
-            <div className="h-0.5 w-12 bg-brand-border" />
-            <span className="text-[10px] font-black text-zinc-400 uppercase tracking-widest">Brasil 2026</span>
-            <div className="h-0.5 w-12 bg-brand-border" />
-          </div>
-        </div>
+    <div className="space-y-4 py-4 w-full">
+      <div className="px-4 text-center space-y-1 overflow-hidden">
+        <h2 className="text-xl md:text-3xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
+          <span>Bem-vindo ao</span>
+          <span className="text-brand-red">Fifty+</span> 
+          {profile?.user_name && (
+            <motion.span 
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-brand-text1 truncate max-w-[200px] md:max-w-none"
+            >
+              {formatName(profile.user_name)}
+            </motion.span>
+          )}
+        </h2>
+        <p className="text-brand-text3 font-bold text-[8px] md:text-xs uppercase tracking-[0.2em] opacity-60">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
       <div className="md:px-4 md:max-w-4xl md:mx-auto w-full">
         <NewsCarousel setCurrentPage={setCurrentPage} />
       </div>
 
-      <div className="px-6 py-12 space-y-12 md:max-w-2xl md:mx-auto">
-        <div className="space-y-8">
-          <div className="flex items-center gap-4 mb-10">
-            <div className="h-px flex-1 bg-brand-border" />
-            <h3 className="text-[11px] font-black text-brand-text3 uppercase tracking-[0.4em] whitespace-nowrap">Como Funciona Profissionalmente</h3>
-            <div className="h-px flex-1 bg-brand-border" />
+      <div className="px-4 space-y-6 md:max-w-2xl md:mx-auto">
+        <div className="bg-white rounded-[2.5rem] border-2 border-brand-border overflow-hidden shadow-sm">
+          <div className="p-6 border-b border-brand-border bg-brand-surface2">
+             <h3 className="text-xs font-black text-brand-text1 uppercase tracking-[0.2em]">Como funciona:</h3>
           </div>
-
-          <div className="space-y-4 relative max-w-sm mx-auto">
+          <div className="p-6 space-y-0 relative max-w-sm mx-auto">
+            {/* Trail Line */}
+            <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
+            
             {steps.map((step, i) => (
               <motion.div 
                 key={i}
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-6 py-4 group"
+                transition={{ delay: i * 0.08 }}
+                className="flex items-center gap-6 py-4 relative z-10"
               >
                 <div className={cn(
-                  "w-16 h-16 rounded-[1.5rem] text-white flex items-center justify-center shrink-0 shadow-xl border-4 border-white transition-transform group-hover:scale-110",
+                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
                   step.color
                 )}>
                   {step.icon}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-base md:text-lg font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                  <p className="text-xs md:text-sm text-brand-text3 font-bold uppercase tracking-tight opacity-60 leading-tight">{step.desc}</p>
+                  <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
+                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-60">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
 
-        <div className="max-w-sm mx-auto w-full pt-8">
+        <div className="max-w-sm mx-auto w-full">
           <motion.button
             whileHover={{ scale: 1.02, backgroundColor: '#E11D48' }}
             whileTap={{ scale: 0.98 }}
@@ -1186,19 +1167,11 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                 setCurrentPage('perfil');
               }
             }}
-            className="w-full bg-brand-red text-white py-7 rounded-[2.5rem] font-black text-lg uppercase tracking-[0.2em] shadow-2xl shadow-brand-red/40 flex items-center justify-center gap-4 active:scale-95 transition-all border-b-4 border-brand-red/20"
+            className="w-full bg-brand-red text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-red/20 active:scale-95 transition-all flex items-center justify-center gap-3"
           >
-            <Zap size={24} fill="currentColor" />
+            <Zap size={18} fill="currentColor" />
             {hasPersistedProfile ? 'COMEÇAR AGORA' : 'CONFIGURAR PERFIL'}
           </motion.button>
-          <div className="flex flex-col items-center gap-2 mt-10 opacity-40">
-            <p className="text-[9px] text-center text-brand-text3 font-black uppercase tracking-widest">Versão Profissional 1.0 • Fifty+ Brasil</p>
-            <div className="flex gap-4">
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-border" />
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-red" />
-              <div className="w-1.5 h-1.5 rounded-full bg-brand-border" />
-            </div>
-          </div>
         </div>
       </div>
     </div>
