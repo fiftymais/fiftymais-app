@@ -581,7 +581,6 @@ export default function App() {
                 <p className="text-xs font-black text-brand-text1 truncate uppercase tracking-tight">
                   {profile?.user_name || session.user.email?.split('@')[0]}
                 </p>
-                <p className="text-[9px] font-bold text-brand-text3 truncate uppercase tracking-widest opacity-60">Plano Pro</p>
               </div>
             </div>
             <button 
@@ -1113,138 +1112,91 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
   );
 }
 
-function TutorialCarousel() {
-  const [index, setIndex] = useState(0);
-  const total = 5;
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setIndex((prev) => (prev + 1) % total);
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
-
-  const steps = [
-    {
-      tag: 'PASSO 1',
-      title: 'Configuração do Perfil',
-      sub: 'Adicione sua logo, endereço e redes sociais para personalizar suas propostas.',
-      bg: 'bg-blue-600',
-      icon: <Settings size={24} className="text-white" />
-    },
-    {
-      tag: 'PASSO 2',
-      title: 'Iniciar Proposta',
-      sub: 'Clique em "Novo" para começar um orçamento rápido pelo celular.',
-      bg: 'bg-emerald-600',
-      icon: <Plus size={24} className="text-white" />
-    },
-    {
-      tag: 'PASSO 3',
-      title: 'Escolher Ambientes',
-      sub: 'Selecione os cômodos e adicione as peças de marcenaria de cada um.',
-      bg: 'bg-amber-600',
-      icon: <Layout size={24} className="text-white" />
-    },
-    {
-      tag: 'PASSO 4',
-      title: 'Medidas Técnicas',
-      sub: 'Informe as dimensões e detalhes para um cálculo preciso de custos.',
-      bg: 'bg-purple-600',
-      icon: <Maximize size={24} className="text-white" />
-    },
-    {
-      tag: 'PASSO 5',
-      title: 'Gerar o PDF',
-      sub: 'Pronto! Gere o orçamento profissional em PDF e envie direto pelo WhatsApp.',
-      bg: 'bg-brand-red',
-      icon: <FileText size={24} className="text-white" />
-    }
-  ];
-
-  return (
-    <div className="pb-6 font-dm -mt-4">
-      <div className="relative h-64 md:h-80 overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
-        <AnimatePresence mode="wait">
-          <motion.div 
-            key={index}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.6 }}
-            className={cn(
-              "absolute inset-0 p-8 flex flex-col items-center justify-center text-center gap-6",
-              steps[index].bg
-            )}
-          >
-            <div className="absolute top-6 left-0 right-0 flex justify-center">
-               <h3 className="text-sm font-black text-white/40 uppercase tracking-[0.4em]">Como Funciona</h3>
-            </div>
-
-            <div className="w-16 h-16 rounded-3xl bg-white/20 flex items-center justify-center shadow-inner mt-4">
-              {steps[index].icon}
-            </div>
-            <div className="space-y-2 relative z-10 flex flex-col items-center justify-center">
-              <span className="px-3 py-1 rounded-full bg-white/20 text-white text-[9px] font-black uppercase tracking-widest mb-2">
-                {steps[index].tag}
-              </span>
-              <h4 className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">
-                {steps[index].title}
-              </h4>
-              <p className="text-xs md:text-sm text-white/80 leading-relaxed font-bold max-w-xs">
-                {steps[index].sub}
-              </p>
-            </div>
-
-            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-1.5">
-              {steps.map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "h-1.5 rounded-full transition-all duration-300",
-                    index === i ? "w-6 bg-white" : "w-1.5 bg-white/30"
-                  )}
-                />
-              ))}
-            </div>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  );
-}
-
 function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
   const formatName = (name: string) => {
     if (!name) return '';
     return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
   };
 
+  const steps = [
+    { title: 'Perfil', desc: 'Configure seus dados e logo.', icon: <Settings size={18} />, color: 'bg-blue-500' },
+    { title: 'Novo', desc: 'Inicie um orçamento rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
+    { title: 'Ambientes', desc: 'Defina os cômodos.', icon: <Layout size={18} />, color: 'bg-amber-500' },
+    { title: 'Medidas', desc: 'Insira as dimensões.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
+    { title: 'PDF', desc: 'Gere e envie o orçamento.', icon: <FileText size={18} />, color: 'bg-brand-red' },
+  ];
+
   return (
-    <div className="space-y-4 py-4 w-full">
-      <div className="px-4 text-center space-y-2 overflow-hidden">
-        <h2 className="text-2xl md:text-3xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
-          <span>Bem-vindo ao</span>
-          <span className="text-brand-red">Fifty+</span> 
-          {profile?.user_name && (
-            <motion.span 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-brand-text1 truncate max-w-[200px] md:max-w-none"
-            >
-              {formatName(profile.user_name)}
-            </motion.span>
-          )}
-        </h2>
-        <p className="text-brand-text3 font-black text-[8px] md:text-[10px] uppercase tracking-[0.4em] opacity-40">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
+    <div className="flex-1 flex flex-col w-full h-full overflow-hidden bg-brand-bg">
+      <div className="shrink-0 bg-white border-b border-brand-border pb-4">
+        <div className="px-4 py-4 text-center space-y-1 overflow-hidden">
+          <h2 className="text-xl md:text-2xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
+            <span>Bem-vindo ao</span>
+            <span className="text-brand-red">Fifty+</span> 
+            {profile?.user_name && (
+              <motion.span 
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-brand-text1 truncate max-w-[150px] md:max-w-none"
+              >
+                {formatName(profile.user_name)}
+              </motion.span>
+            )}
+          </h2>
+        </div>
+
+        <div className="md:px-4 md:max-w-4xl md:mx-auto w-full">
+          <NewsCarousel setCurrentPage={setCurrentPage} />
+        </div>
       </div>
 
-      <div className="md:px-4 md:max-w-4xl md:mx-auto w-full">
-        <NewsCarousel setCurrentPage={setCurrentPage} />
-      </div>
+      <div className="flex-1 overflow-y-auto px-6 py-8">
+        <div className="max-w-sm mx-auto relative">
+          {/* Vertical Line */}
+          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-brand-border opacity-50" />
+          
+          <div className="space-y-12">
+            {steps.map((step, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="flex items-center gap-6 relative z-10"
+              >
+                <div className={cn(
+                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-lg border-2 border-white",
+                  step.color
+                )}>
+                  {step.icon}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
+                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-40">{step.desc}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
 
-      <div className="md:px-4 md:max-w-4xl md:mx-auto w-full">
-        <TutorialCarousel />
+        <div className="mt-12 max-w-sm mx-auto pb-24">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => {
+              if (hasPersistedProfile) {
+                onStart();
+              } else {
+                setCurrentPage('perfil');
+              }
+            }}
+            className="w-full bg-brand-red text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-brand-red/20 active:scale-95 transition-all flex items-center justify-center gap-3"
+          >
+            <Zap size={18} fill="currentColor" />
+            {hasPersistedProfile ? 'COMEÇAR AGORA' : 'CONFIGURAR PERFIL'}
+          </motion.button>
+        </div>
       </div>
     </div>
   );
@@ -2123,6 +2075,37 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
     setLoading(false);
   };
 
+  const handleDeleteProfile = async () => {
+    if (!confirm('Tem certeza que deseja excluir seu perfil? Todos os seus dados e orçamentos serão perdidos permanentemente.')) return;
+    
+    setLoading(true);
+    const { error } = await supabase.from('profiles').delete().eq('id', userId);
+    if (error) {
+      showToast(error.message, 'error');
+    } else {
+      showToast('Perfil excluído com sucesso');
+      setProfile({
+        nome: '',
+        wpp: '',
+        cidade: '',
+        insta: '',
+        cpf: '',
+        endereco: '',
+        logo: '',
+        user_name: '',
+        unidade_medida: 'mm'
+      });
+      setIsEditing(true);
+      onSaveSuccess();
+    }
+    setLoading(false);
+  };
+
+  const handleRemoveLogo = () => {
+    updateProfile('logo', '');
+    showToast('Logo removida. Salve para confirmar.');
+  };
+
   const handleUpdatePassword = async () => {
     if (!passwords.new || !passwords.confirm) {
       showToast('Preencha os campos de senha', 'error');
@@ -2256,6 +2239,14 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                           <Camera className="text-brand-text3 opacity-20" size={32} />
                         )}
                       </div>
+                      {profile.logo && (
+                        <button 
+                          onClick={handleRemoveLogo}
+                          className="absolute -top-2 -right-2 bg-red-600 text-white p-1.5 rounded-full shadow-lg active:scale-90 transition-all"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </div>
                     <div>
                       <h3 className="text-xl font-black text-brand-text1 uppercase tracking-tight leading-none">{profile.nome}</h3>
@@ -2299,6 +2290,12 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                     className="w-full text-red-600 py-6 font-black text-[10px] uppercase tracking-[0.3em] active:opacity-50 transition-all mt-4"
                   >
                     Sair da Conta
+                  </button>
+                  <button 
+                    onClick={handleDeleteProfile}
+                    className="w-full text-zinc-300 py-2 font-bold text-[8px] uppercase tracking-[0.2em] active:opacity-50 transition-all"
+                  >
+                    Excluir Perfil Permanentemente
                   </button>
                 </div>
               </div>
