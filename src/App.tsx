@@ -1951,6 +1951,15 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
     }
   };
 
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '—';
+    if (dateStr.includes('-')) {
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    }
+    return new Date(dateStr).toLocaleDateString('pt-BR');
+  };
+
   return (
     <div className="space-y-6 pb-24">
       <div className="flex items-center justify-between">
@@ -1958,19 +1967,27 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
       </div>
 
       <div className="bg-white border-2 border-brand-border rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-lg">
-        <div className="bg-brand-red p-8 md:p-10 text-white flex justify-between items-center">
-          <div>
+        <div className="bg-brand-red p-8 md:p-10 text-white flex justify-between items-start">
+          <div className="flex items-center gap-4">
+            <div className="bg-white rounded-2xl p-3 min-w-[80px] md:min-w-[70px] flex items-center justify-center shadow-sm">
+              {profile?.logo ? (
+                <img src={profile.logo} className="max-h-8 md:max-h-6 object-contain" />
+              ) : (
+                <span className="text-brand-red text-xs md:text-[10px] font-bold uppercase tracking-widest">{profile?.nome?.substring(0, 5) || 'Fifty+'}</span>
+              )}
+            </div>
+            <div>
+              <h3 className="text-lg md:text-base font-bold uppercase tracking-tight leading-tight">{profile?.nome || 'Fifty+'}</h3>
+              <p className="text-[10px] md:text-[9px] font-semibold uppercase tracking-[0.2em] opacity-80 mt-1">
+                {profile?.wpp || '—'}
+              </p>
+            </div>
+          </div>
+          <div className="text-right">
             <h3 className="text-xl md:text-lg font-bold uppercase tracking-tight">Orçamento</h3>
             <p className="text-[10px] md:text-[9px] font-semibold uppercase tracking-[0.2em] opacity-80 mt-1">
-              #{String(proposta.numero).padStart(3, '0')} • {new Date(proposta.created_at).toLocaleDateString()}
+              #{String(proposta.numero).padStart(3, '0')} • {formatDate(proposta.created_at)}
             </p>
-          </div>
-          <div className="bg-white rounded-2xl p-3 min-w-[80px] md:min-w-[70px] flex items-center justify-center shadow-sm">
-            {profile?.logo ? (
-              <img src={profile.logo} className="max-h-8 md:max-h-6 object-contain" />
-            ) : (
-              <span className="text-brand-red text-xs md:text-[10px] font-bold uppercase tracking-widest">{profile?.nome?.substring(0, 5) || 'Fifty+'}</span>
-            )}
           </div>
         </div>
 
@@ -2000,13 +2017,19 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
             {proposta.inicio && (
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Início</span>
-                <span className="text-base md:text-sm font-semibold text-brand-text1">{new Date(proposta.inicio).toLocaleDateString('pt-BR')}</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{formatDate(proposta.inicio)}</span>
               </div>
             )}
             {proposta.entrega && (
               <div className="flex justify-between items-center py-1">
                 <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Entrega</span>
-                <span className="text-base md:text-sm font-semibold text-brand-text1">{new Date(proposta.entrega).toLocaleDateString('pt-BR')}</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{formatDate(proposta.entrega)}</span>
+              </div>
+            )}
+            {proposta.garantia && (
+              <div className="flex justify-between items-center py-1">
+                <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Garantia</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{proposta.garantia}</span>
               </div>
             )}
           </section>

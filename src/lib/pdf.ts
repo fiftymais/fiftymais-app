@@ -9,7 +9,15 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   let y = 20;
 
   const fmt = (val: number) => 'R$ ' + (val || 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-  const hoje = new Date(proposta.created_at || Date.now()).toLocaleDateString('pt-BR');
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return '—';
+    if (dateStr.includes('-')) {
+      const [year, month, day] = dateStr.split('-');
+      return `${day}/${month}/${year}`;
+    }
+    return new Date(dateStr).toLocaleDateString('pt-BR');
+  };
+  const hoje = formatDate(proposta.created_at || new Date().toISOString().split('T')[0]);
 
   const m = (proposta.medidas && typeof proposta.medidas === 'object' && !Array.isArray(proposta.medidas)) ? proposta.medidas : null;
   const ambientes = proposta.ambientes || m?.ambientes || [];
@@ -49,35 +57,53 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   const lineSpacing = 7;
   const sectionSpacing = 10;
 
-  // --- LOGO ---
+  // --- CABEÇALHO (LOGO + DADOS MARCENARIA) ---
+  const headerY = y;
+  let textStartX = M;
+
   if (profile.logo) {
     try {
-      const imgW = 40;
-      const imgH = 25;
-      doc.addImage(profile.logo, 'JPEG', (W - imgW) / 2, y, imgW, imgH, '', 'FAST');
-      y += imgH + 12;
+      const imgW = 35;
+      const imgH = 20;
+      doc.addImage(profile.logo, 'JPEG', M, headerY, imgW, imgH, '', 'FAST');
+      textStartX = M + imgW + 5;
     } catch (e) {
-      y += 10;
+      // Fallback if image fails
     }
-  } else {
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
-    doc.text(profile.nome || 'Fifty+', W / 2, y, { align: 'center' });
-    y += 15;
   }
 
-  // --- TÍTULO ---
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
-  const title = "PROPOSTA DE ORÇAMENTO PARA MÓVEIS PLANEJADOS";
-  const splitTitle = doc.splitTextToSize(title, W - M * 2);
-  doc.text(splitTitle, M, y);
-  y += (splitTitle.length * 7) + 2;
+  doc.setTextColor(...BLACK);
+  doc.text(profile.nome || 'Fifty+', textStartX, headerY + 5);
+  
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(...GREY);
+  let infoY = headerY + 10;
+  if (profile.cpf) { doc.text(`CNPJ/CPF: ${profile.cpf}`, textStartX, infoY); infoY += 4; }
+  doc.text(`WhatsApp: ${profile.wpp || '—'}`, textStartX, infoY); infoY += 4;
+  if (profile.insta) { doc.text(`Instagram: ${profile.insta}`, textStartX, infoY); infoY += 4; }
 
+  y = Math.max(infoY + 5, headerY + 25);
+
+  // --- TÍTULO E DATA ---
   doc.setDrawColor(220, 220, 220);
   doc.setLineWidth(0.2);
   doc.line(M, y, W - M, y);
-  y += sectionSpacing;
+  y += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.setTextColor(...BLACK);
+  doc.text("PROPOSTA DE ORÇAMENTO", M, y);
+  
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Nº: ${String(proposta.numero).padStart(3, '0')}`, W - M, y, { align: 'right' });
+  y += 5;
+  doc.text(`Data: ${hoje}`, W - M, y, { align: 'right' });
+  y += 10;
 
   // --- DADOS DO CLIENTE ---
   doc.setFontSize(10);
@@ -94,12 +120,6 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   const splitAddr = doc.splitTextToSize(addr, W - M - 35);
   doc.text(splitAddr, M + 15, y);
   y += (splitAddr.length * 5) + 2;
-
-  doc.setFont('helvetica', 'bold');
-  doc.text('DATA: ', M, y);
-  doc.setFont('helvetica', 'normal');
-  doc.text(hoje, M + 15, y);
-  y += lineSpacing;
 
   if (tech.validade) {
     doc.setFont('helvetica', 'bold');
@@ -170,6 +190,9 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
   if (tech.chapa) specs.push(`Material: ${tech.chapa}`);
   if (tech.acabamento) specs.push(`Acabamento: ${tech.acabamento}`);
   if (tech.ferragens) specs.push(`Ferragens: ${tech.ferragens}`);
+  if (tech.inicio) specs.push(`Início da Montagem: ${formatDate(tech.inicio)}`);
+  if (tech.entrega) specs.push(`Previsão de Entrega: ${formatDate(tech.entrega)}`);
+  if (tech.garantia) specs.push(`Garantia: ${tech.garantia}`);
   if (tech.detalhes) specs.push(`Observações: ${tech.detalhes}`);
 
   specs.forEach(s => {
@@ -212,20 +235,6 @@ export const generateProposalPDF = (proposta: Proposta, profile: Profile) => {
     doc.text(splitC, M, y);
     y += splitC.length * 5 + 1;
   });
-  y += sectionSpacing;
-
-  // --- MARCENARIA ---
-  chkPg(40);
-  doc.setFont('helvetica', 'bold');
-  doc.text('DADOS DO FORNECEDOR', M, y);
-  y += 7;
-  doc.setFont('helvetica', 'normal');
-  doc.text(profile.nome || 'Fifty+', M, y);
-  y += 5;
-  if (profile.cpf) { doc.text(`CNPJ/CPF: ${profile.cpf}`, M, y); y += 5; }
-  doc.text(`WhatsApp: ${profile.wpp || '—'}`, M, y);
-  y += 5;
-  if (profile.insta) { doc.text(`Instagram: ${profile.insta}`, M, y); y += 5; }
   y += sectionSpacing;
 
   // --- IMPORTANTES ---
