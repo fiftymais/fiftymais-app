@@ -207,6 +207,20 @@ export default function App() {
 
       setProfile({ ...data, user_name: userName, unidade_medida: unit });
       if (data.nome) setHasPersistedProfile(true);
+    } else {
+      // Initialize with empty profile if not found
+      setProfile({
+        nome: '',
+        wpp: '',
+        cidade: '',
+        insta: '',
+        cpf: '',
+        endereco: '',
+        logo: '',
+        user_name: '',
+        unidade_medida: 'mm'
+      });
+      setHasPersistedProfile(false);
     }
   };
 
@@ -2300,7 +2314,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   <div className="flex flex-col items-center gap-4">
                     <label className="relative group cursor-pointer">
                       <div className="w-24 h-24 rounded-[2rem] bg-brand-surface2 border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner group-hover:border-brand-red transition-all">
-                        {profile.logo ? (
+                        {profile?.logo ? (
                           <img src={profile.logo} className="w-full h-full object-contain p-2" />
                         ) : (
                           <Camera className="text-brand-text3 opacity-40" size={32} />
@@ -2313,7 +2327,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                     </label>
                     <div className="flex flex-col items-center gap-2">
                       <p className="text-[8px] font-black text-brand-text3 uppercase tracking-widest">Toque para alterar logo</p>
-                      {profile.logo && (
+                      {profile?.logo && (
                         <button 
                           onClick={handleRemoveLogo}
                           className="text-red-500 text-[8px] font-black uppercase tracking-widest hover:underline"
