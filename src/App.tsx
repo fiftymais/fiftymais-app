@@ -11,6 +11,7 @@ import {
   Trash2, 
   Eye, 
   Edit2, 
+  Copy,
   MessageCircle, 
   ChevronRight, 
   ChevronLeft, 
@@ -80,10 +81,23 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<'propostas' | 'orcamento' | 'perfil' | 'preview' | 'tutorial' | 'calculadora'>('tutorial');
   const [profile, setProfile] = useState<Profile | null>(null);
   const [hasPersistedProfile, setHasPersistedProfile] = useState(false);
+  const [isRecovery, setIsRecovery] = useState(false);
   const [propostas, setPropostas] = useState<Proposta[]>([]);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = () => setIsOffline(false);
+    const handleOffline = () => setIsOffline(true);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   const filteredPropostas = propostas.filter(p => {
     const matchesSearch = (p.cliente_nome || '').toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -143,8 +157,9 @@ export default function App() {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
-        // Handle potential token issues by ensuring session is synced
+      if (event === 'PASSWORD_RECOVERY') {
+        setIsRecovery(true);
+        setCurrentPage('perfil');
       }
       
       setSession(session);
@@ -265,6 +280,21 @@ export default function App() {
   const handleSaveProposta = async () => {
     if (!session?.user) return;
 
+    // Validation
+    if (!formData.cliente_nome?.trim()) {
+      showToast('O nome do cliente é obrigatório', 'error');
+      return;
+    }
+    if (!formData.cliente_wpp?.trim()) {
+      showToast('O WhatsApp do cliente é obrigatório', 'error');
+      return;
+    }
+    if (!formData.ambientes || formData.ambientes.length === 0) {
+      showToast('Adicione pelo menos um ambiente', 'error');
+      return;
+    }
+
+    setLoading(true);
     const mat = Number(formData.v_mat) || 0;
     const despesas = Number(formData.v_despesas) || 0;
     const ferr = Number(formData.v_ferr) || 0;
@@ -405,7 +435,34 @@ export default function App() {
     } catch (err: any) {
       console.error('Unexpected Save Error:', err);
       showToast('Erro inesperado: ' + err.message, 'error');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const handleDuplicateProposta = async (p: Proposta) => {
+    if (!session?.user) return;
+    setLoading(true);
+    
+    const { id, numero, created_at, updated_at, ...rest } = p;
+    const payload = {
+      ...rest,
+      user_id: session.user.id,
+      cliente_nome: `${p.cliente_nome} (Cópia)`,
+      numero: propostas.length + 1,
+      status: 'nao_enviada',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { error } = await supabase.from('propostas').insert(payload);
+    if (error) {
+      showToast('Erro ao duplicar: ' + error.message, 'error');
+    } else {
+      showToast('Proposta duplicada com sucesso!');
+      fetchPropostas(session.user.id);
+    }
+    setLoading(false);
   };
 
   const handleDeleteProposta = async (id: string) => {
@@ -450,6 +507,11 @@ export default function App() {
   if (!session) {
     return (
       <>
+        {isOffline && (
+          <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest py-2 text-center z-[999999]">
+            Você está offline. Algumas funções podem não funcionar.
+          </div>
+        )}
         <LoginScreen showToast={showToast} />
         <AnimatePresence mode="wait">
           {toast && (
@@ -466,6 +528,11 @@ export default function App() {
 
   return (
     <div className="flex h-[100dvh] bg-brand-bg flex-col md:flex-row overflow-hidden">
+      {isOffline && (
+        <div className="fixed top-0 left-0 right-0 bg-red-600 text-white text-[10px] font-black uppercase tracking-widest py-2 text-center z-[999999]">
+          Você está offline. Algumas funções podem não funcionar.
+        </div>
+      )}
       {/* Sidebar for Desktop */}
       {!isFullScreen && (
         <aside className="hidden md:flex w-72 bg-white border-r border-brand-border flex-col shrink-0 shadow-xl z-50">
@@ -599,7 +666,7 @@ export default function App() {
                   className="flex-1 flex flex-col p-4 md:p-0"
                 >
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-semibold text-brand-text1">Seus Orçamentos</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-brand-text1">Orçamentos</h2>
                   <button 
                     onClick={() => {
                       setEditingId(null);
@@ -617,9 +684,9 @@ export default function App() {
                       setCurrentStep(1);
                       setCurrentPage('orcamento');
                     }}
-                    className="bg-brand-red text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-xs"
+                    className="bg-brand-red text-white px-4 py-3 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-[10px] uppercase tracking-widest"
                   >
-                    <Plus size={16} /> Novo Orçamento
+                    <Plus size={16} /> Novo
                   </button>
                 </div>
 
@@ -658,13 +725,13 @@ export default function App() {
                             <p className="font-bold text-brand-green text-xl">{fmt(p.v_total)}</p>
                           </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-3 pt-4 border-t-2 border-brand-border">
+                        <div className="grid grid-cols-4 gap-2 pt-4 border-t-2 border-brand-border">
                           <button 
                             onClick={() => { setFormData(p); setCurrentPage('preview'); }}
                             className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
                           >
-                            <Eye size={20} strokeWidth={2.5} />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">Ver</span>
+                            <Eye size={18} strokeWidth={2.5} />
+                            <span className="text-[8px] font-bold uppercase tracking-widest">Ver</span>
                           </button>
                           <button 
                             onClick={() => {
@@ -675,15 +742,22 @@ export default function App() {
                             }}
                             className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
                           >
-                            <Edit2 size={20} strokeWidth={2.5} />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">Editar</span>
+                            <Edit2 size={18} strokeWidth={2.5} />
+                            <span className="text-[8px] font-bold uppercase tracking-widest">Editar</span>
+                          </button>
+                          <button 
+                            onClick={() => handleDuplicateProposta(p)}
+                            className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
+                          >
+                            <Copy size={18} strokeWidth={2.5} />
+                            <span className="text-[8px] font-bold uppercase tracking-widest">Copiar</span>
                           </button>
                           <button 
                             onClick={() => handleDeleteProposta(p.id)}
                             className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-red-50 text-red-600 hover:bg-red-100 transition-all active:scale-90 border border-transparent hover:border-red-200"
                           >
-                            <Trash2 size={20} strokeWidth={2.5} />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">Excluir</span>
+                            <Trash2 size={18} strokeWidth={2.5} />
+                            <span className="text-[8px] font-bold uppercase tracking-widest">Excluir</span>
                           </button>
                         </div>
                       </div>
@@ -749,9 +823,11 @@ export default function App() {
                     userId={session.user.id} 
                     showToast={showToast}
                     setCurrentPage={setCurrentPage}
+                    isRecovery={isRecovery}
                     onSaveSuccess={() => {
                       setHasPersistedProfile(true);
                       fetchProfile(session.user.id);
+                      setIsRecovery(false);
                     }}
                   />
                 </div>
@@ -849,23 +925,23 @@ function FullCalculator() {
   };
 
   return (
-    <div className="bg-white p-8 rounded-[3rem] shadow-xl border-2 border-brand-border w-full max-w-md mx-auto">
-      <div className="flex items-center justify-between mb-6 px-2">
+    <div className="bg-white p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl border-2 border-brand-border w-full max-w-md mx-auto">
+      <div className="flex items-center justify-between mb-4 px-2">
         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-text3">Calculadora Profissional</span>
       </div>
       
-      <div className="bg-brand-surface2 p-8 rounded-3xl mb-6 text-right overflow-hidden min-h-[120px] flex flex-col justify-end border-2 border-brand-border shadow-inner">
+      <div className="bg-brand-surface2 p-6 md:p-8 rounded-2xl md:rounded-3xl mb-4 md:mb-6 text-right overflow-hidden min-h-[100px] md:min-h-[120px] flex flex-col justify-end border-2 border-brand-border shadow-inner">
         <div className="text-sm text-brand-text3 h-6 truncate mb-1 font-mono font-medium">{equation || ' '}</div>
-        <div className="text-5xl font-bold truncate font-mono text-brand-text1 tracking-tighter">{display}</div>
+        <div className="text-4xl md:text-5xl font-bold truncate font-mono text-brand-text1 tracking-tighter">{display}</div>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-2 md:gap-3">
         {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
           <button
             key={btn}
             onClick={() => handleBtn(btn)}
             className={cn(
-              "h-16 md:h-20 rounded-2xl font-bold text-xl transition-all active:scale-90 flex items-center justify-center shadow-sm",
+              "h-14 md:h-20 rounded-xl md:rounded-2xl font-bold text-lg transition-all active:scale-90 flex items-center justify-center shadow-sm",
               btn === 'C' ? "bg-zinc-100 text-brand-red border-2 border-brand-border" :
               ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "bg-white text-brand-text1 border-2 border-brand-border hover:bg-brand-surface2"
             )}
@@ -1008,7 +1084,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   };
 
   return (
-    <div className="space-y-6 py-4 max-w-2xl mx-auto">
+    <div className="space-y-4 py-2 max-w-2xl mx-auto">
       <div className="px-4 text-center space-y-1 overflow-hidden">
         <h2 className="text-xl md:text-3xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
           <span>Bem-vindo ao</span>
@@ -1102,7 +1178,9 @@ function LoginScreen({ showToast }: { showToast: (m: string, t?: 'success' | 'er
   const handleForgot = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/`,
+    });
     if (error) showToast(error.message, 'error');
     else showToast('Link enviado para seu e-mail!');
     setLoading(false);
@@ -1899,11 +1977,15 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
   );
 }
 
-function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, onSaveSuccess }: any) {
+function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, onSaveSuccess, isRecovery }: any) {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(!profile?.nome);
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(isRecovery);
   const [passwords, setPasswords] = useState({ new: '', confirm: '' });
+
+  useEffect(() => {
+    if (isRecovery) setShowPasswordForm(true);
+  }, [isRecovery]);
 
   const updateProfile = (key: string, val: any) => setProfile((prev: any) => ({ ...prev, [key]: val }));
 
@@ -1981,6 +2063,15 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
   const handleLogo = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 1024 * 1024) {
+        showToast('A logo deve ter no máximo 1MB', 'error');
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        showToast('O arquivo deve ser uma imagem', 'error');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (ev) => updateProfile('logo', ev.target?.result);
       reader.readAsDataURL(file);
@@ -2042,8 +2133,11 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   {loading ? 'Atualizando...' : 'Confirmar Alteração'}
                 </button>
                 <button 
-                  onClick={() => setShowPasswordForm(false)}
-                  className="w-full text-zinc-400 text-[10px] font-bold uppercase tracking-widest py-2"
+                  onClick={() => !isRecovery && setShowPasswordForm(false)}
+                  className={cn(
+                    "w-full text-zinc-400 text-[10px] font-bold uppercase tracking-widest py-2",
+                    isRecovery && "hidden"
+                  )}
                 >
                   Cancelar e Voltar
                 </button>
@@ -2058,7 +2152,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
             className="space-y-6"
           >
             <div className="flex items-center justify-between">
-              <h2 className="text-xl font-black uppercase tracking-tight">Configurações</h2>
+              {/* Minimalist - Title removed as requested */}
             </div>
 
             {!isEditing && profile?.nome ? (
@@ -2092,28 +2186,28 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-2">
+                <div className="flex flex-col items-center gap-1 pt-4">
                   <button 
                     onClick={() => setIsEditing(true)}
-                    className="w-full bg-transparent border border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    className="w-full text-zinc-400 py-3 font-bold text-[10px] uppercase tracking-[0.2em] active:opacity-50 transition-all"
                   >
-                    <Settings size={14} /> Editar Perfil
+                    Editar Perfil
                   </button>
                   <button 
                     onClick={() => setShowPasswordForm(true)}
-                    className="w-full bg-transparent border border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    className="w-full text-zinc-400 py-3 font-bold text-[10px] uppercase tracking-[0.2em] active:opacity-50 transition-all"
                   >
-                    <Lock size={14} /> Alterar Senha
+                    Alterar Senha
                   </button>
                   <button 
                     onClick={() => window.open('https://billing.stripe.com/p/login/6oU4gz6HobERbDm1uPd7q00', '_blank')}
-                    className="w-full bg-transparent border border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    className="w-full text-zinc-400 py-3 font-bold text-[10px] uppercase tracking-[0.2em] active:opacity-50 transition-all"
                   >
-                    <ExternalLink size={14} /> Gerenciar Assinatura
+                    Gerenciar Assinatura
                   </button>
                   <button 
                     onClick={() => supabase.auth.signOut()}
-                    className="w-full text-zinc-400 py-4 font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all"
+                    className="w-full text-zinc-300 py-6 font-bold text-[9px] uppercase tracking-[0.3em] active:opacity-50 transition-all mt-4"
                   >
                     Sair da Conta
                   </button>
