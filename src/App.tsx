@@ -549,34 +549,34 @@ export default function App() {
       )}
       {/* Sidebar for Desktop */}
       {!isFullScreen && (
-        <aside className="hidden md:flex w-72 bg-white border-r border-brand-border flex-col shrink-0 shadow-xl z-50">
-          <div className="p-8 border-b border-brand-border">
+        <aside className="hidden md:flex w-60 bg-white border-r border-brand-border flex-col shrink-0 z-50">
+          <div className="p-6 border-b border-brand-border">
             <button 
               onClick={() => setCurrentPage('tutorial')}
-              className="text-2xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
+              className="text-xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
             >
               Fifty+
             </button>
-            <div className="flex items-center gap-1 mt-1 opacity-60">
-              <span className="text-[10px]">🇧🇷</span>
-              <span className="text-[7px] font-bold uppercase tracking-tighter text-zinc-400">Brasil</span>
+            <div className="flex items-center gap-1 mt-0.5 opacity-60">
+              <span className="text-[9px]">🇧🇷</span>
+              <span className="text-[6px] font-bold uppercase tracking-tighter text-zinc-400">Brasil</span>
             </div>
           </div>
           
-          <nav className="flex-1 p-6 space-y-2">
+          <nav className="flex-1 p-4 space-y-1">
             {[
-              { id: 'tutorial', label: 'Início', icon: <Home size={20} /> },
-              { id: 'propostas', label: 'Orçamentos', icon: <FileText size={20} /> },
-              { id: 'calculadora', label: 'Calculadora', icon: <Calculator size={20} /> },
-              { id: 'perfil', label: 'Configurações', icon: <Settings size={20} /> },
+              { id: 'tutorial', label: 'Início', icon: <Home size={18} /> },
+              { id: 'propostas', label: 'Orçamentos', icon: <FileText size={18} /> },
+              { id: 'calculadora', label: 'Calculadora', icon: <Calculator size={18} /> },
+              { id: 'perfil', label: 'Configurações', icon: <Settings size={18} /> },
             ].map(item => (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id as any)}
                 className={cn(
-                  "w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-sm transition-all active:scale-[0.98]",
+                  "w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all active:scale-[0.98]",
                   currentPage === item.id 
-                    ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" 
+                    ? "bg-brand-red text-white shadow-md shadow-brand-red/10" 
                     : "text-brand-text3 hover:bg-brand-surface2 hover:text-brand-red"
                 )}
               >
@@ -586,22 +586,22 @@ export default function App() {
             ))}
           </nav>
 
-          <div className="p-6 border-t border-brand-border space-y-4">
-            <div className="flex items-center gap-3 px-2">
-              <div className="w-10 h-10 rounded-2xl bg-brand-red text-white flex items-center justify-center font-black text-sm shadow-lg">
+          <div className="p-4 border-t border-brand-border space-y-3">
+            <div className="flex items-center gap-2 px-2">
+              <div className="w-8 h-8 rounded-xl bg-brand-red text-white flex items-center justify-center font-black text-xs shadow-md">
                 {session.user.email?.[0].toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-black text-brand-text1 truncate uppercase tracking-tight">
+                <p className="text-[10px] font-black text-brand-text1 truncate uppercase tracking-tight">
                   {profile?.user_name || session.user.email?.split('@')[0]}
                 </p>
               </div>
             </div>
             <button 
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-bold text-sm text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all active:scale-95"
+              className="w-full flex items-center gap-2 px-4 py-3 rounded-xl font-bold text-[10px] text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all active:scale-95 uppercase tracking-widest"
             >
-              <LogOut size={20} />
+              <LogOut size={16} />
               Sair
             </button>
           </div>
@@ -678,8 +678,8 @@ export default function App() {
                   exit={{ opacity: 0, x: 20 }}
                   className="flex-1 flex flex-col p-4 md:p-0"
                 >
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl md:text-2xl font-bold text-brand-text1">Orçamentos</h2>
+                <div className="flex items-center justify-between mb-4 md:mb-8">
+                  <h2 className="text-xl md:text-xl font-bold text-brand-text1">Orçamentos</h2>
                   {hasPersistedProfile && (
                     <button 
                       onClick={() => {
@@ -698,55 +698,55 @@ export default function App() {
                         setCurrentStep(1);
                         setCurrentPage('orcamento');
                       }}
-                      className="bg-brand-red text-white px-4 py-3 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-[10px] uppercase tracking-widest"
+                      className="bg-brand-red text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-[9px] uppercase tracking-widest"
                     >
-                      <Plus size={16} /> Novo
+                      <Plus size={14} /> Novo
                     </button>
                   )}
                 </div>
 
-                <div className="flex gap-2 mb-6">
+                <div className="flex gap-2 mb-6 md:mb-8">
                   <div className="relative flex-1">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-text3" size={20} />
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-brand-text3" size={18} />
                     <input 
                       type="text" 
                       placeholder="Buscar cliente pelo nome..." 
                       value={searchTerm}
                       onChange={e => setSearchTerm(e.target.value)}
-                      className="w-full bg-white border-2 border-brand-border rounded-2xl pl-12 pr-4 py-4 text-base font-medium focus:border-brand-red transition-all outline-none shadow-sm text-center"
+                      className="w-full bg-white border-2 border-brand-border rounded-2xl pl-12 pr-4 py-3 md:py-2.5 text-base md:text-sm font-medium focus:border-brand-red transition-all outline-none shadow-sm text-center"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {filteredPropostas.length === 0 ? (
-                    <div className="py-16 text-center text-brand-text3 bg-white rounded-3xl border-2 border-brand-border border-dashed">
-                      <FileText size={64} className="mx-auto mb-4 opacity-10" />
-                      <p className="font-bold text-lg">Nenhum orçamento encontrado.</p>
-                      <p className="text-sm opacity-60">Toque em "+ Novo Orçamento" para começar.</p>
+                    <div className="col-span-full py-16 text-center text-brand-text3 bg-white rounded-3xl border-2 border-brand-border border-dashed">
+                      <FileText size={48} className="mx-auto mb-4 opacity-10" />
+                      <p className="font-bold text-base">Nenhum orçamento encontrado.</p>
+                      <p className="text-xs opacity-60">Toque em "+ Novo" para começar.</p>
                     </div>
                   ) : (
                     filteredPropostas.map(p => (
-                      <div key={p.id} className="bg-white border-2 border-brand-border rounded-3xl p-5 shadow-md hover:shadow-lg transition-all active:scale-[0.99]">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="space-y-1">
-                            <p className="text-[10px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">
+                      <div key={p.id} className="bg-white border-2 border-brand-border rounded-3xl p-4 md:p-5 shadow-sm hover:shadow-md transition-all active:scale-[0.99]">
+                        <div className="flex justify-between items-start mb-3 md:mb-4">
+                          <div className="space-y-0.5">
+                            <p className="text-[9px] font-semibold text-brand-text3 uppercase tracking-[0.2em]">
                               #{String(p.numero).padStart(3, '0')} • {new Date(p.created_at).toLocaleDateString()}
                             </p>
-                            <h3 className="font-semibold text-lg md:text-xl text-brand-text1 leading-tight whitespace-nowrap overflow-hidden text-ellipsis">{p.cliente_nome}</h3>
-                            <p className="text-xs md:text-sm font-medium text-brand-red uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{p.tipo_movel}</p>
+                            <h3 className="font-semibold text-base md:text-lg text-brand-text1 leading-tight whitespace-nowrap overflow-hidden text-ellipsis">{p.cliente_nome}</h3>
+                            <p className="text-[10px] md:text-xs font-medium text-brand-red uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">{p.tipo_movel}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-brand-green text-xl">{fmt(p.v_total)}</p>
+                            <p className="font-bold text-brand-green text-lg md:text-xl">{fmt(p.v_total)}</p>
                           </div>
                         </div>
-                        <div className="grid grid-cols-4 gap-2 pt-4 border-t-2 border-brand-border">
+                        <div className="grid grid-cols-4 gap-2 pt-3 md:pt-4 border-t-2 border-brand-border">
                           <button 
                             onClick={() => { setFormData(p); setCurrentPage('preview'); }}
-                            className="flex flex-col items-center justify-center gap-1.5 py-4 rounded-2xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
+                            className="flex flex-col items-center justify-center gap-1 py-3 md:py-2.5 rounded-xl bg-brand-surface2 text-brand-text2 hover:bg-brand-red/5 hover:text-brand-red transition-all active:scale-90 border border-transparent hover:border-brand-red/20"
                           >
-                            <Eye size={18} strokeWidth={2.5} />
-                            <span className="text-[8px] font-bold uppercase tracking-widest">Ver</span>
+                            <Eye size={16} strokeWidth={2.5} />
+                            <span className="text-[7px] font-bold uppercase tracking-widest">Ver</span>
                           </button>
                           <button 
                             onClick={() => {
@@ -966,23 +966,23 @@ function FullCalculator() {
   };
 
   return (
-    <div className="bg-white p-4 md:p-8 rounded-[2rem] md:rounded-[3rem] shadow-xl border-2 border-brand-border w-full max-w-md mx-auto">
+    <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[3.5rem] shadow-xl border-2 border-brand-border w-full max-w-md mx-auto">
       <div className="flex items-center justify-between mb-4 px-2">
         <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-text3">Calculadora Profissional</span>
       </div>
       
-      <div className="bg-brand-surface2 p-6 md:p-8 rounded-2xl md:rounded-3xl mb-4 md:mb-6 text-right overflow-hidden min-h-[100px] md:min-h-[120px] flex flex-col justify-end border-2 border-brand-border shadow-inner">
+      <div className="bg-brand-surface2 p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] mb-4 md:mb-8 text-right overflow-hidden min-h-[100px] md:min-h-[140px] flex flex-col justify-end border-2 border-brand-border shadow-inner">
         <div className="text-sm text-brand-text3 h-6 truncate mb-1 font-mono font-medium">{equation || ' '}</div>
-        <div className="text-4xl md:text-5xl font-bold truncate font-mono text-brand-text1 tracking-tighter">{display}</div>
+        <div className="text-4xl md:text-6xl font-bold truncate font-mono text-brand-text1 tracking-tighter">{display}</div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 md:gap-3">
+      <div className="grid grid-cols-4 gap-2 md:gap-4">
         {['C', '÷', 'x', '-', '7', '8', '9', '+', '4', '5', '6', '=', '1', '2', '3', '0'].map((btn) => (
           <button
             key={btn}
             onClick={() => handleBtn(btn)}
             className={cn(
-              "h-14 md:h-20 rounded-xl md:rounded-2xl font-bold text-lg transition-all active:scale-90 flex items-center justify-center shadow-sm",
+              "h-14 md:h-16 rounded-xl md:rounded-2xl font-bold text-lg md:text-base transition-all active:scale-90 flex items-center justify-center shadow-sm",
               btn === 'C' ? "bg-zinc-100 text-brand-red border-2 border-brand-border" :
               ['÷', 'x', '-', '+', '='].includes(btn) ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" : "bg-white text-brand-text1 border-2 border-brand-border hover:bg-brand-surface2"
             )}
@@ -1095,7 +1095,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative h-[480px] md:h-[600px] overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
+      <div className="relative h-[480px] md:h-[400px] overflow-hidden md:rounded-[2.5rem] md:border md:border-brand-border bg-white shadow-sm transition-all duration-500">
         <AnimatePresence mode="wait">
           <motion.div 
             key={index}
@@ -1114,10 +1114,10 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
                   {banners[index].tag}
                 </span>
               </div>
-              <h4 className={cn(banners[index].titleClass || "text-sm md:text-base font-medium leading-tight", banners[index].textColor)}>
+              <h4 className={cn(banners[index].titleClass || "text-sm md:text-sm font-medium leading-tight", banners[index].textColor)}>
                 {banners[index].title}
               </h4>
-              <p className={cn("text-[9px] md:text-[10px] opacity-80 leading-relaxed font-normal max-w-md", banners[index].textColor)}>
+              <p className={cn("text-[9px] md:text-[9px] opacity-80 leading-relaxed font-normal max-w-md", banners[index].textColor)}>
                 {banners[index].sub}
               </p>
             </div>
@@ -1172,36 +1172,42 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-8">
-        <div className="max-w-md mx-auto mb-10 text-center px-4">
-          <h3 className="text-xs font-black text-brand-red uppercase tracking-[0.3em] mb-2">Como Funciona</h3>
-          <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-widest opacity-90">Siga o passo a passo para ter sua proposta pronta em 5 minutos</p>
+      <div className="flex-1 overflow-y-auto px-4 py-8 md:px-12 md:py-12">
+        <div className="max-w-md md:max-w-2xl mx-auto mb-10 md:mb-16 text-center px-4">
+          <h3 className="text-xs md:text-sm font-black text-brand-red uppercase tracking-[0.3em] mb-2 md:mb-4">Como Funciona</h3>
+          <p className="text-[10px] md:text-xs text-brand-text3 font-bold uppercase tracking-widest opacity-90">Siga o passo a passo para ter sua proposta pronta em 5 minutos</p>
         </div>
 
-        <div className="max-w-md mx-auto relative px-4">
+        <div className="max-w-md md:max-w-2xl mx-auto relative px-4">
           {/* Vertical Line */}
-          <div className="absolute left-10 top-0 bottom-0 w-0.5 bg-brand-border opacity-50" />
+          <div className="absolute left-10 md:left-1/2 top-0 bottom-0 w-0.5 bg-brand-border opacity-30 md:-translate-x-1/2" />
           
-          <div className="space-y-12">
+          <div className="space-y-12 md:space-y-20">
             {steps.map((step, i) => (
               <motion.div 
                 key={i}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-center gap-6 relative z-10"
+                className={cn(
+                  "flex items-center gap-6 relative z-10",
+                  i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                )}
               >
                 <div className={cn(
-                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-lg border-2 border-white ml-4",
+                  "w-12 h-12 md:w-14 md:h-14 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-lg border-2 border-white ml-4 md:ml-0",
                   step.color
                 )}>
                   {step.icon}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[8px] font-black text-brand-red uppercase tracking-widest mb-0.5">{step.step}</p>
-                  <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-80 whitespace-nowrap">{step.desc}</p>
+                <div className={cn(
+                  "flex-1 min-w-0",
+                  i % 2 === 0 ? "md:text-left" : "md:text-right"
+                )}>
+                  <p className="text-[8px] md:text-[9px] font-black text-brand-red uppercase tracking-widest mb-0.5">{step.step}</p>
+                  <h4 className="text-sm md:text-base font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
+                  <p className="text-[10px] md:text-xs text-brand-text3 font-bold uppercase tracking-tight opacity-80 whitespace-nowrap">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -1209,14 +1215,14 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         </div>
 
         {!hasPersistedProfile && (
-          <div className="mt-12 max-w-md mx-auto pb-24 px-4">
+          <div className="mt-12 md:mt-20 max-w-md mx-auto pb-24 px-4">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => {
                 setCurrentPage('perfil');
               }}
-              className="w-full bg-[#01bd23] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-green-600/20 active:scale-95 transition-all flex items-center justify-center gap-3"
+              className="w-full bg-[#01bd23] text-white py-5 md:py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-green-600/20 active:scale-95 transition-all flex items-center justify-center gap-3"
             >
               <Settings size={18} />
               CONFIGURE SEU PERFIL
@@ -1432,7 +1438,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
 
       {step === 1 && (
         <div className="space-y-4">
-          <div className="bg-white p-6 rounded-[2rem] border-2 border-brand-border space-y-6 shadow-sm">
+          <div className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] border-2 border-brand-border space-y-6 shadow-sm">
             <h3 className="text-sm font-bold text-brand-red uppercase tracking-widest mb-2">Dados do Cliente</h3>
             <div className="space-y-2">
               <label className="text-sm font-bold text-brand-text3 uppercase tracking-wider ml-1">Nome Completo *</label>
@@ -1440,7 +1446,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 type="text" 
                 value={data.cliente_nome || ''} 
                 onChange={e => updateData('cliente_nome', e.target.value)}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-lg font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 md:py-3 text-lg md:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="Ex: João Silva"
               />
             </div>
@@ -1450,7 +1456,7 @@ function OrcamentoForm({ step, setStep, data, setData, onSave, onCancel, profile
                 type="tel" 
                 value={data.cliente_wpp || ''} 
                 onChange={e => updateData('cliente_wpp', formatPhone(e.target.value))}
-                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 text-lg font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
+                className="w-full bg-brand-surface2 border-2 border-brand-border rounded-xl px-4 py-4 md:py-3 text-lg md:text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none text-center"
                 placeholder="(00) 00000-0000"
               />
             </div>
@@ -1951,76 +1957,76 @@ function PreviewPage({ proposta, profile, onBack, onStatusUpdate }: any) {
         <h2 className="text-2xl font-bold text-brand-text1">Proposta ✅</h2>
       </div>
 
-      <div className="bg-white border-2 border-brand-border rounded-[2.5rem] overflow-hidden shadow-lg">
-        <div className="bg-brand-red p-8 text-white flex justify-between items-center">
+      <div className="bg-white border-2 border-brand-border rounded-[2.5rem] md:rounded-[3rem] overflow-hidden shadow-lg">
+        <div className="bg-brand-red p-8 md:p-10 text-white flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-bold uppercase tracking-tight">Orçamento</h3>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] opacity-80 mt-1">
+            <h3 className="text-xl md:text-lg font-bold uppercase tracking-tight">Orçamento</h3>
+            <p className="text-[10px] md:text-[9px] font-semibold uppercase tracking-[0.2em] opacity-80 mt-1">
               #{String(proposta.numero).padStart(3, '0')} • {new Date(proposta.created_at).toLocaleDateString()}
             </p>
           </div>
-          <div className="bg-white rounded-2xl p-3 min-w-[80px] flex items-center justify-center shadow-sm">
+          <div className="bg-white rounded-2xl p-3 min-w-[80px] md:min-w-[70px] flex items-center justify-center shadow-sm">
             {profile?.logo ? (
-              <img src={profile.logo} className="max-h-8 object-contain" />
+              <img src={profile.logo} className="max-h-8 md:max-h-6 object-contain" />
             ) : (
-              <span className="text-brand-red text-xs font-bold uppercase tracking-widest">{profile?.nome?.substring(0, 5) || 'Fifty+'}</span>
+              <span className="text-brand-red text-xs md:text-[10px] font-bold uppercase tracking-widest">{profile?.nome?.substring(0, 5) || 'Fifty+'}</span>
             )}
           </div>
         </div>
 
-        <div className="p-8 space-y-8">
-          <section className="space-y-3">
-            <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Informações do Cliente</h4>
+        <div className="p-8 md:p-10 space-y-8 md:space-y-6">
+          <section className="space-y-3 md:space-y-2">
+            <h4 className="text-[10px] md:text-[9px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Informações do Cliente</h4>
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold text-brand-text3 uppercase">Nome</span>
-              <span className="text-base font-semibold text-brand-text1 whitespace-nowrap overflow-hidden text-ellipsis ml-4">{proposta.cliente_nome}</span>
+              <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Nome</span>
+              <span className="text-base md:text-sm font-semibold text-brand-text1 whitespace-nowrap overflow-hidden text-ellipsis ml-4">{proposta.cliente_nome}</span>
             </div>
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold text-brand-text3 uppercase">WhatsApp</span>
-              <span className="text-base font-semibold text-brand-text1">{proposta.cliente_wpp}</span>
+              <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">WhatsApp</span>
+              <span className="text-base md:text-sm font-semibold text-brand-text1">{proposta.cliente_wpp}</span>
             </div>
           </section>
 
-          <section className="space-y-3">
-            <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Detalhes do Projeto</h4>
+          <section className="space-y-3 md:space-y-2">
+            <h4 className="text-[10px] md:text-[9px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Detalhes do Projeto</h4>
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold text-brand-text3 uppercase">Ambientes</span>
-              <span className="text-base font-semibold text-brand-text1">{(proposta.ambientes || []).length}</span>
+              <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Ambientes</span>
+              <span className="text-base md:text-sm font-semibold text-brand-text1">{(proposta.ambientes || []).length}</span>
             </div>
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold text-brand-text3 uppercase">Material</span>
-              <span className="text-base font-semibold text-brand-text1">{proposta.chapa}</span>
+              <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Material</span>
+              <span className="text-base md:text-sm font-semibold text-brand-text1">{proposta.chapa}</span>
             </div>
             {proposta.inicio && (
               <div className="flex justify-between items-center py-1">
-                <span className="text-sm font-semibold text-brand-text3 uppercase">Início</span>
-                <span className="text-base font-semibold text-brand-text1">{new Date(proposta.inicio).toLocaleDateString('pt-BR')}</span>
+                <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Início</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{new Date(proposta.inicio).toLocaleDateString('pt-BR')}</span>
               </div>
             )}
             {proposta.entrega && (
               <div className="flex justify-between items-center py-1">
-                <span className="text-sm font-semibold text-brand-text3 uppercase">Entrega</span>
-                <span className="text-base font-semibold text-brand-text1">{new Date(proposta.entrega).toLocaleDateString('pt-BR')}</span>
+                <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Entrega</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{new Date(proposta.entrega).toLocaleDateString('pt-BR')}</span>
               </div>
             )}
           </section>
 
-          <section className="space-y-3">
-            <h4 className="text-[10px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Condições de Pagamento</h4>
+          <section className="space-y-3 md:space-y-2">
+            <h4 className="text-[10px] md:text-[9px] font-bold text-brand-text3 uppercase tracking-[0.3em] border-b-2 border-brand-border pb-2">Condições de Pagamento</h4>
             <div className="flex justify-between items-center py-1">
-              <span className="text-sm font-semibold text-brand-text3 uppercase">Parcelas</span>
-              <span className="text-base font-semibold text-brand-text1">{proposta.pgto_parcelas || 1}x {proposta.pgto_juros ? 'c/ juros' : 's/ juros'}</span>
+              <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Parcelas</span>
+              <span className="text-base md:text-sm font-semibold text-brand-text1">{proposta.pgto_parcelas || 1}x {proposta.pgto_juros ? 'c/ juros' : 's/ juros'}</span>
             </div>
             {proposta.pgto_pix && (
               <div className="flex justify-between items-center py-1">
-                <span className="text-sm font-semibold text-brand-text3 uppercase">Chave PIX</span>
-                <span className="text-base font-semibold text-brand-text1">{proposta.pgto_pix}</span>
+                <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Chave PIX</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{proposta.pgto_pix}</span>
               </div>
             )}
             {proposta.validade && (
               <div className="flex justify-between items-center py-1">
-                <span className="text-sm font-semibold text-brand-text3 uppercase">Validade</span>
-                <span className="text-base font-semibold text-brand-text1">{proposta.validade}</span>
+                <span className="text-sm md:text-xs font-semibold text-brand-text3 uppercase">Validade</span>
+                <span className="text-base md:text-sm font-semibold text-brand-text1">{proposta.validade}</span>
               </div>
             )}
           </section>
@@ -2334,10 +2340,10 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="bg-white p-8 rounded-[2.5rem] border-2 border-brand-border shadow-sm space-y-6">
+                <div className="bg-white p-8 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border-2 border-brand-border shadow-sm space-y-6 md:space-y-8">
                   <div className="flex flex-col items-center gap-4">
                     <label className="relative group cursor-pointer">
-                      <div className="w-24 h-24 rounded-[2rem] bg-brand-surface2 border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner group-hover:border-brand-red transition-all">
+                      <div className="w-24 h-24 md:w-20 md:h-20 rounded-[2rem] bg-brand-surface2 border-2 border-brand-border flex items-center justify-center overflow-hidden shadow-inner group-hover:border-brand-red transition-all">
                         {profile?.logo ? (
                           <img src={profile.logo} className="w-full h-full object-contain p-2" />
                         ) : (
@@ -2362,14 +2368,14 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                     </div>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="space-y-4 md:space-y-3">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">PRIMEIRO NOME *</label>
                       <input 
                         type="text" 
                         value={profile.user_name || ''} 
                         onChange={e => updateProfile('user_name', e.target.value)}
-                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 md:py-3 text-center text-base md:text-sm font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                         placeholder="Seu Nome"
                       />
                     </div>
@@ -2379,7 +2385,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                         type="text" 
                         value={profile.nome || ''} 
                         onChange={e => updateProfile('nome', e.target.value)}
-                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 md:py-3 text-center text-base md:text-sm font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                         placeholder="Nome da Marcenaria"
                       />
                     </div>
@@ -2389,7 +2395,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                         type="tel" 
                         value={profile.wpp || ''} 
                         onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
-                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 md:py-3 text-center text-base md:text-sm font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                         placeholder="(00) 00000-0000"
                       />
                     </div>
