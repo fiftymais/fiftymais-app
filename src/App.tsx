@@ -855,7 +855,7 @@ export default function App() {
             <div className="bg-white/80 backdrop-blur-xl border border-brand-border rounded-[2.5rem] p-2 flex items-center justify-between shadow-2xl shadow-black/5">
         {[
           { id: 'tutorial', label: 'Início', icon: <Home size={20} /> },
-          { id: 'perfil', label: 'Perfil', icon: <Settings size={20} /> },
+          { id: 'perfil', label: 'Configurações', icon: <Settings size={20} /> },
           { 
             id: 'novo', 
             label: 'Novo', 
@@ -1108,15 +1108,107 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
   );
 }
 
-function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
+function TutorialCarousel() {
+  const [index, setIndex] = useState(0);
+  const total = 5;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % total);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
   const steps = [
-    { title: '1. Perfil', desc: 'Logo e dados.', icon: <Settings size={18} />, color: 'bg-blue-500' },
-    { title: '2. Proposta', desc: 'Inicie rápido.', icon: <div className="font-black text-xs">Fifty+</div>, color: 'bg-emerald-500' },
-    { title: '3. Ambientes', desc: 'Escolha cômodos.', icon: <Layout size={18} />, color: 'bg-amber-500' },
-    { title: '4. Medidas', desc: 'Dimensões técnicas.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
-    { title: '5. Orçamento', desc: 'Gere o PDF.', icon: <FileText size={18} />, color: 'bg-brand-red' },
+    {
+      tag: 'PASSO 1',
+      title: 'Configuração do Perfil',
+      sub: 'Adicione sua logo, endereço e redes sociais para personalizar suas propostas.',
+      bg: 'bg-blue-600',
+      icon: <Settings size={24} className="text-white" />
+    },
+    {
+      tag: 'PASSO 2',
+      title: 'Iniciar Proposta',
+      sub: 'Clique em "Novo" para começar um orçamento rápido pelo celular.',
+      bg: 'bg-emerald-600',
+      icon: <Plus size={24} className="text-white" />
+    },
+    {
+      tag: 'PASSO 3',
+      title: 'Escolher Ambientes',
+      sub: 'Selecione os cômodos e adicione as peças de marcenaria de cada um.',
+      bg: 'bg-amber-600',
+      icon: <Layout size={24} className="text-white" />
+    },
+    {
+      tag: 'PASSO 4',
+      title: 'Medidas Técnicas',
+      sub: 'Informe as dimensões e detalhes para um cálculo preciso de custos.',
+      bg: 'bg-purple-600',
+      icon: <Maximize size={24} className="text-white" />
+    },
+    {
+      tag: 'PASSO 5',
+      title: 'Gerar o PDF',
+      sub: 'Pronto! Gere o orçamento profissional em PDF e envie direto pelo WhatsApp.',
+      bg: 'bg-brand-red',
+      icon: <FileText size={24} className="text-white" />
+    }
   ];
 
+  return (
+    <div className="pb-6 font-dm">
+      <div className="flex items-center justify-between mb-3 px-4 md:px-0">
+        <h3 className="text-[10px] font-black text-brand-text3 uppercase tracking-[0.2em]">Como Funciona</h3>
+        <div className="flex gap-1">
+          {steps.map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                "h-1 rounded-full transition-all duration-300",
+                index === i ? "w-4 bg-brand-red" : "w-1 bg-brand-border"
+              )}
+            />
+          ))}
+        </div>
+      </div>
+      
+      <div className="relative h-48 overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={index}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.5 }}
+            className={cn(
+              "absolute inset-0 p-6 flex flex-col items-center justify-center text-center gap-4",
+              steps[index].bg
+            )}
+          >
+            <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center shadow-inner">
+              {steps[index].icon}
+            </div>
+            <div className="space-y-1 relative z-10 flex flex-col items-center justify-center">
+              <span className="px-2 py-0.5 rounded bg-white/20 text-white text-[8px] font-black uppercase tracking-widest mb-1">
+                {steps[index].tag}
+              </span>
+              <h4 className="text-lg font-black text-white uppercase tracking-tight">
+                {steps[index].title}
+              </h4>
+              <p className="text-[10px] text-white/80 leading-relaxed font-bold max-w-xs">
+                {steps[index].sub}
+              </p>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }: { onStart: () => void, hasPersistedProfile: boolean, setCurrentPage: (p: string) => void, profile: any }) {
   const formatName = (name: string) => {
     if (!name) return '';
     return name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
@@ -1145,55 +1237,8 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         <NewsCarousel setCurrentPage={setCurrentPage} />
       </div>
 
-      <div className="px-4 space-y-6 md:max-w-2xl md:mx-auto">
-        <div className="bg-white rounded-[2.5rem] border-2 border-brand-border overflow-hidden shadow-sm">
-          <div className="p-6 border-b border-brand-border bg-white">
-             <h3 className="text-sm font-black text-brand-text1 uppercase tracking-[0.1em]">Como funciona:</h3>
-          </div>
-          <div className="p-6 pt-2 space-y-0 relative max-w-sm mx-auto">
-            {/* Trail Line */}
-            <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border opacity-50" />
-            
-            {steps.map((step, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-6 py-3 relative z-10"
-              >
-                <div className={cn(
-                  "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
-                  step.color
-                )}>
-                  {step.icon}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-40">{step.desc}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        <div className="max-w-sm mx-auto w-full pb-8">
-          <motion.button
-            whileHover={{ scale: 1.02, backgroundColor: '#E11D48' }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => {
-              if (hasPersistedProfile) {
-                onStart();
-              } else {
-                setCurrentPage('perfil');
-              }
-            }}
-            className="w-full bg-brand-red text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-lg shadow-brand-red/20 active:scale-95 transition-all flex items-center justify-center gap-3"
-          >
-            <Zap size={18} fill="currentColor" />
-            {hasPersistedProfile ? 'COMEÇAR AGORA' : 'CONFIGURAR PERFIL'}
-          </motion.button>
-        </div>
+      <div className="md:px-4 md:max-w-4xl md:mx-auto w-full">
+        <TutorialCarousel />
       </div>
     </div>
   );
@@ -2273,7 +2318,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
 
                   <div className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Seu Nome Completo *</label>
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">PRIMEIRO NOME *</label>
                       <input 
                         type="text" 
                         value={profile.user_name || ''} 
@@ -2300,6 +2345,26 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                         onChange={e => updateProfile('wpp', formatPhone(e.target.value))}
                         className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
                         placeholder="(00) 00000-0000"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Instagram (@usuario)</label>
+                      <input 
+                        type="text" 
+                        value={profile.insta || ''} 
+                        onChange={e => updateProfile('insta', e.target.value)}
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        placeholder="@suamarcenaria"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black text-zinc-400 uppercase tracking-widest ml-1">Endereço da Marcenaria</label>
+                      <input 
+                        type="text" 
+                        value={profile.endereco || ''} 
+                        onChange={e => updateProfile('endereco', e.target.value)}
+                        className="w-full bg-zinc-50 border border-zinc-100 rounded-2xl px-4 py-4 text-center text-base font-bold focus:bg-white focus:border-brand-red transition-all outline-none"
+                        placeholder="Rua, Número, Bairro"
                       />
                     </div>
                     <div className="space-y-1.5">
