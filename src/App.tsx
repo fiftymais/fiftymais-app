@@ -851,8 +851,8 @@ export default function App() {
 
         {/* Bottom Nav for Mobile */}
         {!isFullScreen && (
-          <nav className="md:hidden fixed bottom-6 left-6 right-6 z-50">
-            <div className="bg-white/80 backdrop-blur-xl border border-brand-border rounded-[2.5rem] p-2 flex items-center justify-between shadow-2xl shadow-black/5">
+          <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-xl border-t border-brand-border shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
+            <div className="flex items-center justify-around p-2 pb-6">
         {[
           { id: 'tutorial', label: 'Início', icon: <Home size={20} /> },
           { id: 'perfil', label: 'Configurações', icon: <Settings size={20} /> },
@@ -889,7 +889,7 @@ export default function App() {
             key={item.id}
             onClick={item.onClick || (() => setCurrentPage(item.id as any))}
             className={cn(
-              "flex flex-col items-center justify-center w-14 h-12 rounded-2xl transition-all active:scale-90",
+              "flex flex-col items-center justify-center w-16 h-12 rounded-xl transition-all active:scale-90",
               currentPage === item.id 
                 ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" 
                 : "text-brand-text3"
