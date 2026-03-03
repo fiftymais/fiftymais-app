@@ -853,26 +853,47 @@ export default function App() {
         {!isFullScreen && (
           <nav className="md:hidden fixed bottom-6 left-6 right-6 z-50">
             <div className="bg-white/80 backdrop-blur-xl border border-brand-border rounded-[2.5rem] p-2 flex items-center justify-between shadow-2xl shadow-black/5">
-              {[
-                { id: 'tutorial', label: 'Início', icon: <Home size={22} /> },
-                { id: 'propostas', label: 'Orçamentos', icon: <FileText size={22} /> },
-                { id: 'calculadora', label: 'Calc', icon: <Calculator size={22} /> },
-                { id: 'perfil', label: 'Perfil', icon: <Settings size={22} /> },
-              ].map(item => (
-                <button
-                  key={item.id}
-                  onClick={() => setCurrentPage(item.id as any)}
-                  className={cn(
-                    "flex flex-col items-center justify-center w-16 h-14 rounded-3xl transition-all active:scale-90",
-                    currentPage === item.id 
-                      ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" 
-                      : "text-brand-text3"
-                  )}
-                >
-                  {item.icon}
-                  <span className="text-[8px] font-black uppercase tracking-tighter mt-1">{item.label}</span>
-                </button>
-              ))}
+        {[
+          { id: 'tutorial', label: 'Início', icon: <Home size={20} /> },
+          { id: 'perfil', label: 'Perfil', icon: <Settings size={20} /> },
+          { 
+            id: 'novo', 
+            label: 'Novo', 
+            icon: <Plus size={24} />,
+            onClick: () => {
+              setEditingId(null);
+              setFormData({
+                ambientes: [],
+                chapa: 'MDF 15mm',
+                acabamento: '',
+                ferragens: '',
+                v_margem: 30,
+                status: 'nao_enviada',
+                pgto_formas: ['Dinheiro', 'PIX'],
+                pgto_parcelas: 1,
+                pgto_juros: false
+              });
+              setCurrentStep(1);
+              setCurrentPage('orcamento');
+            }
+          },
+          { id: 'propostas', label: 'Lista', icon: <FileText size={20} /> },
+          { id: 'calculadora', label: 'Calc', icon: <Calculator size={20} /> },
+        ].map(item => (
+          <button
+            key={item.id}
+            onClick={item.onClick || (() => setCurrentPage(item.id as any))}
+            className={cn(
+              "flex flex-col items-center justify-center w-14 h-12 rounded-2xl transition-all active:scale-90",
+              currentPage === item.id 
+                ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" 
+                : "text-brand-text3"
+            )}
+          >
+            {item.icon}
+            <span className="text-[7px] font-black uppercase tracking-tighter mt-0.5">{item.label}</span>
+          </button>
+        ))}
             </div>
           </nav>
         )}
@@ -1054,7 +1075,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative h-[180px] md:h-[140px] overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
+      <div className="relative h-64 md:h-80 overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
         <AnimatePresence mode="wait">
           <motion.div 
             key={index}
@@ -1103,8 +1124,8 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
 
   return (
     <div className="space-y-4 py-4 w-full">
-      <div className="px-4 text-center space-y-1 overflow-hidden">
-        <h2 className="text-xl md:text-3xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
+      <div className="px-4 text-center space-y-2 overflow-hidden">
+        <h2 className="text-2xl md:text-3xl font-black text-brand-text1 tracking-tighter flex flex-wrap items-center justify-center gap-x-2 gap-y-0 px-2 leading-tight">
           <span>Bem-vindo ao</span>
           <span className="text-brand-red">Fifty+</span> 
           {profile?.user_name && (
@@ -1117,7 +1138,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
             </motion.span>
           )}
         </h2>
-        <p className="text-brand-text3 font-bold text-[8px] md:text-xs uppercase tracking-[0.2em] opacity-60">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
+        <p className="text-brand-text3 font-black text-[8px] md:text-[10px] uppercase tracking-[0.4em] opacity-40">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
       <div className="md:px-4 md:max-w-4xl md:mx-auto w-full">
@@ -1126,12 +1147,12 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
 
       <div className="px-4 space-y-6 md:max-w-2xl md:mx-auto">
         <div className="bg-white rounded-[2.5rem] border-2 border-brand-border overflow-hidden shadow-sm">
-          <div className="p-6 border-b border-brand-border bg-brand-surface2">
-             <h3 className="text-xs font-black text-brand-text1 uppercase tracking-[0.2em]">Como funciona:</h3>
+          <div className="p-6 border-b border-brand-border bg-white">
+             <h3 className="text-sm font-black text-brand-text1 uppercase tracking-[0.1em]">Como funciona:</h3>
           </div>
-          <div className="p-6 space-y-0 relative max-w-sm mx-auto">
+          <div className="p-6 pt-2 space-y-0 relative max-w-sm mx-auto">
             {/* Trail Line */}
-            <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border" />
+            <div className="absolute left-[2.75rem] top-10 bottom-10 w-0.5 bg-brand-border opacity-50" />
             
             {steps.map((step, i) => (
               <motion.div 
@@ -1139,7 +1160,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                 initial={{ opacity: 0, x: -15 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-6 py-4 relative z-10"
+                className="flex items-center gap-6 py-3 relative z-10"
               >
                 <div className={cn(
                   "w-12 h-12 rounded-2xl text-white flex items-center justify-center shrink-0 shadow-sm border-2 border-white",
@@ -1149,14 +1170,14 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
-                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-60">{step.desc}</p>
+                  <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-40">{step.desc}</p>
                 </div>
               </motion.div>
             ))}
           </div>
         </div>
 
-        <div className="max-w-sm mx-auto w-full">
+        <div className="max-w-sm mx-auto w-full pb-8">
           <motion.button
             whileHover={{ scale: 1.02, backgroundColor: '#E11D48' }}
             whileTap={{ scale: 0.98 }}
