@@ -666,27 +666,29 @@ export default function App() {
                 >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl md:text-2xl font-bold text-brand-text1">Orçamentos</h2>
-                  <button 
-                    onClick={() => {
-                      setEditingId(null);
-                      setFormData({
-                        ambientes: [],
-                        chapa: 'MDF 15mm',
-                        acabamento: '',
-                        ferragens: '',
-                        v_margem: 30,
-                        status: 'nao_enviada',
-                        pgto_formas: ['Dinheiro', 'PIX'],
-                        pgto_parcelas: 1,
-                        pgto_juros: false
-                      });
-                      setCurrentStep(1);
-                      setCurrentPage('orcamento');
-                    }}
-                    className="bg-brand-red text-white px-4 py-3 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-[10px] uppercase tracking-widest"
-                  >
-                    <Plus size={16} /> Novo
-                  </button>
+                  {hasPersistedProfile && (
+                    <button 
+                      onClick={() => {
+                        setEditingId(null);
+                        setFormData({
+                          ambientes: [],
+                          chapa: 'MDF 15mm',
+                          acabamento: '',
+                          ferragens: '',
+                          v_margem: 30,
+                          status: 'nao_enviada',
+                          pgto_formas: ['Dinheiro', 'PIX'],
+                          pgto_parcelas: 1,
+                          pgto_juros: false
+                        });
+                        setCurrentStep(1);
+                        setCurrentPage('orcamento');
+                      }}
+                      className="bg-brand-red text-white px-4 py-3 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-transform shadow-lg shadow-brand-red/20 text-[10px] uppercase tracking-widest"
+                    >
+                      <Plus size={16} /> Novo
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex gap-2 mb-6">
@@ -883,7 +885,7 @@ export default function App() {
           },
           { id: 'propostas', label: 'Lista', icon: <FileText size={20} /> },
           { id: 'calculadora', label: 'Calc', icon: <Calculator size={20} /> },
-        ].map(item => (
+        ].filter(item => item.id !== 'novo' || hasPersistedProfile).map(item => (
           <button
             key={item.id}
             onClick={item.onClick || (() => setCurrentPage(item.id as any))}
@@ -2097,6 +2099,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
       });
       setIsEditing(true);
       onSaveSuccess();
+      setCurrentPage('tutorial');
     }
     setLoading(false);
   };
@@ -2291,12 +2294,6 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   >
                     Sair da Conta
                   </button>
-                  <button 
-                    onClick={handleDeleteProfile}
-                    className="w-full text-zinc-300 py-2 font-bold text-[8px] uppercase tracking-[0.2em] active:opacity-50 transition-all"
-                  >
-                    Excluir Perfil Permanentemente
-                  </button>
                 </div>
               </div>
             ) : (
@@ -2316,7 +2313,17 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                         <Camera size={14} />
                       </div>
                     </label>
-                    <p className="text-[8px] font-black text-brand-text3 uppercase tracking-widest">Toque para alterar logo</p>
+                    <div className="flex flex-col items-center gap-2">
+                      <p className="text-[8px] font-black text-brand-text3 uppercase tracking-widest">Toque para alterar logo</p>
+                      {profile.logo && (
+                        <button 
+                          onClick={handleRemoveLogo}
+                          className="text-red-500 text-[8px] font-black uppercase tracking-widest hover:underline"
+                        >
+                          Remover Logo
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <div className="space-y-4">
@@ -2407,6 +2414,12 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                     className="w-full bg-[#01bd23] text-white py-5 rounded-2xl font-black text-sm uppercase tracking-[0.2em] shadow-xl shadow-green-600/20 active:scale-95 transition-all disabled:opacity-50"
                   >
                     {loading ? 'Salvando...' : 'Salvar Configurações'}
+                  </button>
+                  <button 
+                    onClick={handleDeleteProfile}
+                    className="w-full text-red-600 py-3 font-bold text-[10px] uppercase tracking-[0.2em] active:opacity-50 transition-all border-2 border-red-50 rounded-2xl hover:bg-red-50"
+                  >
+                    Excluir Perfil Permanentemente
                   </button>
                   {profile?.nome && (
                     <button 
