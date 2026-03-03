@@ -1135,11 +1135,11 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
   };
 
   const steps = [
-    { title: 'Perfil', desc: 'Configure seus dados e logo.', icon: <Settings size={18} />, color: 'bg-blue-500' },
-    { title: 'Novo', desc: 'Inicie um orçamento rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
-    { title: 'Ambientes', desc: 'Defina os cômodos.', icon: <Layout size={18} />, color: 'bg-amber-500' },
-    { title: 'Medidas', desc: 'Insira as dimensões.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
-    { title: 'PDF', desc: 'Gere e envie o orçamento.', icon: <FileText size={18} />, color: 'bg-brand-red' },
+    { step: 'PRIMEIRO PASSO', title: 'CONFIGURAR PERFIL', desc: 'Configure seus dados e logo.', icon: <Settings size={18} />, color: 'bg-blue-500' },
+    { step: 'SEGUNDO PASSO', title: 'CRIAR NOVA PROPOSTA', desc: 'Inicie um orçamento rápido.', icon: <Plus size={18} />, color: 'bg-emerald-500' },
+    { step: 'TERCEIRO PASSO', title: 'DEFINIR AMBIENTES', desc: 'Defina os cômodos do projeto.', icon: <Layout size={18} />, color: 'bg-amber-500' },
+    { step: 'QUARTO PASSO', title: 'INSERIR MEDIDAS', desc: 'Insira as dimensões das peças.', icon: <Maximize size={18} />, color: 'bg-purple-500' },
+    { step: 'QUINTO PASSO', title: 'GERAR PDF EM 5 MIN', desc: 'Gere e envie o orçamento pronto.', icon: <FileText size={18} />, color: 'bg-brand-red' },
   ];
 
   return (
@@ -1167,6 +1167,11 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-8">
+        <div className="max-w-sm mx-auto mb-10 text-center">
+          <h3 className="text-xs font-black text-brand-red uppercase tracking-[0.3em] mb-2">Como Funciona</h3>
+          <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-widest opacity-60">Siga o passo a passo para ter sua proposta pronta em 5 minutos</p>
+        </div>
+
         <div className="max-w-sm mx-auto relative">
           {/* Vertical Line */}
           <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-brand-border opacity-50" />
@@ -1188,6 +1193,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
                   {step.icon}
                 </div>
                 <div className="flex-1 min-w-0">
+                  <p className="text-[8px] font-black text-brand-red uppercase tracking-widest mb-0.5">{step.step}</p>
                   <h4 className="text-sm font-black text-brand-text1 uppercase tracking-tight">{step.title}</h4>
                   <p className="text-[10px] text-brand-text3 font-bold uppercase tracking-tight opacity-40">{step.desc}</p>
                 </div>
