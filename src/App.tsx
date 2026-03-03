@@ -465,11 +465,11 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-bg flex flex-col md:flex-row">
+    <div className="flex h-[100dvh] bg-brand-bg flex-col md:flex-row overflow-hidden">
       {/* Sidebar for Desktop */}
       {!isFullScreen && (
-        <aside className="hidden md:flex w-44 bg-white border-r border-brand-border flex-col sticky top-0 h-screen">
-          <div className="p-6 mb-4">
+        <aside className="hidden md:flex w-72 bg-white border-r border-brand-border flex-col shrink-0 shadow-xl z-50">
+          <div className="p-8 border-b border-brand-border">
             <button 
               onClick={() => setCurrentPage('tutorial')}
               className="text-2xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
@@ -482,89 +482,80 @@ export default function App() {
             </div>
           </div>
           
-          <nav className="flex-1 px-3 space-y-1">
-          {[
-            { id: 'tutorial', label: 'Início', icon: <Home size={14} /> },
-            { id: 'perfil', label: 'Configurações', icon: <Settings size={14} /> },
-            { id: 'orcamento', label: 'Novo Orçamento', icon: <Plus size={14} />, action: () => {
-              setEditingId(null);
-              setFormData({
-                ambientes: [],
-                chapa: 'MDF 15mm',
-                acabamento: '',
-                ferragens: '',
-                v_margem: 30,
-                status: 'nao_enviada',
-                pgto_formas: ['Dinheiro', 'PIX'],
-                pgto_parcelas: 1,
-                pgto_juros: false
-              });
-              setCurrentStep(1);
-              setCurrentPage('orcamento');
-            }},
-            { id: 'propostas', label: 'Lista', icon: <FileText size={14} /> },
-            { id: 'calculadora', label: 'Calculadora', icon: <Calculator size={14} /> },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={item.action || (() => setCurrentPage(item.id as any))}
-              className={cn(
-                "w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-medium text-[10px] transition-all uppercase tracking-tight",
-                currentPage === item.id 
-                  ? "bg-brand-red text-white shadow-md shadow-brand-red/10" 
-                  : "text-brand-text3 hover:bg-brand-surface2 hover:text-brand-text1"
-              )}
-            >
-              <span className={cn(
-                "transition-transform duration-300",
-                currentPage === item.id ? "text-white" : "text-brand-red"
-              )}>
+          <nav className="flex-1 p-6 space-y-2">
+            {[
+              { id: 'tutorial', label: 'Início', icon: <Home size={20} /> },
+              { id: 'propostas', label: 'Orçamentos', icon: <FileText size={20} /> },
+              { id: 'calculadora', label: 'Calculadora', icon: <Calculator size={20} /> },
+              { id: 'perfil', label: 'Configurações', icon: <Settings size={20} /> },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setCurrentPage(item.id as any)}
+                className={cn(
+                  "w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-sm transition-all active:scale-[0.98]",
+                  currentPage === item.id 
+                    ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" 
+                    : "text-brand-text3 hover:bg-brand-surface2 hover:text-brand-red"
+                )}
+              >
                 {item.icon}
-              </span>
-              {item.label}
-            </button>
-          ))}
-        </nav>
+                {item.label}
+              </button>
+            ))}
+          </nav>
 
-        <div className="p-3 border-t border-brand-border">
-          <button 
-            onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-2.5 py-2 rounded-lg font-bold text-[10px] text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all uppercase tracking-tight"
-          >
-            <LogOut size={14} /> Sair
-          </button>
-        </div>
-      </aside>
-    )}
+          <div className="p-6 border-t border-brand-border space-y-4">
+            <div className="flex items-center gap-3 px-2">
+              <div className="w-10 h-10 rounded-2xl bg-brand-red text-white flex items-center justify-center font-black text-sm shadow-lg">
+                {session.user.email?.[0].toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-black text-brand-text1 truncate uppercase tracking-tight">
+                  {profile?.user_name || session.user.email?.split('@')[0]}
+                </p>
+                <p className="text-[9px] font-bold text-brand-text3 truncate uppercase tracking-widest opacity-60">Plano Pro</p>
+              </div>
+            </div>
+            <button 
+              onClick={handleLogout}
+              className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl font-bold text-sm text-brand-text3 hover:bg-red-50 hover:text-red-600 transition-all active:scale-95"
+            >
+              <LogOut size={20} />
+              Sair
+            </button>
+          </div>
+        </aside>
+      )}
 
     {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-[100dvh] overflow-hidden">
         {/* Top Bar for Mobile */}
         {!isFullScreen && (
-          <header className="md:hidden sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-14 flex items-center justify-between">
+          <header className="md:hidden sticky top-0 z-50 bg-white border-b border-brand-border px-4 h-16 flex items-center justify-between shrink-0">
             <div className="flex flex-col">
               <button 
                 onClick={() => setCurrentPage('tutorial')}
-                className="text-xl font-semibold text-brand-red tracking-tight hover:opacity-80 transition-opacity"
+                className="text-2xl font-black text-brand-red tracking-tighter hover:opacity-80 transition-opacity"
               >
                 Fifty+
               </button>
-              <span className="text-[7px] font-black uppercase tracking-widest text-zinc-400 -mt-1">🇧🇷 Brasil</span>
+              <span className="text-[8px] font-black uppercase tracking-widest text-zinc-400 -mt-1">🇧🇷 Brasil</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-brand-red text-white flex items-center justify-center text-xs font-bold">
+              <div className="w-9 h-9 rounded-xl bg-brand-red text-white flex items-center justify-center text-sm font-black shadow-lg shadow-brand-red/10">
                 {session.user.email?.[0].toUpperCase()}
               </div>
               <button onClick={handleLogout} className="p-2 text-brand-text3 hover:text-brand-red transition-colors">
-                <LogOut size={18} />
+                <LogOut size={20} />
               </button>
             </div>
           </header>
         )}
 
         <main className={cn(
-          "flex-1 overflow-y-auto",
-          isFullScreen ? "p-0" : "p-4 md:p-8 pb-24 md:pb-8"
+          "flex-1 overflow-y-auto flex flex-col",
+          isFullScreen ? "p-0" : "p-0 md:p-8 pb-24 md:pb-8"
         )}>
           {isFullScreen && (
             <div className="fixed top-6 right-6 z-[100]">
@@ -577,31 +568,36 @@ export default function App() {
               </button>
             </div>
           )}
-          <AnimatePresence mode="wait">
-            {currentPage === 'tutorial' && (
-              <motion.div
-                key="tutorial"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-              >
-                <TutorialPage 
-                  onStart={() => setCurrentPage('orcamento')} 
-                  hasPersistedProfile={hasPersistedProfile}
-                  setCurrentPage={setCurrentPage}
-                  profile={profile}
-                />
-              </motion.div>
-            )}
+          <div className={cn(
+            "flex-1 w-full mx-auto flex flex-col",
+            !isFullScreen && "max-w-4xl"
+          )}>
+            <AnimatePresence mode="wait">
+              {currentPage === 'tutorial' && (
+                <motion.div
+                  key="tutorial"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className="flex-1 flex flex-col p-4 md:p-0"
+                >
+                  <TutorialPage 
+                    onStart={() => setCurrentPage('orcamento')} 
+                    hasPersistedProfile={hasPersistedProfile}
+                    setCurrentPage={setCurrentPage}
+                    profile={profile}
+                  />
+                </motion.div>
+              )}
 
-            {currentPage === 'propostas' && (
-              <motion.div 
-                key="propostas"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                className="max-w-2xl mx-auto"
-              >
+              {currentPage === 'propostas' && (
+                <motion.div 
+                  key="propostas"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 20 }}
+                  className="flex-1 flex flex-col p-4 md:p-0"
+                >
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-2xl font-semibold text-brand-text1">Seus Orçamentos</h2>
                   <button 
@@ -703,17 +699,19 @@ export default function App() {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="max-w-2xl mx-auto"
+                className="flex-1 flex flex-col min-h-full"
               >
-                <OrcamentoForm 
-                  step={currentStep} 
-                  setStep={setCurrentStep} 
-                  data={formData} 
-                  setData={setFormData} 
-                  onSave={handleSaveProposta}
-                  onCancel={() => setCurrentPage('propostas')}
-                  profile={profile}
-                />
+                <div className="flex-1 p-4 md:p-8 flex flex-col">
+                  <OrcamentoForm 
+                    step={currentStep} 
+                    setStep={setCurrentStep} 
+                    data={formData} 
+                    setData={setFormData} 
+                    onSave={handleSaveProposta}
+                    onCancel={() => setCurrentPage('propostas')}
+                    profile={profile}
+                  />
+                </div>
               </motion.div>
             )}
 
@@ -723,14 +721,16 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="max-w-2xl mx-auto"
+                className="flex-1 flex flex-col min-h-full"
               >
-                <PreviewPage 
-                  proposta={formData as Proposta} 
-                  profile={profile!} 
-                  onBack={() => setCurrentPage('propostas')} 
-                  onStatusUpdate={handleUpdateStatus}
-                />
+                <div className="flex-1 p-4 md:p-8">
+                  <PreviewPage 
+                    proposta={formData as Proposta} 
+                    profile={profile!} 
+                    onBack={() => setCurrentPage('propostas')} 
+                    onStatusUpdate={handleUpdateStatus}
+                  />
+                </div>
               </motion.div>
             )}
 
@@ -740,19 +740,21 @@ export default function App() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
-                className="max-w-2xl mx-auto"
+                className="flex-1 flex flex-col min-h-full"
               >
-                <ProfilePage 
-                  profile={profile} 
-                  setProfile={setProfile} 
-                  userId={session.user.id} 
-                  showToast={showToast}
-                  setCurrentPage={setCurrentPage}
-                  onSaveSuccess={() => {
-                    setHasPersistedProfile(true);
-                    fetchProfile(session.user.id);
-                  }}
-                />
+                <div className="flex-1 p-4 md:p-8 flex flex-col">
+                  <ProfilePage 
+                    profile={profile} 
+                    setProfile={setProfile} 
+                    userId={session.user.id} 
+                    showToast={showToast}
+                    setCurrentPage={setCurrentPage}
+                    onSaveSuccess={() => {
+                      setHasPersistedProfile(true);
+                      fetchProfile(session.user.id);
+                    }}
+                  />
+                </div>
               </motion.div>
             )}
 
@@ -762,89 +764,40 @@ export default function App() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="max-w-md mx-auto"
+                className="flex-1 flex flex-col items-center justify-center p-4 md:p-8"
               >
                 <FullCalculator />
               </motion.div>
             )}
           </AnimatePresence>
-        </main>
+        </div>
+      </main>
 
         {/* Bottom Nav for Mobile */}
         {!isFullScreen && (
-          <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-brand-border px-6 py-2 flex items-center justify-between z-50">
-            <button 
-              onClick={() => setCurrentPage('tutorial')}
-              className={cn(
-                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-                currentPage === 'tutorial' ? "text-brand-red" : "text-brand-text3"
-              )}
-            >
-              <Home size={20} strokeWidth={currentPage === 'tutorial' ? 2.5 : 2} />
-              <span className="text-[9px] uppercase tracking-tight font-semibold">Início</span>
-            </button>
-
-            <button 
-              onClick={() => setCurrentPage('perfil')}
-              className={cn(
-                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-                currentPage === 'perfil' ? "text-brand-red" : "text-brand-text3"
-              )}
-            >
-              <Settings size={20} strokeWidth={currentPage === 'perfil' ? 2.5 : 2} />
-              <span className="text-[9px] uppercase tracking-tight font-semibold">Ajustes</span>
-            </button>
-
-            <button 
-              onClick={() => {
-                setEditingId(null);
-                setFormData({
-                  ambientes: [],
-                  chapa: 'MDF 15mm',
-                  acabamento: '',
-                  ferragens: '',
-                  v_margem: 30,
-                  status: 'nao_enviada',
-                  pgto_formas: ['Dinheiro', 'PIX'],
-                  pgto_parcelas: 1,
-                  pgto_juros: false
-                });
-                setCurrentStep(1);
-                setCurrentPage('orcamento');
-              }}
-              className={cn(
-                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-                currentPage === 'orcamento' ? "text-brand-red" : "text-brand-text3"
-              )}
-            >
-              <div className={cn(
-                "w-8 h-8 rounded-xl flex items-center justify-center font-black text-[10px] border-2 transition-all",
-                currentPage === 'orcamento' ? "bg-brand-red text-white border-brand-red" : "bg-white text-brand-red border-brand-red"
-              )}>F+</div>
-              <span className="text-[9px] uppercase tracking-tight font-semibold">Novo</span>
-            </button>
-
-            <button 
-              onClick={() => setCurrentPage('propostas')}
-              className={cn(
-                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-                currentPage === 'propostas' ? "text-brand-red" : "text-brand-text3"
-              )}
-            >
-              <FileText size={20} strokeWidth={currentPage === 'propostas' ? 2.5 : 2} />
-              <span className="text-[9px] uppercase tracking-tight font-semibold">Lista</span>
-            </button>
-
-            <button 
-              onClick={() => setCurrentPage('calculadora')}
-              className={cn(
-                "flex flex-col items-center gap-1 px-2 py-1 rounded-2xl transition-all duration-300",
-                currentPage === 'calculadora' ? "text-brand-red" : "text-brand-text3"
-              )}
-            >
-              <Calculator size={20} strokeWidth={currentPage === 'calculadora' ? 2.5 : 2} />
-              <span className="text-[9px] uppercase tracking-tight font-semibold">Calc</span>
-            </button>
+          <nav className="md:hidden fixed bottom-6 left-6 right-6 z-50">
+            <div className="bg-white/80 backdrop-blur-xl border border-brand-border rounded-[2.5rem] p-2 flex items-center justify-between shadow-2xl shadow-black/5">
+              {[
+                { id: 'tutorial', label: 'Início', icon: <Home size={22} /> },
+                { id: 'propostas', label: 'Orçamentos', icon: <FileText size={22} /> },
+                { id: 'calculadora', label: 'Calc', icon: <Calculator size={22} /> },
+                { id: 'perfil', label: 'Perfil', icon: <Settings size={22} /> },
+              ].map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => setCurrentPage(item.id as any)}
+                  className={cn(
+                    "flex flex-col items-center justify-center w-16 h-14 rounded-3xl transition-all active:scale-90",
+                    currentPage === item.id 
+                      ? "bg-brand-red text-white shadow-lg shadow-brand-red/20" 
+                      : "text-brand-text3"
+                  )}
+                >
+                  {item.icon}
+                  <span className="text-[8px] font-black uppercase tracking-tighter mt-1">{item.label}</span>
+                </button>
+              ))}
+            </div>
           </nav>
         )}
       </div>
@@ -2106,7 +2059,6 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
           >
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-black uppercase tracking-tight">Configurações</h2>
-              <p className="text-[10px] font-bold text-brand-text3 uppercase tracking-widest">Gerencie sua conta</p>
             </div>
 
             {!isEditing && profile?.nome ? (
@@ -2140,28 +2092,28 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-2">
                   <button 
                     onClick={() => setIsEditing(true)}
-                    className="w-full bg-white border-2 border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    className="w-full bg-transparent border border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
                   >
-                    <Settings size={16} /> Editar Perfil
+                    <Settings size={14} /> Editar Perfil
                   </button>
                   <button 
                     onClick={() => setShowPasswordForm(true)}
-                    className="w-full bg-zinc-900 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg"
+                    className="w-full bg-transparent border border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
                   >
-                    <Lock size={16} /> Alterar Senha
+                    <Lock size={14} /> Alterar Senha
                   </button>
                   <button 
                     onClick={() => window.open('https://billing.stripe.com/p/login/6oU4gz6HobERbDm1uPd7q00', '_blank')}
-                    className="w-full bg-brand-red text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all shadow-lg shadow-brand-red/20"
+                    className="w-full bg-transparent border border-brand-border text-brand-text1 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all"
                   >
-                    <ExternalLink size={16} /> Gerenciar Assinatura
+                    <ExternalLink size={14} /> Gerenciar Assinatura
                   </button>
                   <button 
                     onClick={() => supabase.auth.signOut()}
-                    className="w-full text-brand-red py-4 font-black text-xs uppercase tracking-widest active:scale-95 transition-all"
+                    className="w-full text-zinc-400 py-4 font-black text-[10px] uppercase tracking-widest active:scale-95 transition-all"
                   >
                     Sair da Conta
                   </button>
