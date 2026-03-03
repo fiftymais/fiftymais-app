@@ -646,7 +646,7 @@ export default function App() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="flex-1 flex flex-col p-4 md:p-0"
+                  className="flex-1 flex flex-col md:p-0"
                 >
                   <TutorialPage 
                     onStart={() => setCurrentPage('orcamento')} 
@@ -1036,7 +1036,7 @@ function NewsCarousel({ setCurrentPage }: { setCurrentPage: (p: string) => void 
         </div>
       </div>
       
-      <div className="relative h-[160px] md:h-[140px] overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm hover:shadow-md transition-all duration-500">
+      <div className="relative h-[180px] md:h-[140px] overflow-hidden md:rounded-3xl md:border-2 md:border-brand-border bg-white shadow-sm md:shadow-md transition-all duration-500">
         <AnimatePresence mode="wait">
           <motion.div 
             key={index}
@@ -1102,7 +1102,7 @@ function TutorialPage({ onStart, hasPersistedProfile, setCurrentPage, profile }:
         <p className="text-brand-text3 font-bold text-[8px] md:text-xs uppercase tracking-[0.2em] opacity-60">SUA FERRAMENTA COMPLETA PARA ORÇAMENTOS</p>
       </div>
 
-      <div className="-mx-4 md:mx-0">
+      <div className="md:mx-0">
         <NewsCarousel setCurrentPage={setCurrentPage} />
       </div>
 
@@ -2207,7 +2207,7 @@ function ProfilePage({ profile, setProfile, userId, showToast, setCurrentPage, o
                   </button>
                   <button 
                     onClick={() => supabase.auth.signOut()}
-                    className="w-full text-zinc-300 py-6 font-bold text-[9px] uppercase tracking-[0.3em] active:opacity-50 transition-all mt-4"
+                    className="w-full text-red-600 py-6 font-black text-[10px] uppercase tracking-[0.3em] active:opacity-50 transition-all mt-4"
                   >
                     Sair da Conta
                   </button>
